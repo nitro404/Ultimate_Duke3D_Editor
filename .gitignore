@@ -1,0 +1,31 @@
+**/bin/*
+**/Test/*
+**/Misc/*
+**/Extract/*
+**/Logs/*
+**/Release/*
+**/DOSBox/
+Group Manager.ini
+Group Manager.cfg
+Plugins/GRP Plugin/GRP.jar
+Plugins/SSI Plugin/SSI.jar
+Plugin Library/Plugin Library.jar
+Group Manager/Duke Nukem 3D Group Manager*.jar
+Duke Nukem 3D Group Manager.txt
+*.GRP
+*.SSI
+*.ZIP
+*.BAT
+*.EXE
+*.COM
+*.WAV
+*.VOC
+*.ART
+*.MAP
+*.DAT
+*.DMO
+XGroup.*
+VOC2WAV5.TXT
+WAV2VOC2.TXT
+stderr.txt
+stdout.txt
