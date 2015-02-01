@@ -115,7 +115,14 @@ public class GroupFile {
 		
 		if(directory != null) {
 			if(!directory.exists()) {
-				if(!directory.mkdirs()) { return false; }
+				try {
+					if(!directory.mkdirs()) {
+						return false;
+					}
+				}
+				catch(SecurityException e) {
+					return false;
+				}
 			}
 		}
 		

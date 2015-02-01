@@ -21,7 +21,11 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	protected boolean m_updating;
 	
 	protected JPopupMenu m_groupPanelPopupMenu;
-	
+	protected JMenu m_selectPopupMenu;
+	protected JMenuItem m_selectInversePopupMenuItem;
+	protected JMenuItem m_selectRandomPopupMenuItem;
+	protected JMenuItem m_selectAllPopupMenuItem;
+	protected JMenuItem m_selectNonePopupMenuItem;
 	protected JMenuItem m_savePopupMenuItem;
 	protected JMenuItem m_saveAsPopupMenuItem;
 	protected JMenuItem m_addFilesPopupMenuItem;
@@ -58,6 +62,12 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	public void initPopupMenu() {
 		m_groupPanelPopupMenu = new JPopupMenu();
 		
+		m_selectPopupMenu = new JMenu("Select");
+		m_selectInversePopupMenuItem = new JMenuItem("Inverse");
+		m_selectRandomPopupMenuItem = new JMenuItem("Random");
+		m_selectAllPopupMenuItem = new JMenuItem("All");
+		m_selectNonePopupMenuItem = new JMenuItem("None");
+		
 		m_savePopupMenuItem = new JMenuItem("Save");
 		m_saveAsPopupMenuItem = new JMenuItem("Save As");
 		m_addFilesPopupMenuItem = new JMenuItem("Add Files");
@@ -69,6 +79,10 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_closePopupMenuItem = new JMenuItem("Close");
 		m_canelPopupMenuItem = new JMenuItem("Cancel");
 		
+		m_selectInversePopupMenuItem.addActionListener(this);
+		m_selectRandomPopupMenuItem.addActionListener(this);
+		m_selectAllPopupMenuItem.addActionListener(this);
+		m_selectNonePopupMenuItem.addActionListener(this);
 		m_savePopupMenuItem.addActionListener(this);
 		m_saveAsPopupMenuItem.addActionListener(this);
 		m_addFilesPopupMenuItem.addActionListener(this);
@@ -80,6 +94,12 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_closePopupMenuItem.addActionListener(this);
 		m_canelPopupMenuItem.addActionListener(this);
 		
+		m_selectPopupMenu.add(m_selectInversePopupMenuItem);
+		m_selectPopupMenu.add(m_selectRandomPopupMenuItem);
+		m_selectPopupMenu.add(m_selectAllPopupMenuItem);
+		m_selectPopupMenu.add(m_selectNonePopupMenuItem);
+		
+		m_groupPanelPopupMenu.add(m_selectPopupMenu);
 		m_groupPanelPopupMenu.add(m_savePopupMenuItem);
 		m_groupPanelPopupMenu.add(m_saveAsPopupMenuItem);
 		m_groupPanelPopupMenu.add(m_addFilesPopupMenuItem);
@@ -262,6 +282,14 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		}
 	}
 	
+	public abstract void selectInverse();
+	
+	public abstract void selectRandom();
+
+	public abstract void selectAll();
+
+	public abstract void clearSelection();
+	
 	public boolean save() throws GroupWriteException {
 		if(m_group == null) { return false; }
 		
@@ -276,6 +304,11 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		if(!m_initialized || m_updating) { return; }
 		
 		m_updating = true;
+		
+		m_selectInversePopupMenuItem.setEnabled(m_group.numberOfFiles() > 0);
+		m_selectRandomPopupMenuItem.setEnabled(m_group.numberOfFiles() > 0);
+		m_selectAllPopupMenuItem.setEnabled(m_group.numberOfFiles() > 0);
+		m_selectNonePopupMenuItem.setEnabled(m_group.numberOfFiles() > 0);
 		
 		m_removeFilesPopupMenuItem.setText("Remove File" + (numberOfSelectedFiles() == 1 ? "" : "s"));
 		m_extractFilesPopupMenuItem.setText("Extract File" + (numberOfSelectedFiles() == 1 ? "" : "s"));
@@ -296,7 +329,19 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	public void actionPerformed(ActionEvent e) {
 		if(m_group == null || e == null || e.getSource() == null || m_updating) { return; }
 		
-		if(e.getSource() == m_savePopupMenuItem) {
+		if(e.getSource() == m_selectInversePopupMenuItem) {
+			selectInverse();
+		}
+		else if(e.getSource() == m_selectRandomPopupMenuItem) {
+			selectRandom();
+		}
+		else if(e.getSource() == m_selectAllPopupMenuItem) {
+			selectAll();
+		}
+		else if(e.getSource() == m_selectNonePopupMenuItem) {
+			clearSelection();
+		}
+		else if(e.getSource() == m_savePopupMenuItem) {
 			handleGroupAction(new GroupAction(this, GroupActionType.Save));
 		}
 		else if(e.getSource() == m_saveAsPopupMenuItem) {

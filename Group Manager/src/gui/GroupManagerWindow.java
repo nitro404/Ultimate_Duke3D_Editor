@@ -40,6 +40,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	private JMenuItem m_fileCloseMenuItem;
 	private JMenuItem m_fileCloseAllMenuItem;
 	private JMenuItem m_fileExitMenuItem;
+	private JMenu m_selectMenu;
+	private JMenuItem m_selectInverseMenuItem;
+	private JMenuItem m_selectRandomMenuItem;
+	private JMenuItem m_selectAllMenuItem;
+	private JMenuItem m_selectNoneMenuItem;
 	private JMenu m_settingsMenu;
 	private JMenuItem m_settingsPluginDirectoryNameMenuItem;
 	private JMenuItem m_settingsConsoleLogFileNameMenuItem;
@@ -183,6 +188,12 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileExportMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.Event.CTRL_MASK));
 		m_fileExitMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.Event.CTRL_MASK));
 		
+		m_selectMenu = new JMenu("Select");
+		m_selectInverseMenuItem = new JMenuItem("Inverse");
+		m_selectRandomMenuItem = new JMenuItem("Random");
+		m_selectAllMenuItem = new JMenuItem("All");
+		m_selectNoneMenuItem = new JMenuItem("None");
+		
 		m_settingsMenu = new JMenu("Settings");
 		m_settingsPluginDirectoryNameMenuItem = new JMenuItem("Plugin Directory Name");
 		m_settingsConsoleLogFileNameMenuItem = new JMenuItem("Console Log File Name");
@@ -230,6 +241,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileCloseMenuItem.addActionListener(this);
 		m_fileCloseAllMenuItem.addActionListener(this);
 		m_fileExitMenuItem.addActionListener(this);
+		m_selectInverseMenuItem.addActionListener(this);
+		m_selectRandomMenuItem.addActionListener(this);
+		m_selectAllMenuItem.addActionListener(this);
+		m_selectNoneMenuItem.addActionListener(this);
 		m_settingsPluginDirectoryNameMenuItem.addActionListener(this);
 		m_settingsConsoleLogFileNameMenuItem.addActionListener(this);
 		m_settingsLogDirectoryNameMenuItem.addActionListener(this);
@@ -266,6 +281,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileMenu.add(m_fileCloseAllMenuItem);
 		m_fileMenu.add(m_fileExitMenuItem);
 		
+		m_selectMenu.add(m_selectInverseMenuItem);
+		m_selectMenu.add(m_selectRandomMenuItem);
+		m_selectMenu.add(m_selectAllMenuItem);
+		m_selectMenu.add(m_selectNoneMenuItem);
+		
 		m_settingsMenu.add(m_settingsPluginDirectoryNameMenuItem);
 		m_settingsMenu.add(m_settingsConsoleLogFileNameMenuItem);
 		m_settingsMenu.add(m_settingsLogDirectoryNameMenuItem);
@@ -292,6 +312,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_helpMenu.add(m_helpAboutMenuItem);
 		
 		m_menuBar.add(m_fileMenu);
+		m_menuBar.add(m_selectMenu);
 		m_menuBar.add(m_settingsMenu);
 		m_menuBar.add(m_pluginsMenu);
 		m_menuBar.add(m_windowMenu);
@@ -1246,11 +1267,9 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileRemoveFilesMenuItem.setText("Remove File" + (selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1 ? "" : "s"));
 		m_fileExtractFilesMenuItem.setText("Extract File" + (selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1 ? "" : "s"));
 		
-		if(selectedGroupPanel != null) {
-			m_fileRemoveFilesMenuItem.setEnabled(selectedGroupPanel.numberOfSelectedFiles() > 0);
-			m_fileReplaceFileMenuItem.setEnabled(selectedGroupPanel.numberOfSelectedFiles() == 1);
-			m_fileExtractFilesMenuItem.setEnabled(selectedGroupPanel.numberOfSelectedFiles() > 0);
-		}
+		m_fileRemoveFilesMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() > 0);
+		m_fileReplaceFileMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1);
+		m_fileExtractFilesMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() > 0);
 		
 		m_fileRemoveFilesMenuItem.setEnabled(groupTabSelected);
 		m_fileReplaceFileMenuItem.setEnabled(groupTabSelected);
@@ -1260,6 +1279,12 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileExportMenuItem.setEnabled(groupTabSelected);
 		m_fileCloseMenuItem.setEnabled(groupTabSelected);
 		m_fileCloseAllMenuItem.setEnabled(m_groupPanels.size() > 0);
+		
+		boolean groupHasFiles = selectedGroupPanel != null && selectedGroupPanel.getGroup().numberOfFiles() > 0;
+		m_selectInverseMenuItem.setEnabled(groupHasFiles);
+		m_selectRandomMenuItem.setEnabled(groupHasFiles);
+		m_selectAllMenuItem.setEnabled(groupHasFiles);
+		m_selectNoneMenuItem.setEnabled(groupHasFiles);
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -1394,6 +1419,34 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		// close the program
 		else if(e.getSource() == m_fileExitMenuItem) {
 			close();
+		}
+		// inverse file selection
+		else if(e.getSource() == m_selectInverseMenuItem) {
+			GroupPanel selectedGroupPanel = getSelectedGroupPanel();
+			if(selectedGroupPanel == null || selectedGroupPanel.getGroup().numberOfFiles() == 0) { return; }
+			
+			selectedGroupPanel.selectInverse();
+		}
+		// randomize file selection
+		else if(e.getSource() == m_selectRandomMenuItem) {
+			GroupPanel selectedGroupPanel = getSelectedGroupPanel();
+			if(selectedGroupPanel == null || selectedGroupPanel.getGroup().numberOfFiles() == 0) { return; }
+			
+			selectedGroupPanel.selectRandom();
+		}
+		// select all files
+		else if(e.getSource() == m_selectAllMenuItem) {
+			GroupPanel selectedGroupPanel = getSelectedGroupPanel();
+			if(selectedGroupPanel == null || selectedGroupPanel.getGroup().numberOfFiles() == 0) { return; }
+			
+			selectedGroupPanel.selectAll();
+		}
+		// clear file selection
+		else if(e.getSource() == m_selectNoneMenuItem) {
+			GroupPanel selectedGroupPanel = getSelectedGroupPanel();
+			if(selectedGroupPanel == null || selectedGroupPanel.getGroup().numberOfFiles() == 0) { return; }
+			
+			selectedGroupPanel.clearSelection();
 		}
 		// change the plugins folder name
 		else if(e.getSource() == m_settingsPluginDirectoryNameMenuItem) {
