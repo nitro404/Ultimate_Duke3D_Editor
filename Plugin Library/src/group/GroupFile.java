@@ -26,15 +26,18 @@ public class GroupFile {
 		m_trailingData = null;
 	}
 	
-	public GroupFile(String fileName, byte[] data) {
+	public GroupFile(String fileName, byte data[]) {
 		setFileName(fileName);
 		setData(data);
 		m_leadingData = null;
 		m_trailingData = null;
 	}
 	
-	protected GroupFile(File file, byte data[]) {
-		this(file == null ? null : file.getName(), data);
+	public GroupFile(File file, byte data[]) {
+		setFileName(file == null ? null : file.getName());
+		setData(data);
+		m_leadingData = null;
+		m_trailingData = null;
 	}
 	
 	public String getFileName() {

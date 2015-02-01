@@ -1,19 +1,19 @@
-package utilities;
+package group;
 
-public enum Endianness {
-	BigEndian,
-	LittleEndian,
+public enum SortDirection {
+	Ascending,
+	Descending,
 	Invalid;
 	
-	public final static Endianness defaultEndianness = BigEndian;
+	public final static SortDirection defaultDirection = Ascending;
 	
 	public final static String[] displayNames = {
-		"Big Endian",
-		"Little Endian",
+		"Ascending",
+		"Descending",
 		"Invalid"
 	};
 	
-	public static int numberOfEndinanTypes() {
+	public static int numberOfSortDirections() {
 		return values().length - 1;
 	}
 	
@@ -21,15 +21,15 @@ public enum Endianness {
 		return displayNames[ordinal()];
 	}
 	
-	public static String getDisplayName(Endianness endian) {
-		return displayNames[endian.ordinal()];
+	public static String getDisplayName(SortDirection direction) {
+		return displayNames[direction.ordinal()];
 	}
 	
 	public static String getValueList() {
 		String valueList = new String();
-		for(int i=0;i<numberOfEndinanTypes();i++) {
+		for(int i=0;i<numberOfSortDirections();i++) {
 			valueList += values()[i];
-			if(i < numberOfEndinanTypes() - 1) {
+			if(i < numberOfSortDirections() - 1) {
 				valueList += ", ";
 			}
 		}
@@ -38,9 +38,9 @@ public enum Endianness {
 	
 	public static String getDisplayNameList() {
 		String displayNameList = new String();
-		for(int i=0;i<numberOfEndinanTypes();i++) {
+		for(int i=0;i<numberOfSortDirections();i++) {
 			displayNameList += displayNames[i];
-			if(i < numberOfEndinanTypes() - 1) {
+			if(i < numberOfSortDirections() - 1) {
 				displayNameList += ", ";
 			}
 		}
@@ -48,15 +48,15 @@ public enum Endianness {
 	}
 	
 	public boolean isValid() {
-		return ordinal() >= 0 && ordinal() < numberOfEndinanTypes();
+		return ordinal() >= 0 && ordinal() < numberOfSortDirections();
 	}
 	
-	public static Endianness parseFrom(String data) {
+	public static SortDirection parseFrom(String data) {
 		if(data == null) { return Invalid; }
 		String temp = data.trim();
 		if(temp.length() == 0) { return Invalid; }
 		
-		for(int i=0;i<numberOfEndinanTypes();i++) {
+		for(int i=0;i<numberOfSortDirections();i++) {
 			if(temp.equalsIgnoreCase(values()[i].name()) || temp.equalsIgnoreCase(displayNames[i])) {
 				return values()[i];
 			}

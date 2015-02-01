@@ -6,17 +6,24 @@ import exception.*;
 import utilities.*;
 import console.*;
 
-public abstract class Group {
+public abstract class Group implements Updatable {
 	
 	protected GroupFileType m_fileType;
 	protected File m_file;
 	protected Vector<GroupFile> m_files;
+	protected GroupFileSortType m_sortType;
+	protected SortDirection m_sortDirection;
 	protected boolean m_loaded;
+	
+	public static final boolean DEFAULT_REPLACE_FILES = true;
+	public static final boolean DEFAULT_SORT_FILES = true;
 	
 	public Group() {
 		m_fileType = getDefaultGroupFileType();
 		m_file = null;
 		m_files = new Vector<GroupFile>();
+		m_sortType = GroupFileSortType.defaultSortType;
+		m_sortDirection = SortDirection.defaultDirection;
 		m_loaded = false;
 	}
 	
@@ -24,6 +31,8 @@ public abstract class Group {
 		m_fileType = getDefaultGroupFileType();
 		m_file = fileName == null ? null : new File(fileName);
 		m_files = new Vector<GroupFile>();
+		m_sortType = GroupFileSortType.defaultSortType;
+		m_sortDirection = SortDirection.defaultDirection;
 		m_loaded = false;
 	}
 	
@@ -31,6 +40,8 @@ public abstract class Group {
 		m_fileType = getDefaultGroupFileType();
 		m_file = file;
 		m_files = new Vector<GroupFile>();
+		m_sortType = GroupFileSortType.defaultSortType;
+		m_sortDirection = SortDirection.defaultDirection;
 		m_loaded = false;
 	}
 	
@@ -40,6 +51,8 @@ public abstract class Group {
 		m_fileType = fileType == null ? getDefaultGroupFileType() : fileType;
 		m_file = null;
 		m_files = new Vector<GroupFile>();
+		m_sortType = GroupFileSortType.defaultSortType;
+		m_sortDirection = SortDirection.defaultDirection;
 		m_loaded = false;
 	}
 
@@ -49,6 +62,8 @@ public abstract class Group {
 		m_fileType = fileType == null ? getDefaultGroupFileType() : fileType;
 		m_file = fileName == null ? null : new File(fileName);
 		m_files = new Vector<GroupFile>();
+		m_sortType = GroupFileSortType.defaultSortType;
+		m_sortDirection = SortDirection.defaultDirection;
 		m_loaded = false;
 	}
 	
@@ -58,6 +73,8 @@ public abstract class Group {
 		m_fileType = fileType == null ? getDefaultGroupFileType() : fileType;
 		m_file = file;
 		m_files = new Vector<GroupFile>();
+		m_sortType = GroupFileSortType.defaultSortType;
+		m_sortDirection = SortDirection.defaultDirection;
 		m_loaded = false;
 	}
 	
@@ -75,6 +92,50 @@ public abstract class Group {
 
 	public Endianness getFileEndianness() {
 		return Endianness.defaultEndianness;
+	}
+	
+	public GroupFileSortType getSortType() {
+		return m_sortType;
+	}
+	
+	public boolean setSortType(GroupFileSortType sortType) {
+		return setSortType(sortType, true);
+	}
+	
+	public boolean setSortType(GroupFileSortType sortType, boolean sortFiles) {
+		if(!sortType.isValid()) { return false; }
+		
+		boolean sortTypeChanged = m_sortType != sortType;
+		
+		m_sortType = sortType;
+		
+		if(sortTypeChanged && sortFiles) {
+			sortFiles();
+		}
+		
+		return true;
+	}
+	
+	public SortDirection getSortDirection() {
+		return m_sortDirection;
+	}
+	
+	public boolean setSortDirection(SortDirection sortDirection) {
+		return setSortDirection(sortDirection, true);
+	}
+	
+	public boolean setSortDirection(SortDirection sortDirection, boolean sortFiles) {
+		if(!sortDirection.isValid()) { return false; }
+		
+		boolean sortDirectionChanged = m_sortDirection != sortDirection;
+		
+		m_sortDirection = sortDirection;
+		
+		if(sortDirectionChanged && sortFiles) {
+			sortFiles();
+		}
+		
+		return true;
 	}
 	
 	public boolean isLoaded() {
@@ -474,189 +535,7 @@ public abstract class Group {
 		
 		return matchingFiles;
 	}
-	
-	public boolean addFile(File file) {
-		if(file == null || !file.isFile() || !file.exists()) { return false; }
-		
-		if(file.getName().length() > GroupFile.MAX_FILE_NAME_LENGTH) {
-        	SystemConsole.instance.writeLine("Warning: Truncating file name \"" + file.getName() + "\", exceeds max length of " + GroupFile.MAX_FILE_NAME_LENGTH + ".");
-        }
-		
-		GroupFile newGroupFile = null;
-		try { newGroupFile = GroupFile.readFrom(file); }
-		catch(FileNotFoundException e) { return false; }
-		catch(IOException e) { return false; }
-		if(newGroupFile == null) { return false; }
-		
-		m_files.add(newGroupFile);
-		
-		return true;
-	}
-	
-	public boolean addFile(GroupFile file) {
-		if(file == null || !file.isValid()) { return false; }
-		
-		m_files.add(file);
-		
-		return true;
-	}
-	
-	public int addFiles(GroupFile files[]) {
-		return addFiles(files, true);
-	}
-	
-	public int addFiles(Vector<GroupFile> files) {
-		return addFiles(files, true);
-	}
-	
-	public int addFiles(Group group) {
-		return addFiles(group, true);
-	}
-	
-	public int addFiles(GroupFile files[], boolean replace) {
-		if(files == null) { return 0; }
-		
-		int filesAdded = 0;
-		int fileIndex = -1;
-		
-		for(int i=0;i<files.length;i++) {
-			if(files[i] != null && files[i].isValid()) {
-				fileIndex = indexOfFile(files[i]);
-				
-				if(fileIndex == -1) {
-					m_files.add(files[i]);
-					
-					filesAdded++;
-				}
-				else {
-					if(replace) {
-						m_files.set(i, files[i]);
-						
-						filesAdded++;
-					}
-				}
-			}
-		}
-		
-		return filesAdded;
-	}
-	
-	public int addFiles(Vector<GroupFile> files, boolean replace) {
-		if(files == null) { return 0; }
-		
-		int filesAdded = 0;
-		int fileIndex = -1;
-		
-		for(int i=0;i<files.size();i++) {
-			if(files.elementAt(i) != null && files.elementAt(i).isValid()) {
-				fileIndex = indexOfFile(files.elementAt(i));
-				
-				if(fileIndex == -1) {
-					m_files.add(files.elementAt(i));
-					
-					filesAdded++;
-				}
-				else {
-					if(replace) {
-						m_files.set(i, files.elementAt(i));
-						
-						filesAdded++;
-					}
-				}
-			}
-		}
-		
-		return filesAdded;
-	}
-	
-	public int addFiles(Group group, boolean replace) {
-		if(group == null) { return 0; }
-		
-		return addFiles(group.m_files);
-	}
 
-	public int addFiles(File files[]) {
-		if(files == null || files.length == 0) { return 0; }
-		
-		GroupFile g = null;
-		
-		int numberOfFilesAdded = 0;
-		
-		for(int i=0;i<files.length;i++) {
-			if(files[i] == null || !files[i].exists() || !files[i].isFile()) { continue; }
-			
-			 try {
-				 g = GroupFile.readFrom(files[i]);
-			 }
-			 catch(IOException e) {
-				 SystemConsole.instance.writeLine("Warning: Failed to read file \"" + files[i].getName() + "\" while adding files to group \"" + m_file.getName() + "\".");
-				 
-				 continue;
-			 }
-			 
-			 if(!g.isValid()) {
-				 SystemConsole.instance.writeLine("Warning: Encountered invalid file \"" + files[i].getName() + "\" while adding files to group \"" + m_file.getName() + "\".");
-				 
-				 continue;
-			 }
-			 
-			 if(!addFile(g)) {
-				 SystemConsole.instance.writeLine("Warning: Failed to add file \"" + files[i].getName() + "\" to group \"" + m_file.getName() + "\".");
-			 }
-			 
-			 numberOfFilesAdded++;
-		}
-		
-		return numberOfFilesAdded;
-	}
-	
-	public boolean removeFile(int index) {
-		if(index < 0 || index >= m_files.size()) { return false; }
-		
-		m_files.remove(index);
-		
-		return true;
-	}
-	
-	public boolean removeFile(String fileName) {
-		if(fileName == null) { return false; }
-		
-		String formattedFileName = fileName.trim();
-		if(formattedFileName.length() == 0) { return false; }
-		if(formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) {
-			formattedFileName = formattedFileName.substring(0, GroupFile.MAX_FILE_NAME_LENGTH - 1);
-		}
-		
-		String currentFileName;
-		for(int i=0;i<m_files.size();i++) {
-			currentFileName = m_files.elementAt(i).getFileName();
-			if(currentFileName != null && currentFileName.equalsIgnoreCase(formattedFileName)) {
-				m_files.remove(i);
-				
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean removeFile(File file) {
-		if(file == null) {
-			return false;
-		}
-		
-		return removeFile(file.getName());
-	}
-	
-	public boolean removeFile(GroupFile file) {
-		if(file == null || !file.isValid()) { return false; }
-		
-		return removeFile(file.getFileName());
-	}
-	
-	public void clearFiles() {
-		m_files.clear();
-	}
-	
 	public boolean extractFile(int index, String directory) throws IOException {
 		return extractFile(index, directory == null || directory.length() == 0 ? null : new File(directory));
 	}
@@ -774,6 +653,549 @@ public abstract class Group {
 		return numberOfExtractedFiles;
 	}
 	
+	public boolean addFile(GroupFile file) {
+		return addFile(file, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+	}
+	
+	public boolean addFile(File file) {
+		return addFile(file, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+	}
+
+	public boolean addFile(GroupFile file, boolean replace) {
+		return addFile(file, replace, DEFAULT_SORT_FILES);
+	}
+		
+	public boolean addFile(File file, boolean replace) {
+		return addFile(file, replace, DEFAULT_SORT_FILES);
+	}
+	
+	public boolean addFile(GroupFile file, boolean replace, boolean sort) {
+		if(file == null || !file.isValid()) { return false; }
+		
+		boolean fileAdded = false;
+		int fileIndex = indexOfFile(file);
+		
+		if(fileIndex == -1) {
+			m_files.add(file);
+			
+			fileAdded = true;
+		}
+		else {
+			if(replace) {
+				m_files.set(fileIndex, file);
+				
+				fileAdded = true;
+			}
+		}
+		
+		if(sort) {
+			sortFiles();
+		}
+		
+		return fileAdded;
+	}
+	
+	public boolean addFile(File file, boolean replace, boolean sort) {
+		if(file == null || !file.isFile() || !file.exists()) { return false; }
+		
+		if(file.getName().length() > GroupFile.MAX_FILE_NAME_LENGTH) {
+        	SystemConsole.instance.writeLine("Warning: Truncating file name \"" + file.getName() + "\", exceeds max length of " + GroupFile.MAX_FILE_NAME_LENGTH + ".");
+        }
+		
+		GroupFile newGroupFile = null;
+		try { newGroupFile = GroupFile.readFrom(file); }
+		catch(FileNotFoundException e) { return false; }
+		catch(IOException e) { return false; }
+		if(newGroupFile == null) { return false; }
+		
+		boolean fileAdded = false;
+		int fileIndex = indexOfFile(newGroupFile);
+		
+		if(fileIndex == -1) {
+			m_files.add(newGroupFile);
+			
+			fileAdded = true;
+		}
+		else {
+			if(replace) {
+				m_files.add(newGroupFile);
+				
+				fileAdded = true;
+			}
+		}
+		
+		if(sort) {
+			sortFiles();
+		}
+		
+		return fileAdded;
+	}
+	
+	public int addFiles(GroupFile[] files) {
+		if(files == null || files.length == 0) { return 0; }
+		
+		return addFiles(files, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+	}
+	
+	public int addFiles(Vector<GroupFile> files) {
+		if(files == null || files.size() == 0) { return 0; }
+		
+		return addFiles(files, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+	}
+	
+	public int addFiles(Group group) {
+		if(group == null || group.numberOfFiles() == 0) { return 0; }
+		
+		return addFiles(group, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+	}
+	
+	public int addFiles(File[] files) {
+		if(files == null || files.length == 0) { return 0; }
+		
+		return addFiles(files, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+	}
+
+	public int addFiles(GroupFile[] files, boolean replace) {
+		if(files == null || files.length == 0) { return 0; }
+		
+		return addFiles(files, replace, DEFAULT_SORT_FILES);
+	}
+	
+	public int addFiles(Vector<GroupFile> files, boolean replace) {
+		if(files == null || files.size() == 0) { return 0; }
+		
+		return addFiles(files, replace, DEFAULT_SORT_FILES);
+	}
+	
+	public int addFiles(Group group, boolean replace) {
+		if(group == null) { return 0; }
+		
+		return addFiles(group.m_files, replace, DEFAULT_SORT_FILES);
+	}
+
+	public int addFiles(File[] files, boolean replace) {
+		if(files == null || files.length == 0) { return 0; }
+		
+		return addFiles(files, replace, DEFAULT_SORT_FILES);
+	}
+	
+	public int addFiles(GroupFile[] files, boolean replace, boolean sort) {
+		if(files == null) { return 0; }
+		
+		int numberOfFilesAdded = 0;
+		int fileIndex = -1;
+		
+		for(int i=0;i<files.length;i++) {
+			if(files[i] != null && files[i].isValid()) {
+				fileIndex = indexOfFile(files[i]);
+				
+				if(fileIndex == -1) {
+					m_files.add(files[i]);
+					
+					numberOfFilesAdded++;
+				}
+				else {
+					if(replace) {
+						m_files.set(i, files[i]);
+						
+						numberOfFilesAdded++;
+					}
+				}
+			}
+		}
+		
+		if(sort) {
+			sortFiles();
+		}
+		
+		return numberOfFilesAdded;
+	}
+	
+	public int addFiles(Vector<GroupFile> files, boolean replace, boolean sort) {
+		if(files == null) { return 0; }
+		
+		int numberOfFilesAdded = 0;
+		int fileIndex = -1;
+		
+		for(int i=0;i<files.size();i++) {
+			if(files.elementAt(i) != null && files.elementAt(i).isValid()) {
+				fileIndex = indexOfFile(files.elementAt(i));
+				
+				if(fileIndex == -1) {
+					m_files.add(files.elementAt(i));
+					
+					numberOfFilesAdded++;
+				}
+				else {
+					if(replace) {
+						m_files.set(i, files.elementAt(i));
+						
+						numberOfFilesAdded++;
+					}
+				}
+			}
+		}
+		
+		if(sort) {
+			sortFiles();
+		}
+		
+		return numberOfFilesAdded;
+	}
+
+	public int addFiles(Group group, boolean replace, boolean sort) {
+		if(group == null) { return 0; }
+		
+		return addFiles(group.m_files);
+	}
+	
+	public int addFiles(File[] files, boolean replace, boolean sort) {
+		if(files == null || files.length == 0) { return 0; }
+		
+		GroupFile g = null;
+		
+		int numberOfFilesAdded = 0;
+		int fileIndex = -1;
+		
+		for(int i=0;i<files.length;i++) {
+			if(files[i] == null || !files[i].exists() || !files[i].isFile()) { continue; }
+			
+			try {
+				g = GroupFile.readFrom(files[i]);
+			}
+			catch(IOException e) {
+				SystemConsole.instance.writeLine("Warning: Failed to read file \"" + files[i].getName() + "\" while adding files to group" + (m_file == null ? "." : "\"" + m_file.getName() + "\"."));
+				 
+				continue;
+			}
+			
+			if(g == null || !g.isValid()) {
+				SystemConsole.instance.writeLine("Warning: Encountered invalid file \"" + files[i].getName() + "\" while adding files to group" + (m_file == null ? "." : "\"" + m_file.getName() + "\"."));
+				
+				continue;
+			}
+			
+			fileIndex = indexOfFile(g);
+			 
+			if(fileIndex == -1) {
+				m_files.add(g);
+				
+				numberOfFilesAdded++;
+			}
+			else {
+				if(replace) {
+					m_files.set(i, g);
+					
+					numberOfFilesAdded++;
+				}
+			} 
+		}
+		
+		if(sort) {
+			sortFiles();
+		}
+		
+		return numberOfFilesAdded;
+	}
+	
+	public boolean replaceFile(int index, GroupFile newFile) {
+		return replaceFile(index, newFile, DEFAULT_SORT_FILES);
+	}
+	
+	public boolean replaceFile(int index, File newFile) {
+		return replaceFile(index, newFile, DEFAULT_SORT_FILES);
+	}
+
+	public boolean replaceFile(GroupFile oldFile, GroupFile newFile) {
+		return replaceFile(oldFile, newFile, DEFAULT_SORT_FILES);
+	}
+	
+	public boolean replaceFile(GroupFile oldFile, File newFile) {
+		return replaceFile(oldFile, newFile, DEFAULT_SORT_FILES);
+	}
+
+	public boolean replaceFile(String fileName, GroupFile newFile) {
+		return replaceFile(fileName, newFile, DEFAULT_SORT_FILES);
+	}
+	
+	public boolean replaceFile(String fileName, File newFile) {
+		return replaceFile(fileName, newFile, DEFAULT_SORT_FILES);
+	}
+	
+	public boolean replaceFile(File oldFile, GroupFile newFile) {
+		return replaceFile(oldFile, newFile, DEFAULT_SORT_FILES);
+	}
+	
+	public boolean replaceFile(File oldFile, File newFile) {
+		return replaceFile(oldFile, newFile, DEFAULT_SORT_FILES);
+	}
+	
+	public boolean replaceFile(int index, GroupFile newFile, boolean sort) {
+		if(index < 0 || index >= m_files.size() || newFile == null || !newFile.isValid()) { return false; }
+		
+		m_files.set(index, newFile);
+		
+		if(sort) {
+			sortFiles();
+		}
+		
+		return true;
+	}
+
+	public boolean replaceFile(int index, File newFile, boolean sort) {
+		if(index < 0 || index >= m_files.size() || newFile == null || !newFile.exists() || !newFile.isFile()) { return false; }
+		
+		GroupFile newGroupFile = null;
+		
+		try {
+			newGroupFile = GroupFile.readFrom(newFile);
+		}
+		catch(IOException e) {
+			SystemConsole.instance.writeLine("Warning: Failed to read file \"" + newFile.getName() + "\" while adding files to group" + (m_file == null ? "." : "\"" + m_file.getName() + "\"."));
+			 
+			return false;
+		}
+		
+		if(newGroupFile == null || !newGroupFile.isValid()) {
+			SystemConsole.instance.writeLine("Warning: Encountered invalid file \"" + newFile.getName() + "\" while adding files to group" + (m_file == null ? "." : "\"" + m_file.getName() + "\"."));
+			
+			return false;
+		}
+		
+		m_files.set(index, newGroupFile);
+		
+		if(sort) {
+			sortFiles();
+		}
+		
+		return true;
+	}
+	
+	public boolean replaceFile(GroupFile oldFile, GroupFile newFile, boolean sort) {
+		if(oldFile == null || newFile == null || !oldFile.isValid() || !newFile.isValid()) { return false; }
+		
+		int fileIndex = indexOfFile(oldFile);
+		
+		if(fileIndex != -1) {
+			m_files.set(fileIndex, newFile);
+			
+			if(sort) {
+				sortFiles();
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+
+	public boolean replaceFile(GroupFile oldFile, File newFile, boolean sort) {
+		if(oldFile == null || newFile == null || !oldFile.isValid() || !newFile.exists() || !newFile.isFile()) { return false; }
+		
+		int fileIndex = indexOfFile(oldFile);
+		GroupFile newGroupFile = null;
+		
+		if(fileIndex != -1) {
+			try {
+				newGroupFile = GroupFile.readFrom(newFile);
+			}
+			catch(IOException e) {
+				SystemConsole.instance.writeLine("Warning: Failed to read file \"" + newFile.getName() + "\" while adding files to group" + (m_file == null ? "." : "\"" + m_file.getName() + "\"."));
+				 
+				return false;
+			}
+			
+			if(newGroupFile == null || !newGroupFile.isValid()) {
+				SystemConsole.instance.writeLine("Warning: Encountered invalid file \"" + newFile.getName() + "\" while adding files to group" + (m_file == null ? "." : "\"" + m_file.getName() + "\"."));
+				
+				return false;
+			}
+			
+			m_files.set(fileIndex, newGroupFile);
+			
+			if(sort) {
+				sortFiles();
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean replaceFile(String fileName, GroupFile newFile, boolean sort) {
+		if(fileName == null || fileName.length() == 0 || newFile == null || !newFile.isValid()) { return false; }
+		
+		String formattedFileName = fileName.trim();
+		if(formattedFileName.length() == 0) { return false; }
+
+		int fileIndex = indexOfFile(fileName);
+		
+		if(fileIndex != -1) {
+			m_files.set(fileIndex, newFile);
+			
+			if(sort) {
+				sortFiles();
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+
+	public boolean replaceFile(String fileName, File newFile, boolean sort) {
+		if(fileName == null || fileName.length() == 0 || newFile == null || !newFile.exists() || !newFile.isFile()) { return false; }
+		
+		String formattedFileName = fileName.trim();
+		if(formattedFileName.length() == 0) { return false; }
+		
+		int fileIndex = indexOfFile(fileName);
+		GroupFile newGroupFile = null;
+		
+		if(fileIndex != -1) {
+			try {
+				newGroupFile = GroupFile.readFrom(newFile);
+			}
+			catch(IOException e) {
+				SystemConsole.instance.writeLine("Warning: Failed to read file \"" + newFile.getName() + "\" while adding files to group" + (m_file == null ? "." : "\"" + m_file.getName() + "\"."));
+				 
+				return false;
+			}
+			
+			if(newGroupFile == null || !newGroupFile.isValid()) {
+				SystemConsole.instance.writeLine("Warning: Encountered invalid file \"" + newFile.getName() + "\" while adding files to group" + (m_file == null ? "." : "\"" + m_file.getName() + "\"."));
+				
+				return false;
+			}
+			
+			m_files.set(fileIndex, newGroupFile);
+			
+			if(sort) {
+				sortFiles();
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean replaceFile(File oldFile, GroupFile newFile, boolean sort) {
+		if(oldFile == null || oldFile.getName().length() == 0 || newFile == null || !newFile.isValid()) { return false; }
+		
+		return replaceFile(oldFile.getName(), newFile, sort);
+	}
+	
+	public boolean replaceFile(File oldFile, File newFile, boolean sort) {
+		if(oldFile == null || oldFile.getName().length() == 0 || newFile == null || !newFile.exists() || !newFile.isFile()) { return false; }
+		
+		return replaceFile(oldFile.getName(), newFile, sort);
+	}
+	
+	public boolean removeFile(int index) {
+		if(index < 0 || index >= m_files.size()) { return false; }
+		
+		m_files.remove(index);
+		
+		return true;
+	}
+	
+	public boolean removeFile(String fileName) {
+		if(fileName == null) { return false; }
+		
+		String formattedFileName = fileName.trim();
+		if(formattedFileName.length() == 0) { return false; }
+		if(formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) {
+			formattedFileName = formattedFileName.substring(0, GroupFile.MAX_FILE_NAME_LENGTH - 1);
+		}
+		
+		String currentFileName;
+		for(int i=0;i<m_files.size();i++) {
+			currentFileName = m_files.elementAt(i).getFileName();
+			if(currentFileName != null && currentFileName.equalsIgnoreCase(formattedFileName)) {
+				m_files.remove(i);
+				
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean removeFile(File file) {
+		if(file == null) {
+			return false;
+		}
+		
+		return removeFile(file.getName());
+	}
+	
+	public boolean removeFile(GroupFile file) {
+		if(file == null || !file.isValid()) { return false; }
+		
+		return removeFile(file.getFileName());
+	}
+
+	public int removeFiles(String[] fileNames) {
+		if(fileNames == null || fileNames.length == 0) { return 0; }
+
+		int numberOfFilesRemoved = 0;
+		
+		for(int i=0;i<fileNames.length;i++) {
+			if(removeFile(fileNames[i])) {
+				numberOfFilesRemoved++;
+			}
+		}
+		
+		return numberOfFilesRemoved;
+	}
+	
+	public int removeFiles(File[] files) {
+		if(files == null || files.length == 0) { return 0; }
+		
+		int numberOfFilesRemoved = 0;
+		
+		for(int i=0;i<files.length;i++) {
+			if(removeFile(files[i])) {
+				numberOfFilesRemoved++;
+			}
+		}
+		
+		return numberOfFilesRemoved;
+	}
+	
+	public int removeFiles(GroupFile[] files) {
+		if(files == null || files.length == 0) { return 0; }
+
+		int numberOfFilesRemoved = 0;
+		
+		for(int i=0;i<files.length;i++) {
+			if(removeFile(files[i])) {
+				numberOfFilesRemoved++;
+			}
+		}
+		
+		return numberOfFilesRemoved;
+	}
+
+	public int removeFiles(Vector<GroupFile> files) {
+		if(files == null || files.size() == 0) { return 0; }
+
+		int numberOfFilesRemoved = 0;
+		
+		for(int i=0;i<files.size();i++) {
+			if(removeFile(files.elementAt(i))) {
+				numberOfFilesRemoved++;
+			}
+		}
+		
+		return numberOfFilesRemoved;
+	}
+	
+	public void clearFiles() {
+		m_files.clear();
+	}
+	
 	public boolean createFrom(File directory) {
 		if(directory == null || !directory.exists() || !directory.isDirectory()) { return false; }
 		
@@ -783,6 +1205,114 @@ public abstract class Group {
 	public abstract boolean load() throws GroupReadException;
 	
 	public abstract boolean save() throws GroupWriteException;
+	
+	public void update() {
+		sortFiles();
+	}
+	
+	public void sortFiles() {
+		if(m_sortType == GroupFileSortType.Unsorted) { return; }
+		
+		m_files = mergeSortFiles(m_files);
+	}
+	
+	protected Vector<GroupFile> mergeSortFiles(Vector<GroupFile> groupFiles) {
+		if(groupFiles == null) { return null; }
+		
+		if(groupFiles.size() == 0) {
+			return new Vector<GroupFile>();
+		}
+		
+		if(groupFiles.size() == 1) {
+			Vector<GroupFile> groupFile = new Vector<GroupFile>();
+			groupFile.add(groupFiles.elementAt(0));
+			
+			return groupFile;
+		}
+		
+		Vector<GroupFile> left = new Vector<GroupFile>();
+		Vector<GroupFile> right = new Vector<GroupFile>();
+		
+		int mid = groupFiles.size() / 2;
+		
+		for(int i=0;i<mid;i++) {
+			left.add(groupFiles.elementAt(i));
+		}
+		
+		for(int i=mid;i<groupFiles.size();i++) {
+			right.add(groupFiles.elementAt(i));
+		}
+		
+		left = mergeSortFiles(left);
+		right = mergeSortFiles(right);
+		
+		return mergeFiles(left, right);
+	}
+	
+	protected Vector<GroupFile> mergeFiles(Vector<GroupFile> left, Vector<GroupFile> right) {
+		Vector<GroupFile> result = new Vector<GroupFile>();
+		
+		boolean addLeft = true;
+		
+		while(left.size() > 0 && right.size() > 0) {
+			switch(m_sortType) {
+				case FileName:
+					if(m_sortDirection == SortDirection.Ascending) {
+						addLeft = left.elementAt(0).getFileName().compareToIgnoreCase(right.elementAt(0).getFileName()) <= 0;
+					}
+					else {
+						addLeft = left.elementAt(0).getFileName().compareToIgnoreCase(right.elementAt(0).getFileName()) > 0;
+					}
+					break;
+					
+				case FileExtension:
+					String extensionLeft = Utilities.getFileExtension(left.elementAt(0).getFileName());
+					String extensionRight = Utilities.getFileExtension(right.elementAt(0).getFileName());
+					
+					if(extensionLeft != null && extensionRight != null && extensionLeft.length() > 0 && extensionRight.length() > 0) {
+						if(m_sortDirection == SortDirection.Ascending) {
+							addLeft = extensionLeft.compareToIgnoreCase(extensionRight) <= 0;
+						}
+						else {
+							addLeft = extensionLeft.compareToIgnoreCase(extensionRight) > 0;
+						}
+					}
+					break;
+					
+				case FileSize:
+					if(m_sortDirection == SortDirection.Ascending) {
+						addLeft = left.elementAt(0).getFileSize() <= right.elementAt(0).getFileSize();
+					}
+					else {
+						addLeft = left.elementAt(0).getFileSize() > right.elementAt(0).getFileSize();
+					}
+					break;
+				
+				default:
+					break;
+			}
+			
+
+			if(addLeft) {
+				result.add(left.elementAt(0));
+				left.remove(0);
+			}
+			else {
+				result.add(right.elementAt(0));
+				right.remove(0);
+			}
+		}
+		
+		for(int i=0;i<left.size();i++) {
+			result.add(left.elementAt(i));
+		}
+	
+		for(int i=0;i<right.size();i++) {
+			result.add(right.elementAt(i));
+		}
+	
+		return result;
+	}
 	
 	public boolean equals(Object o) {
 		if(o == null || !(o instanceof Group)) {
@@ -801,6 +1331,19 @@ public abstract class Group {
 			}
 		}
 		return true;
+	}
+	
+	public String toString() {
+		String groupString = getGroupFileType().getName() + (m_file == null ? "" : " \"" + m_file.getName() + "\"") + " Files (" + m_files.size() + "): " ;
+		
+		for(int i=0;i<m_files.size();i++) {
+			groupString += m_files.elementAt(i).getFileName();
+			if(i < m_files.size() - 1) {
+				groupString += ", ";
+			}
+		}
+		
+		return groupString;
 	}
 	
 }

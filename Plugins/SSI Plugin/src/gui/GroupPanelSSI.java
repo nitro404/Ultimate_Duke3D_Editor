@@ -6,10 +6,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import group.*;
 
-public class GroupPanelSSI extends GroupPanel implements ActionListener, DocumentListener {
-	
-	private JList<GroupFile> m_fileList;
-	private JScrollPane m_fileListScrollPane;
+public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, DocumentListener {
 	
 	private JPanel m_informationPanel;
 	private JScrollPane m_informationPanelScrollPane;
@@ -42,6 +39,8 @@ public class GroupPanelSSI extends GroupPanel implements ActionListener, Documen
 	public boolean init() {
 		if(m_initialized) { return true; }
 		
+		if(!super.init(false)) { return false; }
+		
 		initComponents();
 		initLayout();
 		
@@ -53,11 +52,6 @@ public class GroupPanelSSI extends GroupPanel implements ActionListener, Documen
 	}
 	
 	private void initComponents() {
-		m_fileList = new JList<GroupFile>();
-		m_fileList.addMouseListener(this);
-		m_fileListScrollPane = new JScrollPane(m_fileList);
-		add(m_fileListScrollPane);
-		
 		m_informationPanel = new JPanel();
 		m_informationPanel.addMouseListener(this);
 		m_informationPanelScrollPane = new JScrollPane(m_informationPanel);
@@ -221,7 +215,7 @@ public class GroupPanelSSI extends GroupPanel implements ActionListener, Documen
 	public boolean setGroup(Group group) {
 		if(group != null && !(group instanceof GroupSSI)) { return false; }
 		
-		m_group = group;
+		super.setGroup(group, false);
 		
 		updateWindow();
 		
@@ -230,6 +224,8 @@ public class GroupPanelSSI extends GroupPanel implements ActionListener, Documen
 	
 	public void updateGroup() {
 		if(!m_initialized || m_group == null) { return; }
+		
+		super.updateGroup();
 		
 		GroupSSI ssiGroup = (GroupSSI) m_group;
 		
@@ -251,11 +247,9 @@ public class GroupPanelSSI extends GroupPanel implements ActionListener, Documen
 		
 		m_updatingWindow = true;
 		
-		m_fileList.clearSelection();
+		super.updateWindow(false);
 		
-		if(m_group != null) {
-			m_fileList.setListData(m_group.getFiles());
-			
+		if(m_group != null && m_group instanceof GroupSSI) {
 			GroupSSI ssiGroup = (GroupSSI) m_group;
 			
 			m_titleTextField.setText(ssiGroup.getTitle());
@@ -281,7 +275,7 @@ public class GroupPanelSSI extends GroupPanel implements ActionListener, Documen
 	public void updateLayout() {
 		if(m_group == null || !m_initialized) { return; }
 		
-		
+		super.updateLayout();
 	}
 
 	public void actionPerformed(ActionEvent e) {

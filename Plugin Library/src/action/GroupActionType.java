@@ -4,6 +4,10 @@ public enum GroupActionType {
 	DoNothing,
 	Save,
 	SaveAs,
+	AddFiles,
+	RemoveFiles,
+	ReplaceFile,
+	ExtractFiles,
 	Import,
 	Export,
 	Close,
@@ -15,11 +19,19 @@ public enum GroupActionType {
 		"Do Nothing",
 		"Save",
 		"Save As",
+		"Add Files",
+		"Remove Files",
+		"Replace File",
+		"Extract Files",
 		"Import",
 		"Export",
 		"Close",
 		"Invalid"
 	};
+
+	public static int numberOfGroupActionTypes() {
+		return values().length - 1;
+	}
 	
 	public String getDisplayName() {
 		return displayNames[ordinal()];
@@ -31,9 +43,9 @@ public enum GroupActionType {
 	
 	public static String getValueList() {
 		String valueList = new String();
-		for(int i=0;i<values().length-1;i++) {
+		for(int i=0;i<numberOfGroupActionTypes();i++) {
 			valueList += values()[i];
-			if(i < values().length - 2) {
+			if(i < numberOfGroupActionTypes() - 1) {
 				valueList += ", ";
 			}
 		}
@@ -42,9 +54,9 @@ public enum GroupActionType {
 	
 	public static String getDisplayNameList() {
 		String displayNameList = new String();
-		for(int i=0;i<values().length-1.;i++) {
+		for(int i=0;i<numberOfGroupActionTypes();i++) {
 			displayNameList += displayNames[i];
-			if(i < values().length - 2) {
+			if(i < numberOfGroupActionTypes() - 1) {
 				displayNameList += ", ";
 			}
 		}
@@ -52,7 +64,7 @@ public enum GroupActionType {
 	}
 	
 	public boolean isValid() {
-		return ordinal() >= 0 && ordinal() < values().length - 1;
+		return ordinal() >= 0 && ordinal() < numberOfGroupActionTypes();
 	}
 	
 	public static GroupActionType parseFrom(String data) {
@@ -60,7 +72,7 @@ public enum GroupActionType {
 		String temp = data.trim();
 		if(temp.length() == 0) { return Invalid; }
 		
-		for(int i=0;i<values().length-1;i++) {
+		for(int i=0;i<numberOfGroupActionTypes();i++) {
 			if(temp.equalsIgnoreCase(values()[i].name()) || temp.equalsIgnoreCase(displayNames[i])) {
 				return values()[i];
 			}

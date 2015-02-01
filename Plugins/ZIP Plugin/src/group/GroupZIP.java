@@ -125,7 +125,7 @@ public class GroupZIP extends Group {
 	    try { zipFile.close(); }
 	    catch(IOException e) { }
 		
-		m_files = groupFiles;
+	    addFiles(groupFiles);
 		
 		m_loaded = true;
 		
@@ -190,6 +190,10 @@ public class GroupZIP extends Group {
 		}
 		
 		return super.equals(o);
+	}
+
+	public String toString() {
+		return super.toString();
 	}
 	
 }

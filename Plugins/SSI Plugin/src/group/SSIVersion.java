@@ -13,6 +13,10 @@ public enum SSIVersion {
 		"Invalid"
 	};
 	
+	public static int numberOfSSIVersions() {
+		return values().length - 1;
+	}
+	
 	public String getDisplayName() {
 		return displayNames[ordinal()];
 	}
@@ -23,9 +27,9 @@ public enum SSIVersion {
 	
 	public static String getValueList() {
 		String valueList = new String();
-		for(int i=0;i<values().length-1;i++) {
+		for(int i=0;i<numberOfSSIVersions();i++) {
 			valueList += values()[i];
-			if(i < values().length - 2) {
+			if(i < numberOfSSIVersions() - 1) {
 				valueList += ", ";
 			}
 		}
@@ -34,9 +38,9 @@ public enum SSIVersion {
 	
 	public static String getDisplayNameList() {
 		String displayNameList = new String();
-		for(int i=0;i<values().length-1.;i++) {
+		for(int i=0;i<numberOfSSIVersions();i++) {
 			displayNameList += displayNames[i];
-			if(i < values().length - 2) {
+			if(i < numberOfSSIVersions() - 1) {
 				displayNameList += ", ";
 			}
 		}
@@ -44,19 +48,19 @@ public enum SSIVersion {
 	}
 	
 	public static String[] getValidDisplayNames() {
-		String[] names = new String[values().length - 1];
-		for(int i=0;i<values().length-1;i++) {
+		String[] names = new String[numberOfSSIVersions()];
+		for(int i=0;i<numberOfSSIVersions();i++) {
 			names[i] = displayNames[i];
 		}
 		return names;
 	}
 	
 	public boolean isValid() {
-		return ordinal() >= 0 && ordinal() < values().length - 1;
+		return ordinal() >= 0 && ordinal() < numberOfSSIVersions();
 	}
 	
 	public int getVersionValue() {
-		return ordinal() < values().length - 1 ? ordinal() + 1 : 0;
+		return ordinal() < numberOfSSIVersions() ? ordinal() + 1 : 0;
 	}
 	
 	public GroupFileType getFileType() {
@@ -77,7 +81,7 @@ public enum SSIVersion {
 	}
 	
 	public static SSIVersion parseFrom(int version) {
-		if(version - 1 < 0 || version - 1 >= values().length - 1) { return Invalid; }
+		if(version - 1 < 0 || version - 1 >= numberOfSSIVersions()) { return Invalid; }
 		
 		return values()[version - 1];
 	}
@@ -87,7 +91,7 @@ public enum SSIVersion {
 		String temp = data.trim();
 		if(temp.length() == 0) { return Invalid; }
 		
-		for(int i=0;i<values().length-1;i++) {
+		for(int i=0;i<numberOfSSIVersions();i++) {
 			if(temp.equalsIgnoreCase(values()[i].name()) || temp.equalsIgnoreCase(displayNames[i])) {
 				return values()[i];
 			}

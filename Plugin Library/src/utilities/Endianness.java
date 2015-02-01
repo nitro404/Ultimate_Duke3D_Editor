@@ -13,6 +13,10 @@ public enum Endianness {
 		"Invalid"
 	};
 	
+	public static int numberOfEndinanTypes() {
+		return values().length - 1;
+	}
+	
 	public String getDisplayName() {
 		return displayNames[ordinal()];
 	}
@@ -23,9 +27,9 @@ public enum Endianness {
 	
 	public static String getValueList() {
 		String valueList = new String();
-		for(int i=0;i<values().length-1;i++) {
+		for(int i=0;i<numberOfEndinanTypes();i++) {
 			valueList += values()[i];
-			if(i < values().length - 2) {
+			if(i < numberOfEndinanTypes() - 1) {
 				valueList += ", ";
 			}
 		}
@@ -34,9 +38,9 @@ public enum Endianness {
 	
 	public static String getDisplayNameList() {
 		String displayNameList = new String();
-		for(int i=0;i<values().length-1.;i++) {
+		for(int i=0;i<numberOfEndinanTypes();i++) {
 			displayNameList += displayNames[i];
-			if(i < values().length - 2) {
+			if(i < numberOfEndinanTypes() - 1) {
 				displayNameList += ", ";
 			}
 		}
@@ -44,7 +48,7 @@ public enum Endianness {
 	}
 	
 	public boolean isValid() {
-		return ordinal() >= 0 && ordinal() < values().length - 1;
+		return ordinal() >= 0 && ordinal() < numberOfEndinanTypes();
 	}
 	
 	public static Endianness parseFrom(String data) {
@@ -52,7 +56,7 @@ public enum Endianness {
 		String temp = data.trim();
 		if(temp.length() == 0) { return Invalid; }
 		
-		for(int i=0;i<values().length-1;i++) {
+		for(int i=0;i<numberOfEndinanTypes();i++) {
 			if(temp.equalsIgnoreCase(values()[i].name()) || temp.equalsIgnoreCase(displayNames[i])) {
 				return values()[i];
 			}

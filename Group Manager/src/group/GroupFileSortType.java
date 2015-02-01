@@ -1,35 +1,23 @@
-package action;
+package group;
 
-public enum GroupActionType {
-	DoNothing,
-	Save,
-	SaveAs,
-	AddFiles,
-	RemoveFiles,
-	ReplaceFile,
-	ExtractFiles,
-	Import,
-	Export,
-	Close,
+public enum GroupFileSortType {
+	Unsorted,
+	FileName,
+	FileExtension,
+	FileSize,
 	Invalid;
 	
-	public final static GroupActionType defaultAction = DoNothing;
+	public final static GroupFileSortType defaultSortType = Unsorted;
 	
 	public final static String[] displayNames = {
-		"Do Nothing",
-		"Save",
-		"Save As",
-		"Add Files",
-		"Remove Files",
-		"Replace File",
-		"Extract Files",
-		"Import",
-		"Export",
-		"Close",
+		"Unsorted",
+		"File Name",
+		"File Extension",
+		"File Size",
 		"Invalid"
 	};
-
-	public static int numberOfGroupActionTypes() {
+	
+	public static int numberOfSortTypes() {
 		return values().length - 1;
 	}
 	
@@ -37,15 +25,15 @@ public enum GroupActionType {
 		return displayNames[ordinal()];
 	}
 	
-	public static String getDisplayName(GroupActionType action) {
+	public static String getDisplayName(GroupFileSortType action) {
 		return displayNames[action.ordinal()];
 	}
 	
 	public static String getValueList() {
 		String valueList = new String();
-		for(int i=0;i<numberOfGroupActionTypes();i++) {
+		for(int i=0;i<numberOfSortTypes();i++) {
 			valueList += values()[i];
-			if(i < numberOfGroupActionTypes() - 1) {
+			if(i < numberOfSortTypes() - 1) {
 				valueList += ", ";
 			}
 		}
@@ -54,9 +42,9 @@ public enum GroupActionType {
 	
 	public static String getDisplayNameList() {
 		String displayNameList = new String();
-		for(int i=0;i<numberOfGroupActionTypes();i++) {
+		for(int i=0;i<numberOfSortTypes();i++) {
 			displayNameList += displayNames[i];
-			if(i < numberOfGroupActionTypes() - 1) {
+			if(i < numberOfSortTypes() - 1) {
 				displayNameList += ", ";
 			}
 		}
@@ -64,15 +52,15 @@ public enum GroupActionType {
 	}
 	
 	public boolean isValid() {
-		return ordinal() >= 0 && ordinal() < numberOfGroupActionTypes();
+		return ordinal() >= 0 && ordinal() < numberOfSortTypes();
 	}
 	
-	public static GroupActionType parseFrom(String data) {
+	public static GroupFileSortType parseFrom(String data) {
 		if(data == null) { return Invalid; }
 		String temp = data.trim();
 		if(temp.length() == 0) { return Invalid; }
 		
-		for(int i=0;i<numberOfGroupActionTypes();i++) {
+		for(int i=0;i<numberOfSortTypes();i++) {
 			if(temp.equalsIgnoreCase(values()[i].name()) || temp.equalsIgnoreCase(displayNames[i])) {
 				return values()[i];
 			}

@@ -6,10 +6,11 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import exception.*;
-import group.*;
+import utilities.*;
 import action.*;
+import group.*;
 
-public abstract class GroupPanel extends JPanel implements Scrollable, ActionListener, MouseListener {
+public abstract class GroupPanel extends JPanel implements Scrollable, ActionListener, MouseListener, Updatable {
 	
 	protected int m_groupNumber;
 	protected Group m_group;
@@ -17,17 +18,23 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	protected Vector<GroupActionListener> m_groupActionListeners;
 	protected boolean m_changed;
 	protected boolean m_initialized;
+	protected boolean m_updating;
 	
 	protected JPopupMenu m_groupPanelPopupMenu;
+	
 	protected JMenuItem m_savePopupMenuItem;
 	protected JMenuItem m_saveAsPopupMenuItem;
+	protected JMenuItem m_addFilesPopupMenuItem;
+	protected JMenuItem m_removeFilesPopupMenuItem;
+	protected JMenuItem m_replaceFilePopupMenuItem;
+	protected JMenuItem m_extractFilesPopupMenuItem;
 	protected JMenuItem m_importPopupMenuItem;
 	protected JMenuItem m_exportPopupMenuItem;
 	protected JMenuItem m_closePopupMenuItem;
 	protected JMenuItem m_canelPopupMenuItem;
 	
 	private static final long serialVersionUID = 6360144485605480625L;
-
+	
 	public GroupPanel() {
 		this(null);
 	}
@@ -37,12 +44,13 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_groupActionListeners = new Vector<GroupActionListener>();
 		m_changed = false;
 		m_initialized = false;
-		
-		setGroup(group);
+		m_updating = false;
 		
 		initPopupMenu();
 		
 		addMouseListener(this);
+
+		setGroup(group);
 	}
 	
 	public abstract boolean init();
@@ -52,6 +60,10 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		
 		m_savePopupMenuItem = new JMenuItem("Save");
 		m_saveAsPopupMenuItem = new JMenuItem("Save As");
+		m_addFilesPopupMenuItem = new JMenuItem("Add Files");
+		m_removeFilesPopupMenuItem = new JMenuItem("Remove Files");
+		m_replaceFilePopupMenuItem = new JMenuItem("Replace File");
+		m_extractFilesPopupMenuItem = new JMenuItem("Extract Files");
 		m_importPopupMenuItem = new JMenuItem("Import");
 		m_exportPopupMenuItem = new JMenuItem("Export");
 		m_closePopupMenuItem = new JMenuItem("Close");
@@ -59,6 +71,10 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		
 		m_savePopupMenuItem.addActionListener(this);
 		m_saveAsPopupMenuItem.addActionListener(this);
+		m_addFilesPopupMenuItem.addActionListener(this);
+		m_removeFilesPopupMenuItem.addActionListener(this);
+		m_replaceFilePopupMenuItem.addActionListener(this);
+		m_extractFilesPopupMenuItem.addActionListener(this);
 		m_importPopupMenuItem.addActionListener(this);
 		m_exportPopupMenuItem.addActionListener(this);
 		m_closePopupMenuItem.addActionListener(this);
@@ -66,6 +82,10 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		
 		m_groupPanelPopupMenu.add(m_savePopupMenuItem);
 		m_groupPanelPopupMenu.add(m_saveAsPopupMenuItem);
+		m_groupPanelPopupMenu.add(m_addFilesPopupMenuItem);
+		m_groupPanelPopupMenu.add(m_removeFilesPopupMenuItem);
+		m_groupPanelPopupMenu.add(m_replaceFilePopupMenuItem);
+		m_groupPanelPopupMenu.add(m_extractFilesPopupMenuItem);
 		m_groupPanelPopupMenu.add(m_importPopupMenuItem);
 		m_groupPanelPopupMenu.add(m_exportPopupMenuItem);
 		m_groupPanelPopupMenu.add(m_closePopupMenuItem);
@@ -75,6 +95,10 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	
 	public int getGroupNumber() {
 		return m_groupNumber;
+	}
+
+	public void setGroupNumber(int groupNumber) {
+		m_groupNumber = groupNumber;
 	}
 	
 	public String getTabName() {
@@ -90,6 +114,14 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	public Group getGroup() {
 		return m_group;
 	}
+
+	public boolean setGroup(Group group) {
+		m_group = group;
+		
+		updateLayout();
+		
+		return true;
+	}
 	
 	public String getFileExtension() {
 		return m_group.getFileExtension();
@@ -99,17 +131,26 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		return m_changed;
 	}
 	
-	public void setGroupNumber(int groupNumber) {
-		m_groupNumber = groupNumber;
+	public void setChanged(boolean changed) {
+		setChanged(changed, true);
 	}
 	
-	public void setChanged(boolean changed) {
+	public void setChanged(boolean changed, boolean update) {
 		m_changed = changed;
 		
 		if(m_changed) {
 			handleGroupChange();
 		}
+		
+		if(update) {
+			update();
+			updateWindow();
+		}
 	}
+	
+	public abstract int numberOfSelectedFiles();
+	
+	public abstract Vector<GroupFile> getSelectedFiles();
 	
 	public boolean isSameFile(File file) {
 		if(file == null || m_group.getFile() == null) { return false; }
@@ -221,14 +262,6 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		}
 	}
 	
-	public boolean setGroup(Group group) {
-		m_group = group;
-		
-		updateLayout();
-		
-		return true;
-	}
-	
 	public boolean save() throws GroupWriteException {
 		if(m_group == null) { return false; }
 		
@@ -239,6 +272,21 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		return saved;
 	}
 	
+	public void update() {
+		if(!m_initialized || m_updating) { return; }
+		
+		m_updating = true;
+		
+		m_removeFilesPopupMenuItem.setText("Remove File" + (numberOfSelectedFiles() == 1 ? "" : "s"));
+		m_extractFilesPopupMenuItem.setText("Extract File" + (numberOfSelectedFiles() == 1 ? "" : "s"));
+		
+		m_removeFilesPopupMenuItem.setEnabled(numberOfSelectedFiles() > 0);
+		m_replaceFilePopupMenuItem.setEnabled(numberOfSelectedFiles() == 1);
+		m_extractFilesPopupMenuItem.setEnabled(numberOfSelectedFiles() > 0);
+		
+		m_updating = false;
+	}
+	
 	public abstract void updateGroup();
 	
 	public abstract void updateWindow();
@@ -246,13 +294,25 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	public abstract void updateLayout();
 	
 	public void actionPerformed(ActionEvent e) {
-		if(m_group == null || e == null || e.getSource() == null) { return; }
+		if(m_group == null || e == null || e.getSource() == null || m_updating) { return; }
 		
 		if(e.getSource() == m_savePopupMenuItem) {
 			handleGroupAction(new GroupAction(this, GroupActionType.Save));
 		}
 		else if(e.getSource() == m_saveAsPopupMenuItem) {
 			handleGroupAction(new GroupAction(this, GroupActionType.SaveAs));
+		}
+		else if(e.getSource() == m_addFilesPopupMenuItem) {
+			handleGroupAction(new GroupAction(this, GroupActionType.AddFiles));
+		}
+		else if(e.getSource() == m_removeFilesPopupMenuItem) {
+			handleGroupAction(new GroupAction(this, GroupActionType.RemoveFiles));
+		}
+		else if(e.getSource() == m_replaceFilePopupMenuItem) {
+			handleGroupAction(new GroupAction(this, GroupActionType.ReplaceFile));
+		}
+		else if(e.getSource() == m_extractFilesPopupMenuItem) {
+			handleGroupAction(new GroupAction(this, GroupActionType.ExtractFiles));
 		}
 		else if(e.getSource() == m_importPopupMenuItem) {
 			handleGroupAction(new GroupAction(this, GroupActionType.Import));
@@ -282,6 +342,8 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	
 	private void showPopupMenu(int x, int y) {
 		if(!m_initialized || m_group == null) { return; }
+		
+		update();
 		
 		m_groupPanelPopupMenu.show(this, x, y);
 	}

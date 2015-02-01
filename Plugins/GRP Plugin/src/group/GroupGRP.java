@@ -184,7 +184,7 @@ public class GroupGRP extends Group {
 			offset += g.getFileSize();
 		}
 		
-		m_files = groupFiles;
+		addFiles(groupFiles);
 		
 		m_loaded = true;
 		
@@ -263,6 +263,10 @@ public class GroupGRP extends Group {
 		}
 		
 		return super.equals(o);
+	}
+	
+	public String toString() {
+		return super.toString();
 	}
 	
 }

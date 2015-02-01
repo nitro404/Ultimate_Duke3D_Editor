@@ -10,6 +10,7 @@ import javax.swing.event.*;
 import exception.*;
 import utilities.*;
 import settings.*;
+import console.*;
 import group.*;
 import action.*;
 import version.*;
@@ -30,6 +31,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	private JMenuItem m_fileSaveMenuItem;
 	private JMenuItem m_fileSaveAsMenuItem;
 	private JMenuItem m_fileSaveAllMenuItem;
+	private JMenuItem m_fileAddFilesMenuItem;
+	private JMenuItem m_fileRemoveFilesMenuItem;
+	private JMenuItem m_fileReplaceFileMenuItem;
+	private JMenuItem m_fileExtractFilesMenuItem;
 	private JMenuItem m_fileImportMenuItem;
 	private JMenuItem m_fileExportMenuItem;
 	private JMenuItem m_fileCloseMenuItem;
@@ -148,6 +153,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileSaveMenuItem = new JMenuItem("Save");
 		m_fileSaveAsMenuItem = new JMenuItem("Save As");
 		m_fileSaveAllMenuItem = new JMenuItem("Save All");
+		m_fileAddFilesMenuItem = new JMenuItem("Add Files");
+		m_fileRemoveFilesMenuItem = new JMenuItem("Remove Files");
+		m_fileReplaceFileMenuItem = new JMenuItem("Replace File");
+		m_fileExtractFilesMenuItem = new JMenuItem("Extract Files");
 		m_fileImportMenuItem = new JMenuItem("Import");
 		m_fileExportMenuItem = new JMenuItem("Export");
 		m_fileCloseMenuItem = new JMenuItem("Close");
@@ -157,14 +166,22 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileNewMenuItem.setMnemonic('N');
 		m_fileOpenMenuItem.setMnemonic('O');
 		m_fileSaveMenuItem.setMnemonic('S');
+		m_fileAddFilesMenuItem.setMnemonic('D');
+		m_fileRemoveFilesMenuItem.setMnemonic('R');
+		m_fileExtractFilesMenuItem.setMnemonic('E');
 		m_fileImportMenuItem.setMnemonic('I');
-		m_fileExportMenuItem.setMnemonic('E');
+		m_fileExportMenuItem.setMnemonic('P');
+		m_fileExitMenuItem.setMnemonic('Q');
 		
 		m_fileNewMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.Event.CTRL_MASK));
 		m_fileOpenMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.Event.CTRL_MASK));
 		m_fileSaveMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.Event.CTRL_MASK));
+		m_fileAddFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.Event.CTRL_MASK));
+		m_fileRemoveFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.Event.CTRL_MASK));
+		m_fileExtractFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.Event.CTRL_MASK));
 		m_fileImportMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.Event.CTRL_MASK));
-		m_fileExportMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.Event.CTRL_MASK));
+		m_fileExportMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.Event.CTRL_MASK));
+		m_fileExitMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.Event.CTRL_MASK));
 		
 		m_settingsMenu = new JMenu("Settings");
 		m_settingsPluginDirectoryNameMenuItem = new JMenuItem("Plugin Directory Name");
@@ -204,6 +221,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileSaveMenuItem.addActionListener(this);
 		m_fileSaveAsMenuItem.addActionListener(this);
 		m_fileSaveAllMenuItem.addActionListener(this);
+		m_fileAddFilesMenuItem.addActionListener(this);
+		m_fileRemoveFilesMenuItem.addActionListener(this);
+		m_fileReplaceFileMenuItem.addActionListener(this);
+		m_fileExtractFilesMenuItem.addActionListener(this);
 		m_fileImportMenuItem.addActionListener(this);
 		m_fileExportMenuItem.addActionListener(this);
 		m_fileCloseMenuItem.addActionListener(this);
@@ -235,6 +256,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileMenu.add(m_fileSaveMenuItem);
 		m_fileMenu.add(m_fileSaveAsMenuItem);
 		m_fileMenu.add(m_fileSaveAllMenuItem);
+		m_fileMenu.add(m_fileAddFilesMenuItem);
+		m_fileMenu.add(m_fileRemoveFilesMenuItem);
+		m_fileMenu.add(m_fileReplaceFileMenuItem);
+		m_fileMenu.add(m_fileExtractFilesMenuItem);
 		m_fileMenu.add(m_fileImportMenuItem);
 		m_fileMenu.add(m_fileExportMenuItem);
 		m_fileMenu.add(m_fileCloseMenuItem);
@@ -496,8 +521,9 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
 		fileChooser.setDialogTitle("Load Group Files");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(true);
-		if(fileChooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) { return; }
+		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return; }
 		
 		loadGroups(fileChooser.getSelectedFiles());
 	}
@@ -687,6 +713,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		JFileChooser fileChooser = new JFileChooser(groupFile == null ? System.getProperty("user.dir") : Utilities.getFilePath(groupFile));
 		fileChooser.setDialogTitle("Save Group File As");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
 		if(groupFile != null) {
 			String fileName = groupFile.getName();
 			String extension = Utilities.getFileExtension(fileName);
@@ -727,6 +755,228 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		update();
 	}
 	
+	public int addFilesToSelectedGroup() {
+		return addFilesToGroup(getSelectedGroupPanel());
+	}
+	
+	public int addFilesToGroup(GroupPanel groupPanel) {
+		if(groupPanel == null) { return 0; }
+		
+		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+		fileChooser.setDialogTitle("Select Files to Add");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(true);
+		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION || fileChooser.getSelectedFiles().length == 0) { return 0; }
+		
+		int numberOfFilesAdded = 0;
+		String formattedFileName = null;
+		DuplicateFileAction duplicateFileAction = DuplicateFileAction.Invalid;
+		File[] selectedFiles = fileChooser.getSelectedFiles();
+		
+		for(int i=0;i<selectedFiles.length;i++) {
+			formattedFileName = Utilities.truncateFileName(selectedFiles[i].getName(), GroupFile.MAX_FILE_NAME_LENGTH);
+			
+			if(duplicateFileAction != DuplicateFileAction.SkipAll && duplicateFileAction != DuplicateFileAction.ReplaceAll) {
+				Object selection = JOptionPane.showInputDialog(m_frame, "File \"" + formattedFileName + "\" already exists, please choose an action:", "Duplicate File", JOptionPane.QUESTION_MESSAGE, null, DuplicateFileAction.getValidDisplayNames(), DuplicateFileAction.displayNames[DuplicateFileAction.defaultAction.ordinal()]);
+				if(selection == null) { break; }
+				
+				duplicateFileAction = DuplicateFileAction.parseFrom(selection.toString());
+			}
+			
+			if(groupPanel.getGroup().addFile(selectedFiles[i])) {
+				numberOfFilesAdded++;
+			}
+			else {
+				GroupManager.console.writeLine("Failed to add file " + formattedFileName + " to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\"."));
+			}
+		}
+		
+		if(numberOfFilesAdded == 0) {
+			String message = "Failed to any files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
+			
+			GroupManager.console.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Failed to Add Files", JOptionPane.ERROR_MESSAGE);
+		}
+		else if(numberOfFilesAdded != selectedFiles.length) {
+			String message = "Only successfully added " + numberOfFilesAdded + " of " + selectedFiles.length + " selected files to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
+			
+			GroupManager.console.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Some Files Added", JOptionPane.WARNING_MESSAGE);
+		}
+		else {
+			String message = "Successfully added all " + selectedFiles.length + " selected files to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
+			
+			GroupManager.console.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "All Files Added", JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		return numberOfFilesAdded;
+	}
+	
+	public int removeSelectedFilesFromSelectedGroup() {
+		return removeSelectedFilesFromGroup(getSelectedGroupPanel());
+	}
+	
+	public int removeSelectedFilesFromGroup(GroupPanel groupPanel) {
+		if(groupPanel == null) { return 0; }
+		
+		Vector<GroupFile> selectedGroupFiles = groupPanel.getSelectedFiles();
+		if(selectedGroupFiles.size() == 0) { return 0; }
+		
+		int choice = JOptionPane.showConfirmDialog(m_frame, "Are you sure you wish to remove the " + selectedGroupFiles.size() + " selected files" + (groupPanel.getGroup().getFile() == null ? "?" : " from group \"" + groupPanel.getGroup().getFile().getName() + "\"?"), "Remove Files?", JOptionPane.YES_NO_CANCEL_OPTION);
+		if(choice == JOptionPane.NO_OPTION || choice == JOptionPane.CANCEL_OPTION) { return 0; }
+		
+		int numberOfFilesRemoved = groupPanel.getGroup().removeFiles(selectedGroupFiles);
+		
+		if(numberOfFilesRemoved == 0) {
+			String message = "Failed to remove any files from group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
+			
+			SystemConsole.getInstance().writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Failed to Remove Files", JOptionPane.ERROR_MESSAGE);
+		}
+		else if(numberOfFilesRemoved != selectedGroupFiles.size()) {
+			String message = "Only successfully removed " + numberOfFilesRemoved + " of " + selectedGroupFiles.size() + " files from group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
+			
+			SystemConsole.getInstance().writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Some Files Removed", JOptionPane.INFORMATION_MESSAGE);
+		}
+		else {
+			String message = "Successfully removed " + numberOfFilesRemoved + " files from group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
+			
+			SystemConsole.getInstance().writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "All Selected Files Removed", JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		return numberOfFilesRemoved;
+	}
+	
+	public boolean replaceSelectedFileInSelectedGroup() {
+		return replaceSelectedFileInGroup(getSelectedGroupPanel());
+	}
+	
+	public boolean replaceSelectedFileInGroup(GroupPanel groupPanel) {
+		if(groupPanel == null) { return false; }
+		
+		Vector<GroupFile> selectedGroupFiles = groupPanel.getSelectedFiles();
+		if(selectedGroupFiles.size() != 1) { return false; }
+		
+		GroupFile selectedGroupFile = selectedGroupFiles.elementAt(0);
+		
+		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+		fileChooser.setDialogTitle("Select Replacement File");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
+		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return false; }
+		if(fileChooser.getSelectedFile() == null || !fileChooser.getSelectedFile().isFile() || !fileChooser.getSelectedFile().exists()) { return false; }
+		
+		boolean fileReplaced = groupPanel.getGroup().replaceFile(selectedGroupFile, fileChooser.getSelectedFile());
+		
+		if(fileReplaced) {
+			String message = "Successfully replaced selected file \"" + selectedGroupFile.getFileName() + "\" in group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
+			
+			SystemConsole.getInstance().writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "File Replaced", JOptionPane.INFORMATION_MESSAGE);
+		}
+		else {
+			String message = "Failed to replace selected file \"" + selectedGroupFile.getFileName() + "\" in group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
+			
+			SystemConsole.getInstance().writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "File Replacement Failed", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		return fileReplaced;
+	}
+
+	public int extractSelectedFilesFromSelectedGroup() {
+		return extractSelectedFilesFromGroup(getSelectedGroupPanel());
+	}
+	
+	public int extractSelectedFilesFromGroup(GroupPanel groupPanel) {
+		if(groupPanel == null) { return 0; }
+
+		Vector<GroupFile> selectedGroupFiles = groupPanel.getSelectedFiles();
+		if(selectedGroupFiles.size() == 0) { return 0; }
+		
+		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+		fileChooser.setDialogTitle("Extract Files");
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
+		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return 0; }
+		if(fileChooser.getSelectedFile() == null || !fileChooser.getSelectedFile().isDirectory()) {
+			GroupManager.console.writeLine("Selected directory \"" + fileChooser.getSelectedFile().getName() + "\" is not a directory.");
+			
+			JOptionPane.showMessageDialog(m_frame, "Selected directory \"" + fileChooser.getSelectedFile().getName() + "\" is not a directory.", "Invalid Directory", JOptionPane.ERROR_MESSAGE);
+			
+			return 0;
+		}
+		
+		if(!fileChooser.getSelectedFile().exists()) {
+			int choice = JOptionPane.showConfirmDialog(m_frame, "The specified directory does not exist, create it?", "Non-Existant Directory", JOptionPane.YES_NO_CANCEL_OPTION);
+			if(choice == JOptionPane.NO_OPTION || choice == JOptionPane.CANCEL_OPTION) { return 0; }
+			
+			try {
+				fileChooser.getSelectedFile().mkdirs();
+			}
+			catch(SecurityException e) {
+				String message = "Failed to create the specified directory or directory structure, please ensure that you have write permission for this location. Exception message: " + e.getMessage();
+				
+				GroupManager.console.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Directory Creation Failed", JOptionPane.ERROR_MESSAGE);
+				
+				return 0;
+			}
+		}
+		
+		int numberOfFilesExtracted = 0;
+		
+		for(int i=0;i<selectedGroupFiles.size();i++) {
+			try {
+				if(selectedGroupFiles.elementAt(i).writeTo(fileChooser.getSelectedFile())) {
+					numberOfFilesExtracted++;
+				}
+				else {
+					GroupManager.console.writeLine("Failed to extract file \"" + selectedGroupFiles.elementAt(i).getFileName() + "\" to directory: \"" + fileChooser.getSelectedFile().getName() + "\".");
+				}
+			}
+			catch(IOException e) {
+				GroupManager.console.writeLine("Exception thrown while extracting file \"" + selectedGroupFiles.elementAt(i).getFileName() + "\" to directory \"" + fileChooser.getSelectedFile().getName() + "\": " + e.getMessage());
+			}
+		}
+		
+		if(numberOfFilesExtracted == 0) {
+			String message = "Failed to any files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
+			
+			GroupManager.console.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Failed to Extract Files", JOptionPane.ERROR_MESSAGE);
+		}
+		else if(numberOfFilesExtracted != selectedGroupFiles.size()) {
+			String message = "Only successfully extracted " + numberOfFilesExtracted + " of " + selectedGroupFiles.size() + " selected files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
+			
+			GroupManager.console.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Some Files Extracted", JOptionPane.WARNING_MESSAGE);
+		}
+		else {
+			String message = "Successfully extracted all " + selectedGroupFiles.size() + " selected files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
+			
+			GroupManager.console.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "All Selected Files Extracted", JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		return numberOfFilesExtracted;
+	}
+	
 	public boolean importGroupIntoSelectedGroup() {
 		return importGroupInto(getSelectedGroupPanel());
 	}
@@ -739,7 +989,9 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		JFileChooser fileChooser = new JFileChooser(group.getFile() == null ? System.getProperty("user.dir") : Utilities.getFilePath(group.getFile()));
 		fileChooser.setDialogTitle("Import Group File");
-		if(fileChooser.showOpenDialog(null) != JFileChooser.APPROVE_OPTION) { return false; }
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
+		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return false; }
 		if(!fileChooser.getSelectedFile().isFile() || !fileChooser.getSelectedFile().exists()) {
 			GroupManager.console.writeLine("Selected group file \"" + fileChooser.getSelectedFile().getName() + "\" is not a file or does not exist.");
 			
@@ -877,6 +1129,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		JFileChooser fileChooser = new JFileChooser(group.getFile() == null ? System.getProperty("user.dir") : Utilities.getFilePath(group.getFile()));
 		fileChooser.setDialogTitle("Export Group File");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
 		String extension = loadedInstantiablePlugins.elementAt(pluginIndex).getSupportedGroupFileType(fileTypeIndex);
 		if(group.getFile() != null) {
 			String fileName = group.getFile().getName();
@@ -980,10 +1234,26 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_pluginsAutoLoadMenuItem.setSelected(GroupManager.settings.autoLoadPlugins);
 		m_settingsAutoSaveSettingsMenuItem.setSelected(GroupManager.settings.autoSaveSettings);
 		
+		GroupPanel selectedGroupPanel = getSelectedGroupPanel();
 		boolean groupTabSelected = m_mainTabbedPane.getSelectedIndex() != m_mainTabbedPane.getTabCount() - 1;
 		m_fileSaveMenuItem.setEnabled(groupTabSelected);
 		m_fileSaveAsMenuItem.setEnabled(groupTabSelected);
 		m_fileSaveAllMenuItem.setEnabled(m_groupPanels.size() > 0);
+		m_fileAddFilesMenuItem.setEnabled(groupTabSelected);
+		
+		m_fileRemoveFilesMenuItem.setText("Remove File" + (selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1 ? "" : "s"));
+		m_fileExtractFilesMenuItem.setText("Extract File" + (selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1 ? "" : "s"));
+		
+		if(selectedGroupPanel != null) {
+			m_fileRemoveFilesMenuItem.setEnabled(selectedGroupPanel.numberOfSelectedFiles() > 0);
+			m_fileReplaceFileMenuItem.setEnabled(selectedGroupPanel.numberOfSelectedFiles() == 1);
+			m_fileExtractFilesMenuItem.setEnabled(selectedGroupPanel.numberOfSelectedFiles() > 0);
+		}
+		
+		m_fileRemoveFilesMenuItem.setEnabled(groupTabSelected);
+		m_fileReplaceFileMenuItem.setEnabled(groupTabSelected);
+		m_fileExtractFilesMenuItem.setEnabled(groupTabSelected);
+		
 		m_fileImportMenuItem.setEnabled(groupTabSelected);
 		m_fileExportMenuItem.setEnabled(groupTabSelected);
 		m_fileCloseMenuItem.setEnabled(groupTabSelected);
@@ -1083,9 +1353,25 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		else if(e.getSource() == m_fileSaveAsMenuItem) {
 			saveSelectedGroupAsNew();
 		}
-		// save all group
+		// save all groups
 		else if(e.getSource() == m_fileSaveAllMenuItem) {
 			saveAllGroups();
+		}
+		// add files to selected group
+		else if(e.getSource() == m_fileAddFilesMenuItem) {
+			addFilesToSelectedGroup();
+		}
+		// remove files from selected group
+		else if(e.getSource() == m_fileRemoveFilesMenuItem) {
+			removeSelectedFilesFromSelectedGroup();
+		}
+		// replace file in selected group
+		else if(e.getSource() == m_fileReplaceFileMenuItem) {
+			replaceSelectedFileInSelectedGroup();
+		}
+		// extract files from selected group
+		else if(e.getSource() == m_fileExtractFilesMenuItem) {
+			extractSelectedFilesFromSelectedGroup();
 		}
 		// import group
 		else if(e.getSource() == m_fileImportMenuItem) {
@@ -1275,11 +1561,27 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			case Save:
 				saveGroup(action.getSource());
 				break;
-			
+				
 			case SaveAs:
 				saveGroupAsNew(action.getSource());
 				break;
+				
+			case AddFiles:
+				addFilesToGroup(action.getSource());
+				break;
+				
+			case RemoveFiles:
+				removeSelectedFilesFromGroup(action.getSource());
+				break;
+				
+			case ReplaceFile:
+				replaceSelectedFileInGroup(action.getSource());
+				break;
 			
+			case ExtractFiles:
+				extractSelectedFilesFromGroup(action.getSource());
+				break;
+				
 			case Import:
 				importGroupInto(action.getSource());
 				break;
@@ -1287,11 +1589,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			case Export:
 				exportGroup(action.getSource());
 				break;
-	
+				
 			case Close:
 				closeGroup(action.getSource());
 				break;
-			
+				
 			default:
 				return false;
 		}

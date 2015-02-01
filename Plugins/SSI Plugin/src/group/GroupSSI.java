@@ -443,7 +443,7 @@ public class GroupSSI extends Group {
 		m_title = title;
 		m_runFile = runFile;
 		m_description = description;
-		m_files = groupFiles;
+		addFiles(groupFiles);
 		
 		m_loaded = true;
 		
@@ -572,6 +572,30 @@ public class GroupSSI extends Group {
 		}
 		
 		return super.equals(o);
+	}
+	
+	public String toString() {
+		String groupString = getGroupFileType().getName() + (m_file == null ? "" : " \"" + m_file.getName() + "\"");
+		
+		groupString += " Title: " + m_title;
+		groupString += " Description: ";
+		for(int i=0;i<m_description.length;i++) {
+			groupString += m_description[i];
+		}
+		if(m_version == SSIVersion.V2) {
+			groupString += " Run File: " + m_runFile;
+		}
+		
+		groupString += " Files (" + m_files.size() + "): ";
+		
+		for(int i=0;i<m_files.size();i++) {
+			groupString += m_files.elementAt(i).getFileName();
+			if(i < m_files.size() - 1) {
+				groupString += ", ";
+			}
+		}
+		
+		return groupString;
 	}
 	
 }
