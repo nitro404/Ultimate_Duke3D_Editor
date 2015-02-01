@@ -783,13 +783,15 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				duplicateFileAction = DuplicateFileAction.parseFrom(selection.toString());
 			}
 			
-			if(groupPanel.getGroup().addFile(selectedFiles[i])) {
+			if(groupPanel.getGroup().addFile(selectedFiles[i], duplicateFileAction == DuplicateFileAction.Replace || duplicateFileAction == DuplicateFileAction.ReplaceAll, false)) {
 				numberOfFilesAdded++;
 			}
 			else {
 				GroupManager.console.writeLine("Failed to add file " + formattedFileName + " to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\"."));
 			}
 		}
+		
+		groupPanel.getGroup().update();
 		
 		if(numberOfFilesAdded == 0) {
 			String message = "Failed to any files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
