@@ -186,6 +186,10 @@ public class GroupGRP extends Group {
 		
 		addFiles(groupFiles);
 		
+		if(!shouldSortFiles()) {
+			setChanged(false);
+		}
+		
 		m_loaded = true;
 		
 		SystemConsole.instance.writeLine(FILE_TYPES[0].getName() + " file parsed successfully, " + groupFiles.size() + " files loaded into memory.");
@@ -253,6 +257,8 @@ public class GroupGRP extends Group {
 		}
 		
 		SystemConsole.instance.writeLine(FILE_TYPES[0].getName() + " file writing complete!");
+		
+		setChanged(false);
 		
 		return true;
 	}

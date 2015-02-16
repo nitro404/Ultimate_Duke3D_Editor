@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.text.*;
 import group.*;
 
 public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, DocumentListener {
@@ -19,8 +20,6 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	private JTextField[] m_descriptionTextField;
 	private JLabel m_runFileLabel;
 	private JTextField m_runFileTextField;
-	
-	boolean m_updatingWindow;
 	
 	private static final long serialVersionUID = -9139327010877190279L;
 	
@@ -213,11 +212,9 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	}
 	
 	public boolean setGroup(Group group) {
-		if(group != null && !(group instanceof GroupSSI)) { return false; }
+		if(group == null || !(group instanceof GroupSSI)) { return false; }
 		
-		super.setGroup(group, false);
-		
-		updateWindow();
+		super.setGroup(group);
 		
 		return true;
 	}
@@ -243,11 +240,11 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	}
 	
 	public void updateWindow() {
-		if(!m_initialized) { return; }
+		if(!m_initialized || m_updatingWindow) { return; }
+		
+		super.updateWindow();
 		
 		m_updatingWindow = true;
-		
-		super.updateWindow(false);
 		
 		if(m_group != null && m_group instanceof GroupSSI) {
 			GroupSSI ssiGroup = (GroupSSI) m_group;
@@ -277,21 +274,66 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 		
 		super.updateLayout();
 	}
+	
+	protected boolean updateDataUsingDocument(Document d) {
+		if(d == null) { return false; }
+		
+		try {
+			if(m_group != null && m_group instanceof GroupSSI) {
+				GroupSSI ssiGroup = (GroupSSI) m_group;
+				
+				if(d == m_titleTextField.getDocument()) {
+System.out.println("m_titleTextField: \"" + d.getText(0, d.getLength()) + "\"");
+					ssiGroup.setTitle(d.getText(0, d.getLength()));
+				}
+				else if(d == m_runFileTextField.getDocument()) {
+System.out.println("m_runFileTextField: \"" + d.getText(0, d.getLength()) + "\"");
+					ssiGroup.setRunFile(d.getText(0, d.getLength()));
+				}
+				else {
+					for(int i=0;i<m_descriptionTextField.length;i++) {
+						if(d == m_descriptionTextField[i].getDocument()) {
+// TODO: test these!
+System.out.println("m_descriptionTextField[" + i + "]: \"" + d.getText(0, d.getLength()) + "\"");
+							ssiGroup.setDescription(d.getText(0, d.getLength()), i);
+						}
+					}
+				}
+			}
+		}
+		catch(BadLocationException e) {
+			return false;
+		}
+		
+		return false;
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getSource() == null) { return; }
 		
-		if(e.getSource() == m_versionComboBox) {
-			if(m_versionComboBox.getSelectedItem() == null) { return; }
+		if(m_group != null && m_group instanceof GroupSSI) {
+			GroupSSI ssiGroup = (GroupSSI) m_group;
 			
-			m_runFileTextField.setEnabled(SSIVersion.parseFrom(m_versionComboBox.getSelectedItem().toString()) == SSIVersion.V2);
-			
-			setChanged(true);
+			if(e.getSource() == m_versionComboBox) {
+				if(m_versionComboBox.getSelectedItem() == null) { return; }
+				
+				SSIVersion ssiVersion = SSIVersion.parseFrom(m_versionComboBox.getSelectedItem().toString());
+				
+				if(ssiVersion.isValid()) {
+					ssiGroup.setVersion(ssiVersion);
+					
+					m_runFileTextField.setEnabled(ssiVersion == SSIVersion.V2);
+					
+					setChanged(true);
+				}
+			}
 		}
 	}
 
 	public void insertUpdate(DocumentEvent e) {
 		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
+		
+		updateDataUsingDocument(e.getDocument());
 		
 		setChanged(true);
 	}
@@ -299,11 +341,15 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	public void removeUpdate(DocumentEvent e) {
 		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
 		
+		updateDataUsingDocument(e.getDocument());
+		
 		setChanged(true);
 	}
 	
 	public void changedUpdate(DocumentEvent e) {
 		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
+		
+		updateDataUsingDocument(e.getDocument());
 		
 		setChanged(true);
 	}

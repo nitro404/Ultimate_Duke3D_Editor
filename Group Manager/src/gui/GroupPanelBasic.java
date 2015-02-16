@@ -5,20 +5,27 @@ import java.util.List;
 import java.awt.*;
 import javax.swing.*;
 import group.*;
+import console.*;
 
 public class GroupPanelBasic extends GroupPanel {
 	
 	protected JList<GroupFile> m_fileList;
 	protected JScrollPane m_fileListScrollPane;
+	protected GroupFile m_selectedGroupFiles[];
+	protected boolean m_updatingWindow;
 	
 	private static final long serialVersionUID = -53066122432650525L;
 	
 	public GroupPanelBasic() {
 		super(null);
+		
+		m_updatingWindow = false;
 	}
 	
 	public GroupPanelBasic(Group group) {
 		super(group);
+		
+		m_updatingWindow = false;
 	}
 	
 	public boolean init() {
@@ -40,20 +47,6 @@ public class GroupPanelBasic extends GroupPanel {
 		}
 		
 		updateWindow();
-		
-		return true;
-	}
-	
-	public boolean setGroup(Group group) {
-		return setGroup(group, true);
-	}
-	
-	public boolean setGroup(Group group, boolean updateWindow) {
-		m_group = group;
-		
-		if(updateWindow) {
-			updateWindow();
-		}
 		
 		return true;
 	}
@@ -81,7 +74,7 @@ public class GroupPanelBasic extends GroupPanel {
 		if(m_group.numberOfFiles() == 0) { return; }
 		
 		if(m_fileList.getModel().getSize() != m_group.numberOfFiles()) {
-			GroupManager.console.writeLine("Cannot select inverse, file list is not up to date. Check for missing update calls in code.");
+			SystemConsole.instance.writeLine("Cannot select inverse, file list is not up to date. Check for missing update calls in code.");
 			return;
 		}
 		
@@ -97,7 +90,7 @@ public class GroupPanelBasic extends GroupPanel {
 		
 		for(int i=0;i<selectedIndicies.length;i++) {
 			if(selectedIndicies[i] < 0 || selectedIndicies[i] >= inverseState.length) {
-				GroupManager.console.writeLine("Inverse state index is out of range: " + selectedIndicies[i] + ", expected value in range of 0 to " + inverseState.length + ".");
+				SystemConsole.instance.writeLine("Inverse state index is out of range: " + selectedIndicies[i] + ", expected value in range of 0 to " + inverseState.length + ".");
 				return;
 			}
 			
@@ -108,7 +101,7 @@ public class GroupPanelBasic extends GroupPanel {
 		for(int i=0;i<inverseState.length;i++) {
 			if(inverseState[i]) {
 				if(c >= inverseIndicies.length) {
-					GroupManager.console.writeLine("Too many inverse indicies encountered when inversing selection.");
+					SystemConsole.instance.writeLine("Too many inverse indicies encountered when inversing selection.");
 					return;
 				}
 				
@@ -163,26 +156,76 @@ public class GroupPanelBasic extends GroupPanel {
 		m_fileList.setSelectedIndices(new int[0]);
 	}
 	
+	public boolean backupSelectedGroupFiles() {
+		if(m_selectedGroupFiles != null) { return false; }
+		
+		List<GroupFile> selectedGroupFiles = m_fileList.getSelectedValuesList();
+		
+		m_selectedGroupFiles = new GroupFile[selectedGroupFiles.size()];
+		for(int i=0;i<selectedGroupFiles.size();i++) {
+			m_selectedGroupFiles[i] = selectedGroupFiles.get(i);
+		}
+		
+		return true;
+	}
+	
+	public boolean restoreSelectedGroupFiles() {
+		if(m_selectedGroupFiles == null) { return false; }
+		
+		Vector<Integer> selectedGroupFileIndexCollection = new Vector<Integer>();
+		
+		int groupFileIndex = -1;
+		for(int i=0;i<m_selectedGroupFiles.length;i++) {
+			groupFileIndex = m_group.indexOfFile(m_selectedGroupFiles[i]);
+			if(groupFileIndex < 0) { continue; }
+			
+			selectedGroupFileIndexCollection.add(groupFileIndex);
+		}
+		
+		int selectedGroupFileIndicies[] = new int[selectedGroupFileIndexCollection.size()];
+		
+		for(int i=0;i<selectedGroupFileIndexCollection.size();i++) {
+			selectedGroupFileIndicies[i] = selectedGroupFileIndexCollection.elementAt(i);
+		}
+		
+		m_fileList.setSelectedIndices(selectedGroupFileIndicies);
+		
+		m_selectedGroupFiles = null;
+		
+		return true;
+	}
+	
 	public void updateGroup() {
 		
 	}
 	
 	public void updateWindow() {
-		updateWindow(true);
-	}
-	
-	public void updateWindow(boolean updateLayout) {
-		if(!m_initialized) { return; }
+		if(!m_initialized || m_updating || m_updatingWindow) { return; }
+		
+		m_updatingWindow = true;
+		
+		if(m_group != null) {
+			if(m_selectedGroupFiles == null) {
+				backupSelectedGroupFiles();
+			}
+		}
+		else {
+			m_selectedGroupFiles = null;
+		}
 		
 		m_fileList.clearSelection();
 		
 		if(m_group != null) {
 			m_fileList.setListData(m_group.getFiles());
 			
-			if(updateLayout) {
-				updateLayout();
+			if(m_selectedGroupFiles != null) {
+				restoreSelectedGroupFiles();
 			}
+			
+			updateLayout();
 		}
+		
+		m_updatingWindow = false;
 	}
 	
 	public void updateLayout() {

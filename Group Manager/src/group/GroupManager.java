@@ -10,14 +10,14 @@ import settings.*;
 import console.*;
 import version.*;
 
-public class GroupManager extends GroupCollection implements GroupChangeListener {
+public class GroupManager extends GroupCollection {
 	
-	public static GroupManager instance;
-	public static GroupManagerWindow groupManagerWindow;
-	public static SettingsManager settings;
-	public static SystemConsole console;
-	public static ExtendedClassLoader classLoader;
-	public static GroupPluginManager pluginManager;
+	public static GroupManager instance = null;
+	public static GroupManagerWindow groupManagerWindow = null;
+	public static SettingsManager settings = null;
+	public static SystemConsole console = null;
+	public static ExtendedClassLoader classLoader = null;
+	public static GroupPluginManager pluginManager = null;
 	private ProgressDialog m_progressDialog;
 	private boolean m_initialized;
 	private static int currentGroupNumber = 1;
@@ -28,7 +28,9 @@ public class GroupManager extends GroupCollection implements GroupChangeListener
 		
 		groupManagerWindow = new GroupManagerWindow();
 		
-		instance = this;
+		if(instance == null) {
+			updateInstance();
+		}
 		settings = new SettingsManager();
 		classLoader = new ExtendedClassLoader();
 		console = new SystemConsole();
@@ -37,6 +39,10 @@ public class GroupManager extends GroupCollection implements GroupChangeListener
 		m_progressDialog = new ProgressDialog(groupManagerWindow.getFrame());
 		
 		m_initialized = false;
+	}
+	
+	public void updateInstance() {
+		instance = this;
 	}
 	
 	public boolean initialize(String[] args) {
@@ -283,10 +289,6 @@ public class GroupManager extends GroupCollection implements GroupChangeListener
 		}
 		
 		return true;
-	}
-	
-	public void notifyGroupChanged(GroupPanel groupPanel) {
-		groupManagerWindow.update();
 	}
 	
 	public void close() {

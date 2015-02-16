@@ -126,6 +126,10 @@ public class GroupZIP extends Group {
 	    catch(IOException e) { }
 		
 	    addFiles(groupFiles);
+	    
+	    if(!shouldSortFiles()) {
+			setChanged(false);
+		}
 		
 		m_loaded = true;
 		
@@ -180,6 +184,8 @@ public class GroupZIP extends Group {
 		catch(IOException e) { }
 		
 		SystemConsole.instance.writeLine(FILE_TYPES[0].getName() + " file writing complete!");
+		
+		setChanged(false);
 		
 		return true;
 	}

@@ -8,7 +8,7 @@ import settings.*;
 
 public class SystemConsole {
 	
-	public static SystemConsole instance;
+	public static SystemConsole instance = null;
 	
     private Vector<SystemConsoleEntry> m_consoleEntries;
     private Vector<Updatable> m_targets;
@@ -17,7 +17,9 @@ public class SystemConsole {
     public static final DateFormat LOG_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss aa");
 
     public SystemConsole() {
-    	instance = this;
+    	if(instance == null) {
+    		updateInstance();
+    	}
     	
     	m_consoleEntries = new Vector<SystemConsoleEntry>();
     	m_targets = new Vector<Updatable>();
@@ -25,8 +27,8 @@ public class SystemConsole {
     	m_headerAddedToLogFile = false;
     }
     
-    public static SystemConsole getInstance() {
-    	return instance;
+    public void updateInstance() {
+    	instance = this;
     }
     
     // adds a target which displays the contents of the console 

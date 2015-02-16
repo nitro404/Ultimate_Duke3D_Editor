@@ -28,16 +28,16 @@ public class ConvertedGroupFinder extends GroupProcessor {
 
 	public void groupProcessingCompleted() {
 		if(m_convertedGroups.size() == 0) {
-			SystemConsole.getInstance().writeLine("No converted groups found.");
+			SystemConsole.instance.writeLine("No converted groups found.");
 			
 			JOptionPane.showMessageDialog(null, "No converted groups found.", "No Converted Groups", JOptionPane.OK_OPTION);
 		}
 		else {
-			SystemConsole.getInstance().writeLine("Found " + m_convertedGroups.size() + " convered groups:");
+			SystemConsole.instance.writeLine("Found " + m_convertedGroups.size() + " convered groups:");
 			
 			for(int i=0;i<m_convertedGroups.size();i++) {
 				if(m_convertedGroups.elementAt(i).getFile() != null) {
-					SystemConsole.getInstance().writeLine((i + 1) + ": " + m_convertedGroups.elementAt(i).getFile().getName());
+					SystemConsole.instance.writeLine((i + 1) + ": " + m_convertedGroups.elementAt(i).getFile().getName());
 				}
 			}
 			

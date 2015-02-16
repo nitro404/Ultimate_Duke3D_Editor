@@ -24,7 +24,7 @@ public class FileCounter extends GroupProcessor {
 	public void groupProcessingCompleted() {
 		JOptionPane.showMessageDialog(null, m_numberOfFiles, "Number of Files", JOptionPane.OK_OPTION);
 		
-		SystemConsole.getInstance().writeLine("Number of files: " + m_numberOfFiles);
+		SystemConsole.instance.writeLine("Number of files: " + m_numberOfFiles);
 	}
 	
 }

@@ -1,17 +1,22 @@
 package settings;
 
 import java.awt.*;
-import variable.*;
 import utilities.*;
+import variable.*;
+import group.*;
 
 public class SettingsManager {
 	
-	public static SettingsManager instance;
+	public static SettingsManager instance = null;
 	
 	private VariableCollection m_settings;
 	
 	public String settingsFileName = defaultSettingsFileName;
 	public String versionFileURL = defaultVersionFileURL;
+	public boolean sortAllGroups;
+	public boolean autoSortFiles;
+	public GroupFileSortType sortType;
+	public SortDirection sortDirection;
 	public boolean autoSaveSettings;
 	public boolean autoLoadPlugins;
 	public String pluginDirectoryName;
@@ -29,6 +34,10 @@ public class SettingsManager {
 	
 	public static final String defaultSettingsFileName = "Group Manager.ini";
 	public static final String defaultVersionFileURL = "http://www.nitro404.com/version/duke3d_group_manager.xml";
+	public static final boolean defaultSortAllGroups = false;
+	public static final boolean defaultAutoSortFiles = true;
+	public static final GroupFileSortType defaultSortType = GroupFileSortType.defaultSortType;
+	public static final SortDirection defaultSortDirection = SortDirection.defaultDirection;
 	public static final boolean defaultAutoSaveSettings = true;
 	public static final boolean defaultAutoLoadPlugins = true;
 	public static final String defaultPluginDirectoryName = "Plugins";
@@ -45,15 +54,25 @@ public class SettingsManager {
 	public static final Color defaultBackgroundColour = new Color(238, 238, 238);
 	
 	public SettingsManager() {
-		instance = this;
+		if(instance == null) {
+			updateInstance();
+		}
 		
 		m_settings = new VariableCollection();
 		
 		reset();
 	}
 	
+	public void updateInstance() {
+		instance = this;
+	}
+	
 	public void reset() {
 		versionFileURL = defaultVersionFileURL;
+		sortAllGroups = defaultSortAllGroups;
+		autoSortFiles = defaultAutoSortFiles;
+		sortType = defaultSortType;
+		sortDirection = defaultSortDirection;
 		autoSaveSettings = defaultAutoSaveSettings;
 		autoLoadPlugins = defaultAutoLoadPlugins;
 		pluginDirectoryName = defaultPluginDirectoryName;
@@ -92,6 +111,48 @@ public class SettingsManager {
 			versionFileURL = tempString;
 		}
 		
+		// parse sort all groups flag
+		tempString = m_settings.getValue("Sort All Groups", "Sorting");
+		if(tempString != null) {
+			if(tempString.equalsIgnoreCase("true")) {
+				sortAllGroups = true;
+			}
+			else if(tempString.equalsIgnoreCase("false")) {
+				sortAllGroups = false;
+			}
+		}
+		
+		// parse auto-sort files flag
+		tempString = m_settings.getValue("Auto-Sort Files", "Sorting");
+		if(tempString != null) {
+			if(tempString.equalsIgnoreCase("true")) {
+				autoSortFiles = true;
+			}
+			else if(tempString.equalsIgnoreCase("false")) {
+				autoSortFiles = false;
+			}
+		}
+
+		// parse file sort type
+		tempString = m_settings.getValue("Sort Type", "Sorting");
+		if(tempString != null) {
+			GroupFileSortType newSortType = GroupFileSortType.parseFrom(tempString);
+			
+			if(newSortType.isValid()) {
+				sortType = newSortType;
+			}
+		}
+		
+		// parse file sort direction
+		tempString = m_settings.getValue("Sort Direction", "Sorting");
+		if(tempString != null) {
+			SortDirection newSortDirection = SortDirection.parseFrom(tempString);
+			
+			if(newSortDirection.isValid()) {
+				sortDirection = newSortDirection;
+			}
+		}
+		
 		// parse auto-save settings value
 		tempString = m_settings.getValue("Auto-Save Settings", "Interface");
 		if(tempString != null) {
@@ -107,11 +168,10 @@ public class SettingsManager {
 		// parse auto-load plugins value
 		tempString = m_settings.getValue("Auto-Load Plugins", "Interface");
 		if(tempString != null) {
-			tempString = tempString.toLowerCase();
-			if(tempString.equals("true")) {
+			if(tempString.equalsIgnoreCase("true")) {
 				autoLoadPlugins = true;
 			}
-			else if(tempString.equals("false")) {
+			else if(tempString.equalsIgnoreCase("false")) {
 				autoLoadPlugins = false;
 			}
 		}
@@ -137,11 +197,10 @@ public class SettingsManager {
 		// parse log console value
 		tempString = m_settings.getValue("Log Console", "Console");
 		if(tempString != null) {
-			tempString = tempString.toLowerCase();
-			if(tempString.equals("true")) {
+			if(tempString.equalsIgnoreCase("true")) {
 				logConsole = true;
 			}
-			else if(tempString.equals("false")) {
+			else if(tempString.equalsIgnoreCase("false")) {
 				logConsole = false;
 			}
 		}
@@ -149,11 +208,10 @@ public class SettingsManager {
 		// parse supress update notifications value
 		tempString = m_settings.getValue("Supress Update Notifications", "Interface");
 		if(tempString != null) {
-			tempString = tempString.toLowerCase();
-			if(tempString.equals("true")) {
+			if(tempString.equalsIgnoreCase("true")) {
 				supressUpdates = true;
 			}
-			else if(tempString.equals("false")) {
+			else if(tempString.equalsIgnoreCase("false")) {
 				supressUpdates = false;
 			}
 		}
@@ -175,11 +233,10 @@ public class SettingsManager {
 		// parse console auto-scrolling
 		tempString = m_settings.getValue("Auto-Scroll Console", "Console");
 		if(tempString != null) {
-			tempString = tempString.trim().toLowerCase();
-			if(tempString.equals("true")) {
+			if(tempString.equalsIgnoreCase("true")) {
 				autoScrollConsole = true;
 			}
-			else if(tempString.equals("false")) {
+			else if(tempString.equalsIgnoreCase("false")) {
 				autoScrollConsole = false;
 			}
 		}
@@ -199,6 +256,10 @@ public class SettingsManager {
 	public boolean saveTo(String fileName) {
 		// update variables collection
 		m_settings.setValue("Version File URL", versionFileURL, "Paths");
+		m_settings.setValue("Sort All Groups", sortAllGroups, "Sorting");
+		m_settings.setValue("Auto-Sort Files", autoSortFiles, "Sorting");
+		m_settings.setValue("Sort Type", sortType.getDisplayName(), "Sorting");
+		m_settings.setValue("Sort Direction", sortDirection.getDisplayName(), "Sorting");
 		m_settings.setValue("Auto-Save Settings", autoSaveSettings, "Interface");
 		m_settings.setValue("Auto-Load Plugins", autoLoadPlugins, "Interface");
 		m_settings.setValue("Plugin Directory Name", pluginDirectoryName, "Paths");

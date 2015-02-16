@@ -109,7 +109,7 @@ public class ExtendedClassLoader extends ClassLoader {
 			if(c == null) {
 				try { c = defineClass(className, classData, 0, classData.length); }
 				catch(ClassFormatError e) {
-					SystemConsole.getInstance().writeLine("Class \"" + className + "\" is not properly formatted: " + e.getMessage() + " (Maybe try compressing the jar file?)");
+					SystemConsole.instance.writeLine("Class \"" + className + "\" is not properly formatted: " + e.getMessage() + " (Maybe try compressing the jar file?)");
 					
 					return null;
 				}
@@ -121,7 +121,7 @@ public class ExtendedClassLoader extends ClassLoader {
     		}
     	}
     	catch(Exception e) {
-    		SystemConsole.getInstance().writeLine("Unexpected exception thrown while deserializing class \"" + className + "\": " + e.getMessage());
+    		SystemConsole.instance.writeLine("Unexpected exception thrown while deserializing class \"" + className + "\": " + e.getMessage());
     		
     		return null;
     	}

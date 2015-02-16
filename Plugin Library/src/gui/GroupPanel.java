@@ -6,19 +6,19 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import exception.*;
+import settings.*;
 import utilities.*;
 import action.*;
 import group.*;
 
-public abstract class GroupPanel extends JPanel implements Scrollable, ActionListener, MouseListener, Updatable {
+public abstract class GroupPanel extends JPanel implements Scrollable, ActionListener, MouseListener, GroupChangeListener, GroupSortListener, Updatable {
 	
 	protected int m_groupNumber;
 	protected Group m_group;
-	protected Vector<GroupChangeListener> m_groupChangeListeners;
 	protected Vector<GroupActionListener> m_groupActionListeners;
-	protected boolean m_changed;
 	protected boolean m_initialized;
 	protected boolean m_updating;
+	protected Vector<UpdateListener> m_updateListeners;
 	
 	protected JPopupMenu m_groupPanelPopupMenu;
 	protected JMenu m_selectPopupMenu;
@@ -26,6 +26,17 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	protected JMenuItem m_selectRandomPopupMenuItem;
 	protected JMenuItem m_selectAllPopupMenuItem;
 	protected JMenuItem m_selectNonePopupMenuItem;
+	protected JMenu m_sortPopupMenu;
+	protected JMenu m_sortTargetPopupMenu;
+	protected JMenu m_sortDirectionPopupMenu;
+	protected JMenu m_sortTypePopupMenu;
+	protected JRadioButtonMenuItem m_sortAllGroupsPopupMenuItem;
+	protected JRadioButtonMenuItem m_sortPerGroupSortingPopupMenuItem;
+	protected JCheckBoxMenuItem m_sortAutoSortPopupMenuItem;
+	protected JRadioButtonMenuItem[] m_sortDirectionPopupMenuItems;
+	protected JRadioButtonMenuItem[] m_sortTypePopupMenuItems;
+	protected ButtonGroup m_sortDirectionButtonGroup;
+	protected ButtonGroup m_sortTypeButtonGroup;
 	protected JMenuItem m_savePopupMenuItem;
 	protected JMenuItem m_saveAsPopupMenuItem;
 	protected JMenuItem m_addFilesPopupMenuItem;
@@ -44,11 +55,10 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	}
 	
 	public GroupPanel(Group group) {
-		m_groupChangeListeners = new Vector<GroupChangeListener>();
 		m_groupActionListeners = new Vector<GroupActionListener>();
-		m_changed = false;
 		m_initialized = false;
 		m_updating = false;
+		m_updateListeners = new Vector<UpdateListener>();
 		
 		initPopupMenu();
 		
@@ -68,6 +78,26 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_selectAllPopupMenuItem = new JMenuItem("All");
 		m_selectNonePopupMenuItem = new JMenuItem("None");
 		
+		m_sortPopupMenu = new JMenu("Sort");
+		m_sortTargetPopupMenu = new JMenu("Target");
+		m_sortDirectionPopupMenu = new JMenu("Direction");
+		m_sortTypePopupMenu = new JMenu("Type");
+		m_sortAllGroupsPopupMenuItem = new JRadioButtonMenuItem("Sort All Groups");
+		m_sortPerGroupSortingPopupMenuItem = new JRadioButtonMenuItem("Per Group Sorting");
+		m_sortAutoSortPopupMenuItem = new JCheckBoxMenuItem("Auto-Sort Group Files");
+		m_sortDirectionPopupMenuItems = new JRadioButtonMenuItem[SortDirection.numberOfSortDirections()];
+		m_sortDirectionButtonGroup = new ButtonGroup();
+		for(int i=0;i<m_sortDirectionPopupMenuItems.length;i++) {
+			m_sortDirectionPopupMenuItems[i] = new JRadioButtonMenuItem(SortDirection.displayNames[i]);
+			m_sortDirectionButtonGroup.add(m_sortDirectionPopupMenuItems[i]);
+		}
+		m_sortTypePopupMenuItems = new JRadioButtonMenuItem[GroupFileSortType.numberOfSortTypes()];
+		m_sortTypeButtonGroup = new ButtonGroup();
+		for(int i=0;i<m_sortTypePopupMenuItems.length;i++) {
+			m_sortTypePopupMenuItems[i] = new JRadioButtonMenuItem(GroupFileSortType.displayNames[i]);
+			m_sortTypeButtonGroup.add(m_sortTypePopupMenuItems[i]);
+		}
+		
 		m_savePopupMenuItem = new JMenuItem("Save");
 		m_saveAsPopupMenuItem = new JMenuItem("Save As");
 		m_addFilesPopupMenuItem = new JMenuItem("Add Files");
@@ -83,6 +113,15 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_selectRandomPopupMenuItem.addActionListener(this);
 		m_selectAllPopupMenuItem.addActionListener(this);
 		m_selectNonePopupMenuItem.addActionListener(this);
+		m_sortAllGroupsPopupMenuItem.addActionListener(this);
+		m_sortPerGroupSortingPopupMenuItem.addActionListener(this);
+		m_sortAutoSortPopupMenuItem.addActionListener(this);
+		for(int i=0;i<m_sortDirectionPopupMenuItems.length;i++) {
+			m_sortDirectionPopupMenuItems[i].addActionListener(this);
+		}
+		for(int i=0;i<m_sortTypePopupMenuItems.length;i++) {
+			m_sortTypePopupMenuItems[i].addActionListener(this);
+		}
 		m_savePopupMenuItem.addActionListener(this);
 		m_saveAsPopupMenuItem.addActionListener(this);
 		m_addFilesPopupMenuItem.addActionListener(this);
@@ -99,7 +138,21 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_selectPopupMenu.add(m_selectAllPopupMenuItem);
 		m_selectPopupMenu.add(m_selectNonePopupMenuItem);
 		
+		m_sortTargetPopupMenu.add(m_sortAllGroupsPopupMenuItem);
+		m_sortTargetPopupMenu.add(m_sortPerGroupSortingPopupMenuItem);
+		m_sortPopupMenu.add(m_sortTargetPopupMenu);
+		for(int i=0;i<m_sortDirectionPopupMenuItems.length;i++) {
+			m_sortDirectionPopupMenu.add(m_sortDirectionPopupMenuItems[i]);
+		}
+		m_sortPopupMenu.add(m_sortDirectionPopupMenu);
+		for(int i=0;i<m_sortTypePopupMenuItems.length;i++) {
+			m_sortTypePopupMenu.add(m_sortTypePopupMenuItems[i]);
+		}
+		m_sortPopupMenu.add(m_sortTypePopupMenu);
+		m_sortPopupMenu.add(m_sortAutoSortPopupMenuItem);
+		
 		m_groupPanelPopupMenu.add(m_selectPopupMenu);
+		m_groupPanelPopupMenu.add(m_sortPopupMenu);
 		m_groupPanelPopupMenu.add(m_savePopupMenuItem);
 		m_groupPanelPopupMenu.add(m_saveAsPopupMenuItem);
 		m_groupPanelPopupMenu.add(m_addFilesPopupMenuItem);
@@ -123,7 +176,7 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	
 	public String getTabName() {
 		String fileName = m_group.getFile() == null ? null : m_group.getFile().getName();
-		return fileName == null ? "NEW " + m_group.getFileExtension() + " *" : fileName + (m_changed ? " *" : "");
+		return fileName == null ? "NEW " + m_group.getFileExtension() + " *" : fileName + (m_group == null || !m_group.isChanged() ? "" : " *");
 	}
 	
 	public String getTabDescription() {
@@ -136,7 +189,17 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	}
 
 	public boolean setGroup(Group group) {
+		if(m_group != null) {
+			m_group.removeGroupChangeListener(this);
+			m_group.removeGroupSortListener(this);
+		}
+		
 		m_group = group;
+		
+		if(m_group != null) {
+			m_group.addGroupChangeListener(this);
+			m_group.addGroupSortListener(this);
+		}
 		
 		updateLayout();
 		
@@ -148,24 +211,13 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	}
 	
 	public boolean isChanged() {
-		return m_changed;
+		return m_group == null ? false : m_group.isChanged();
 	}
 	
 	public void setChanged(boolean changed) {
-		setChanged(changed, true);
-	}
-	
-	public void setChanged(boolean changed, boolean update) {
-		m_changed = changed;
-		
-		if(m_changed) {
-			handleGroupChange();
-		}
-		
-		if(update) {
-			update();
-			updateWindow();
-		}
+	 	if(m_group == null) { return; }
+	 	
+	 	m_group.setChanged(changed);
 	}
 	
 	public abstract int numberOfSelectedFiles();
@@ -188,58 +240,13 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		}
 	}
 	
-	public int numberOfGroupChangeListeners() {
-		return m_groupChangeListeners.size();
-	}
-	
-	public GroupChangeListener getGroupChangeListener(int index) {
-		if(index < 0 || index >= m_groupChangeListeners.size()) { return null; }
-		return m_groupChangeListeners.elementAt(index);
-	}
-	
-	public boolean hasGroupChangeListener(GroupChangeListener a) {
-		return m_groupChangeListeners.contains(a);
-	}
-	
-	public int indexOfGroupChangeListener(GroupChangeListener a) {
-		return m_groupChangeListeners.indexOf(a);
-	}
-	
-	public boolean addGroupChangeListener(GroupChangeListener a) {
-		if(a == null || m_groupChangeListeners.contains(a)) { return false; }
-		
-		m_groupChangeListeners.add(a);
-		
-		return true;
-	}
-	
-	public boolean removeGroupChangeListener(int index) {
-		if(index < 0 || index >= m_groupChangeListeners.size()) { return false; }
-		m_groupChangeListeners.remove(index);
-		return true;
-	}
-	
-	public boolean removeGroupChangeListener(GroupChangeListener a) {
-		if(a == null) { return false; }
-		return m_groupChangeListeners.remove(a);
-	}
-	
-	public void clearGroupChangeListeners() {
-		m_groupChangeListeners.clear();
-	}
-	
-	public void handleGroupChange() {
-		for(int i=0;i<m_groupChangeListeners.size();i++) {
-			m_groupChangeListeners.elementAt(i).notifyGroupChanged(this);
-		}
-	}
-	
 	public int numberOfGroupActionListeners() {
 		return m_groupActionListeners.size();
 	}
 	
 	public GroupActionListener getGroupActionListener(int index) {
 		if(index < 0 || index >= m_groupActionListeners.size()) { return null; }
+		
 		return m_groupActionListeners.elementAt(index);
 	}
 	
@@ -261,12 +268,15 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	
 	public boolean removeGroupActionListener(int index) {
 		if(index < 0 || index >= m_groupActionListeners.size()) { return false; }
+		
 		m_groupActionListeners.remove(index);
+		
 		return true;
 	}
 	
 	public boolean removeGroupActionListener(GroupActionListener a) {
 		if(a == null) { return false; }
+		
 		return m_groupActionListeners.remove(a);
 	}
 	
@@ -274,12 +284,96 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_groupActionListeners.clear();
 	}
 	
-	public void handleGroupAction(GroupAction action) {
+	public void dispatchGroupAction(GroupAction action) {
 		if(!GroupAction.isvalid(action)) { return; }
 		
 		for(int i=0;i<m_groupActionListeners.size();i++) {
 			m_groupActionListeners.elementAt(i).handleGroupAction(action);
 		}
+	}
+	
+	public int numberOfUpdateListeners() {
+		return m_updateListeners.size();
+	}
+	
+	public UpdateListener getUpdateListener(int index) {
+		if(index < 0 || index >= m_updateListeners.size()) { return null; }
+		
+		return m_updateListeners.elementAt(index);
+	}
+	
+	public boolean hasUpdateListener(UpdateListener u) {
+		return m_updateListeners.contains(u);
+	}
+	
+	public int indexOfUpdateListener(UpdateListener u) {
+		return m_updateListeners.indexOf(u);
+	}
+	
+	public boolean addUpdateListener(UpdateListener u) {
+		if(u == null || m_updateListeners.contains(u)) { return false; }
+		
+		m_updateListeners.add(u);
+		
+		return true;
+	}
+	
+	public boolean removeUpdateListener(int index) {
+		if(index < 0 || index >= m_updateListeners.size()) { return false; }
+		
+		m_updateListeners.remove(index);
+		
+		return true;
+	}
+	
+	public boolean removeUpdateListener(UpdateListener u) {
+		if(u == null) { return false; }
+		
+		return m_updateListeners.remove(u);
+	}
+	
+	public void clearUpdateListeners() {
+		m_updateListeners.clear();
+	}
+	
+	public void notifyUpdateWindow() {
+		for(int i=0;i<m_updateListeners.size();i++) {
+			m_updateListeners.elementAt(i).updateWindow();
+		}
+	}
+	
+	public void notifyUpdateAll() {
+		for(int i=0;i<m_updateListeners.size();i++) {
+			m_updateListeners.elementAt(i).updateAll();
+		}
+	}
+	
+	public void handleGroupChange(Group group) {
+		if(group == null || m_group != group) { return; }
+		
+		update();
+		updateWindow();
+	}
+	
+	public void handleGroupSortStateChanged(Group group) {
+		if(group == null || m_group != group) { return; }
+		
+		update();
+		updateWindow();
+		
+		notifyUpdateWindow();
+	}
+	
+	public void handleGroupSortStarted(Group group) {
+		if(group == null || m_group != group) { return; }
+		
+		backupSelectedGroupFiles();
+	}
+	
+	public void handleGroupSortFinished(Group group) {
+		if(group == null || m_group != group) { return; }
+		
+		restoreSelectedGroupFiles();
 	}
 	
 	public abstract void selectInverse();
@@ -290,14 +384,16 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 
 	public abstract void clearSelection();
 	
+	public abstract boolean backupSelectedGroupFiles();
+	
+	public abstract boolean restoreSelectedGroupFiles();
+	
 	public boolean save() throws GroupWriteException {
 		if(m_group == null) { return false; }
 		
 		updateGroup();
 		
-		boolean saved = m_group.save();
-		if(saved) { setChanged(false); }
-		return saved;
+		return m_group.save();
 	}
 	
 	public void update() {
@@ -310,6 +406,27 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_selectAllPopupMenuItem.setEnabled(m_group.numberOfFiles() > 0);
 		m_selectNonePopupMenuItem.setEnabled(m_group.numberOfFiles() > 0);
 		
+		m_sortAllGroupsPopupMenuItem.setSelected(SettingsManager.instance.sortAllGroups);
+		m_sortPerGroupSortingPopupMenuItem.setSelected(!SettingsManager.instance.sortAllGroups);
+		if(SettingsManager.instance.sortAllGroups) {
+			if(SettingsManager.instance.sortDirection.isValid()) {
+				m_sortDirectionPopupMenuItems[SettingsManager.instance.sortDirection.ordinal()].setSelected(true);
+			}
+			if(SettingsManager.instance.sortType.isValid()) {
+				m_sortTypePopupMenuItems[SettingsManager.instance.sortType.ordinal()].setSelected(true);
+			}
+			m_sortAutoSortPopupMenuItem.setSelected(SettingsManager.instance.autoSortFiles);
+		}
+		else {
+			if(m_group.getSortDirection().isValid()) {
+				m_sortDirectionPopupMenuItems[m_group.getSortDirection().ordinal()].setSelected(true);
+			}
+			if(m_group.getSortType().isValid()) {
+				m_sortTypePopupMenuItems[m_group.getSortType().ordinal()].setSelected(true);
+			}
+			m_sortAutoSortPopupMenuItem.setSelected(m_group.getAutoSortFiles());
+		}
+		
 		m_removeFilesPopupMenuItem.setText("Remove File" + (numberOfSelectedFiles() == 1 ? "" : "s"));
 		m_extractFilesPopupMenuItem.setText("Extract File" + (numberOfSelectedFiles() == 1 ? "" : "s"));
 		
@@ -321,6 +438,14 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	}
 	
 	public abstract void updateGroup();
+	
+	public void autoSort() {
+		if(m_group == null) { return; }
+		
+		if(m_group.shouldAutoSortFiles()) {
+			m_group.sortFiles();
+		}
+	}
 	
 	public abstract void updateWindow();
 	
@@ -341,32 +466,99 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		else if(e.getSource() == m_selectNonePopupMenuItem) {
 			clearSelection();
 		}
+		// enable sorting for all groups
+		else if(e.getSource() == m_sortAllGroupsPopupMenuItem) {
+			if(SettingsManager.instance.sortAllGroups) { return; }
+			
+			SettingsManager.instance.sortAllGroups = true;
+			
+			notifyUpdateAll();
+		}
+		// enable per-group sorting
+		else if(e.getSource() == m_sortPerGroupSortingPopupMenuItem) {
+			if(!SettingsManager.instance.sortAllGroups) { return; }
+			
+			SettingsManager.instance.sortAllGroups = false;
+			
+			notifyUpdateAll();
+		}
+		// toggle file auto-sorting
+		else if(e.getSource() == m_sortAutoSortPopupMenuItem) {
+			if(SettingsManager.instance.sortAllGroups) {
+				SettingsManager.instance.autoSortFiles = m_sortAutoSortPopupMenuItem.isSelected();
+				
+				update();
+				updateWindow();
+				
+				notifyUpdateWindow();
+			}
+			else {
+				m_group.setAutoSortFiles(m_sortAutoSortPopupMenuItem.isSelected());
+			}
+		}
 		else if(e.getSource() == m_savePopupMenuItem) {
-			handleGroupAction(new GroupAction(this, GroupActionType.Save));
+			dispatchGroupAction(new GroupAction(this, GroupActionType.Save));
 		}
 		else if(e.getSource() == m_saveAsPopupMenuItem) {
-			handleGroupAction(new GroupAction(this, GroupActionType.SaveAs));
+			dispatchGroupAction(new GroupAction(this, GroupActionType.SaveAs));
 		}
 		else if(e.getSource() == m_addFilesPopupMenuItem) {
-			handleGroupAction(new GroupAction(this, GroupActionType.AddFiles));
+			dispatchGroupAction(new GroupAction(this, GroupActionType.AddFiles));
 		}
 		else if(e.getSource() == m_removeFilesPopupMenuItem) {
-			handleGroupAction(new GroupAction(this, GroupActionType.RemoveFiles));
+			dispatchGroupAction(new GroupAction(this, GroupActionType.RemoveFiles));
 		}
 		else if(e.getSource() == m_replaceFilePopupMenuItem) {
-			handleGroupAction(new GroupAction(this, GroupActionType.ReplaceFile));
+			dispatchGroupAction(new GroupAction(this, GroupActionType.ReplaceFile));
 		}
 		else if(e.getSource() == m_extractFilesPopupMenuItem) {
-			handleGroupAction(new GroupAction(this, GroupActionType.ExtractFiles));
+			dispatchGroupAction(new GroupAction(this, GroupActionType.ExtractFiles));
 		}
 		else if(e.getSource() == m_importPopupMenuItem) {
-			handleGroupAction(new GroupAction(this, GroupActionType.Import));
+			dispatchGroupAction(new GroupAction(this, GroupActionType.Import));
 		}
 		else if(e.getSource() == m_exportPopupMenuItem) {
-			handleGroupAction(new GroupAction(this, GroupActionType.Export));
+			dispatchGroupAction(new GroupAction(this, GroupActionType.Export));
 		}
 		else if(e.getSource() == m_closePopupMenuItem) {
-			handleGroupAction(new GroupAction(this, GroupActionType.Close));
+			dispatchGroupAction(new GroupAction(this, GroupActionType.Close));
+		}
+		else {
+			// change group file sort direction
+			for(int i=0;i<m_sortDirectionPopupMenuItems.length;i++) {
+				if(e.getSource() == m_sortDirectionPopupMenuItems[i]) {
+					if(SettingsManager.instance.sortAllGroups) {
+						if(SettingsManager.instance.sortDirection == SortDirection.values()[i]) { return; }
+						
+						SettingsManager.instance.sortDirection = SortDirection.values()[i];
+						
+						notifyUpdateAll();
+					}
+					else {
+						m_group.setSortDirection(SortDirection.values()[i]);
+					}
+					
+					return;
+				}
+			}
+			
+			// change group file sort type
+			for(int i=0;i<m_sortTypePopupMenuItems.length;i++) {
+				if(e.getSource() == m_sortTypePopupMenuItems[i]) {
+					if(SettingsManager.instance.sortAllGroups) {
+						if(SettingsManager.instance.sortType == GroupFileSortType.values()[i]) { return; }
+						
+						SettingsManager.instance.sortType = GroupFileSortType.values()[i];
+						
+						notifyUpdateAll();
+					}
+					else {
+						m_group.setSortType(GroupFileSortType.values()[i]);
+					}
+					
+					return;
+				}
+			}
 		}
 	}
 	

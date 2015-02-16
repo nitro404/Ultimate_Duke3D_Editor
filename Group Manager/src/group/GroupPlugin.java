@@ -318,7 +318,7 @@ public class GroupPlugin {
 					if(c == null) {
 						jarFile.close();
 						
-						SystemConsole.getInstance().writeLine("Failed to deserialize class from jar file \"" + m_jarFileName + "\": \"" + name + "\".");
+						SystemConsole.instance.writeLine("Failed to deserialize class from jar file \"" + m_jarFileName + "\": \"" + name + "\".");
 						
 						return false;
 					}
@@ -332,7 +332,7 @@ public class GroupPlugin {
 			return true;
 		}
 		catch(IOException e2) {
-			SystemConsole.getInstance().writeLine("Exception thrown while deserializing classes from jar file \"" + m_jarFileName + "\": " + e2.getMessage());
+			SystemConsole.instance.writeLine("Exception thrown while deserializing classes from jar file \"" + m_jarFileName + "\": " + e2.getMessage());
 			
 			try { jarFile.close(); } catch(Exception e3) { }
 			return false;

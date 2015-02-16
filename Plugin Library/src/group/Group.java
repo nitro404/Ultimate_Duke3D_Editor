@@ -4,16 +4,21 @@ import java.util.*;
 import java.io.*;
 import exception.*;
 import utilities.*;
+import settings.*;
 import console.*;
 
-public abstract class Group implements Updatable {
+public abstract class Group {
 	
 	protected GroupFileType m_fileType;
 	protected File m_file;
 	protected Vector<GroupFile> m_files;
+	protected boolean m_changed;
 	protected GroupFileSortType m_sortType;
 	protected SortDirection m_sortDirection;
+	protected boolean m_autoSortFiles;
 	protected boolean m_loaded;
+	protected Vector<GroupChangeListener> m_groupChangeListeners;
+	protected Vector<GroupSortListener> m_groupSortListeners;
 	
 	public static final boolean DEFAULT_REPLACE_FILES = true;
 	public static final boolean DEFAULT_SORT_FILES = true;
@@ -22,27 +27,39 @@ public abstract class Group implements Updatable {
 		m_fileType = getDefaultGroupFileType();
 		m_file = null;
 		m_files = new Vector<GroupFile>();
+		m_changed = false;
 		m_sortType = GroupFileSortType.defaultSortType;
 		m_sortDirection = SortDirection.defaultDirection;
+		m_autoSortFiles = SettingsManager.defaultAutoSortFiles;
 		m_loaded = false;
+		m_groupChangeListeners = new Vector<GroupChangeListener>();
+		m_groupSortListeners = new Vector<GroupSortListener>();
 	}
 	
 	public Group(String fileName) {
 		m_fileType = getDefaultGroupFileType();
 		m_file = fileName == null ? null : new File(fileName);
 		m_files = new Vector<GroupFile>();
+		m_changed = false;
 		m_sortType = GroupFileSortType.defaultSortType;
 		m_sortDirection = SortDirection.defaultDirection;
+		m_autoSortFiles = SettingsManager.defaultAutoSortFiles;
 		m_loaded = false;
+		m_groupChangeListeners = new Vector<GroupChangeListener>();
+		m_groupSortListeners = new Vector<GroupSortListener>();
 	}
 	
 	public Group(File file) {
 		m_fileType = getDefaultGroupFileType();
 		m_file = file;
 		m_files = new Vector<GroupFile>();
+		m_changed = false;
 		m_sortType = GroupFileSortType.defaultSortType;
 		m_sortDirection = SortDirection.defaultDirection;
+		m_autoSortFiles = SettingsManager.defaultAutoSortFiles;
 		m_loaded = false;
+		m_groupChangeListeners = new Vector<GroupChangeListener>();
+		m_groupSortListeners = new Vector<GroupSortListener>();
 	}
 	
 	public Group(GroupFileType fileType) throws InvalidGroupFileTypeException, UnsupportedGroupFileTypeException {
@@ -51,9 +68,13 @@ public abstract class Group implements Updatable {
 		m_fileType = fileType == null ? getDefaultGroupFileType() : fileType;
 		m_file = null;
 		m_files = new Vector<GroupFile>();
+		m_changed = false;
 		m_sortType = GroupFileSortType.defaultSortType;
 		m_sortDirection = SortDirection.defaultDirection;
+		m_autoSortFiles = SettingsManager.defaultAutoSortFiles;
 		m_loaded = false;
+		m_groupChangeListeners = new Vector<GroupChangeListener>();
+		m_groupSortListeners = new Vector<GroupSortListener>();
 	}
 
 	public Group(String fileName, GroupFileType fileType) throws InvalidGroupFileTypeException, UnsupportedGroupFileTypeException {
@@ -62,9 +83,13 @@ public abstract class Group implements Updatable {
 		m_fileType = fileType == null ? getDefaultGroupFileType() : fileType;
 		m_file = fileName == null ? null : new File(fileName);
 		m_files = new Vector<GroupFile>();
+		m_changed = false;
 		m_sortType = GroupFileSortType.defaultSortType;
 		m_sortDirection = SortDirection.defaultDirection;
+		m_autoSortFiles = SettingsManager.defaultAutoSortFiles;
 		m_loaded = false;
+		m_groupChangeListeners = new Vector<GroupChangeListener>();
+		m_groupSortListeners = new Vector<GroupSortListener>();
 	}
 	
 	public Group(File file, GroupFileType fileType) throws InvalidGroupFileTypeException, UnsupportedGroupFileTypeException {
@@ -73,9 +98,13 @@ public abstract class Group implements Updatable {
 		m_fileType = fileType == null ? getDefaultGroupFileType() : fileType;
 		m_file = file;
 		m_files = new Vector<GroupFile>();
+		m_changed = false;
 		m_sortType = GroupFileSortType.defaultSortType;
 		m_sortDirection = SortDirection.defaultDirection;
+		m_autoSortFiles = SettingsManager.defaultAutoSortFiles;
 		m_loaded = false;
+		m_groupChangeListeners = new Vector<GroupChangeListener>();
+		m_groupSortListeners = new Vector<GroupSortListener>();
 	}
 	
 	public File getFile() {
@@ -94,23 +123,33 @@ public abstract class Group implements Updatable {
 		return Endianness.defaultEndianness;
 	}
 	
+	public boolean isChanged() {
+		return m_changed;
+	}
+	
+	public void setChanged(boolean changed) {
+		m_changed = changed;
+		
+		notifyGroupChanged();
+	}
+	
 	public GroupFileSortType getSortType() {
 		return m_sortType;
 	}
 	
 	public boolean setSortType(GroupFileSortType sortType) {
-		return setSortType(sortType, true);
-	}
-	
-	public boolean setSortType(GroupFileSortType sortType, boolean sortFiles) {
 		if(!sortType.isValid()) { return false; }
 		
 		boolean sortTypeChanged = m_sortType != sortType;
 		
 		m_sortType = sortType;
 		
-		if(sortTypeChanged && sortFiles) {
-			sortFiles();
+		notifyGroupSortStateChanged();
+		
+		if(sortTypeChanged) {
+			if(shouldAutoSortFiles()) {
+				sortFiles();
+			}
 		}
 		
 		return true;
@@ -121,21 +160,59 @@ public abstract class Group implements Updatable {
 	}
 	
 	public boolean setSortDirection(SortDirection sortDirection) {
-		return setSortDirection(sortDirection, true);
-	}
-	
-	public boolean setSortDirection(SortDirection sortDirection, boolean sortFiles) {
 		if(!sortDirection.isValid()) { return false; }
 		
 		boolean sortDirectionChanged = m_sortDirection != sortDirection;
 		
 		m_sortDirection = sortDirection;
 		
-		if(sortDirectionChanged && sortFiles) {
-			sortFiles();
+		notifyGroupSortStateChanged();
+		
+		if(sortDirectionChanged) {
+			if(shouldAutoSortFiles()) {
+				sortFiles();
+			}
 		}
 		
 		return true;
+	}
+	
+	public boolean getAutoSortFiles() {
+		return m_autoSortFiles;
+	}
+	
+	public boolean shouldSortFiles() {
+		return (SettingsManager.instance.sortAllGroups && SettingsManager.instance.sortType != GroupFileSortType.Unsorted) ||
+			   (!SettingsManager.instance.sortAllGroups && m_sortType != GroupFileSortType.Unsorted);
+	}
+	
+	public boolean shouldAutoSortFiles() {
+		return ( SettingsManager.instance.sortAllGroups && SettingsManager.instance.autoSortFiles) ||
+			   (!SettingsManager.instance.sortAllGroups && m_autoSortFiles);
+	}
+	
+	public void enableAutoSortFiles() {
+		setAutoSortFiles(true);
+	}
+	
+	public void disableAutoSortFiles() {
+		setAutoSortFiles(false);
+	}
+	
+	public void toggleAutoSortFiles() {
+		setAutoSortFiles(!m_autoSortFiles);
+	}
+
+	public void setAutoSortFiles(boolean autoSortFiles) {
+		m_autoSortFiles = autoSortFiles;
+		
+		notifyGroupSortStateChanged();
+		
+		if(m_autoSortFiles != autoSortFiles) {
+			if(shouldAutoSortFiles()) {
+				sortFiles();
+			}
+		}
 	}
 	
 	public boolean isLoaded() {
@@ -654,22 +731,14 @@ public abstract class Group implements Updatable {
 	}
 	
 	public boolean addFile(GroupFile file) {
-		return addFile(file, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+		return addFile(file, DEFAULT_REPLACE_FILES);
 	}
 	
 	public boolean addFile(File file) {
-		return addFile(file, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
-	}
-
-	public boolean addFile(GroupFile file, boolean replace) {
-		return addFile(file, replace, DEFAULT_SORT_FILES);
-	}
-		
-	public boolean addFile(File file, boolean replace) {
-		return addFile(file, replace, DEFAULT_SORT_FILES);
+		return addFile(file, DEFAULT_REPLACE_FILES);
 	}
 	
-	public boolean addFile(GroupFile file, boolean replace, boolean sort) {
+	public boolean addFile(GroupFile file, boolean replace) {
 		if(file == null || !file.isValid()) { return false; }
 		
 		boolean fileAdded = false;
@@ -688,14 +757,18 @@ public abstract class Group implements Updatable {
 			}
 		}
 		
-		if(sort) {
-			sortFiles();
+		if(fileAdded) {
+			setChanged(true);
+			
+			if(shouldAutoSortFiles()) {
+				sortFiles();
+			}
 		}
 		
 		return fileAdded;
 	}
 	
-	public boolean addFile(File file, boolean replace, boolean sort) {
+	public boolean addFile(File file, boolean replace) {
 		if(file == null || !file.isFile() || !file.exists()) { return false; }
 		
 		if(file.getName().length() > GroupFile.MAX_FILE_NAME_LENGTH) {
@@ -724,8 +797,12 @@ public abstract class Group implements Updatable {
 			}
 		}
 		
-		if(sort) {
-			sortFiles();
+		if(fileAdded) {
+			setChanged(true);
+			
+			if(shouldAutoSortFiles()) {
+				sortFiles();
+			}
 		}
 		
 		return fileAdded;
@@ -734,52 +811,28 @@ public abstract class Group implements Updatable {
 	public int addFiles(GroupFile[] files) {
 		if(files == null || files.length == 0) { return 0; }
 		
-		return addFiles(files, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+		return addFiles(files, DEFAULT_REPLACE_FILES);
 	}
 	
 	public int addFiles(Vector<GroupFile> files) {
 		if(files == null || files.size() == 0) { return 0; }
 		
-		return addFiles(files, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+		return addFiles(files, DEFAULT_REPLACE_FILES);
 	}
 	
 	public int addFiles(Group group) {
 		if(group == null || group.numberOfFiles() == 0) { return 0; }
 		
-		return addFiles(group, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+		return addFiles(group, DEFAULT_REPLACE_FILES);
 	}
 	
 	public int addFiles(File[] files) {
 		if(files == null || files.length == 0) { return 0; }
 		
-		return addFiles(files, DEFAULT_REPLACE_FILES, DEFAULT_SORT_FILES);
+		return addFiles(files, DEFAULT_REPLACE_FILES);
 	}
-
+	
 	public int addFiles(GroupFile[] files, boolean replace) {
-		if(files == null || files.length == 0) { return 0; }
-		
-		return addFiles(files, replace, DEFAULT_SORT_FILES);
-	}
-	
-	public int addFiles(Vector<GroupFile> files, boolean replace) {
-		if(files == null || files.size() == 0) { return 0; }
-		
-		return addFiles(files, replace, DEFAULT_SORT_FILES);
-	}
-	
-	public int addFiles(Group group, boolean replace) {
-		if(group == null) { return 0; }
-		
-		return addFiles(group.m_files, replace, DEFAULT_SORT_FILES);
-	}
-
-	public int addFiles(File[] files, boolean replace) {
-		if(files == null || files.length == 0) { return 0; }
-		
-		return addFiles(files, replace, DEFAULT_SORT_FILES);
-	}
-	
-	public int addFiles(GroupFile[] files, boolean replace, boolean sort) {
 		if(files == null) { return 0; }
 		
 		int numberOfFilesAdded = 0;
@@ -804,14 +857,18 @@ public abstract class Group implements Updatable {
 			}
 		}
 		
-		if(sort) {
-			sortFiles();
+		if(numberOfFilesAdded > 0) {
+			setChanged(true);
+			
+			if(shouldAutoSortFiles()) {
+				sortFiles();
+			}
 		}
 		
 		return numberOfFilesAdded;
 	}
 	
-	public int addFiles(Vector<GroupFile> files, boolean replace, boolean sort) {
+	public int addFiles(Vector<GroupFile> files, boolean replace) {
 		if(files == null) { return 0; }
 		
 		int numberOfFilesAdded = 0;
@@ -836,20 +893,24 @@ public abstract class Group implements Updatable {
 			}
 		}
 		
-		if(sort) {
-			sortFiles();
+		if(numberOfFilesAdded > 0) {
+			setChanged(true);
+			
+			if(shouldAutoSortFiles()) {
+				sortFiles();
+			}
 		}
 		
 		return numberOfFilesAdded;
 	}
 
-	public int addFiles(Group group, boolean replace, boolean sort) {
+	public int addFiles(Group group, boolean replace) {
 		if(group == null) { return 0; }
 		
-		return addFiles(group.m_files);
+		return addFiles(group.m_files, replace);
 	}
 	
-	public int addFiles(File[] files, boolean replace, boolean sort) {
+	public int addFiles(File[] files, boolean replace) {
 		if(files == null || files.length == 0) { return 0; }
 		
 		GroupFile g = null;
@@ -891,51 +952,25 @@ public abstract class Group implements Updatable {
 			} 
 		}
 		
-		if(sort) {
-			sortFiles();
+		if(numberOfFilesAdded > 0) {
+			setChanged(true);
+			
+			if(shouldAutoSortFiles()) {
+				sortFiles();
+			}
 		}
 		
 		return numberOfFilesAdded;
 	}
 	
 	public boolean replaceFile(int index, GroupFile newFile) {
-		return replaceFile(index, newFile, DEFAULT_SORT_FILES);
-	}
-	
-	public boolean replaceFile(int index, File newFile) {
-		return replaceFile(index, newFile, DEFAULT_SORT_FILES);
-	}
-
-	public boolean replaceFile(GroupFile oldFile, GroupFile newFile) {
-		return replaceFile(oldFile, newFile, DEFAULT_SORT_FILES);
-	}
-	
-	public boolean replaceFile(GroupFile oldFile, File newFile) {
-		return replaceFile(oldFile, newFile, DEFAULT_SORT_FILES);
-	}
-
-	public boolean replaceFile(String fileName, GroupFile newFile) {
-		return replaceFile(fileName, newFile, DEFAULT_SORT_FILES);
-	}
-	
-	public boolean replaceFile(String fileName, File newFile) {
-		return replaceFile(fileName, newFile, DEFAULT_SORT_FILES);
-	}
-	
-	public boolean replaceFile(File oldFile, GroupFile newFile) {
-		return replaceFile(oldFile, newFile, DEFAULT_SORT_FILES);
-	}
-	
-	public boolean replaceFile(File oldFile, File newFile) {
-		return replaceFile(oldFile, newFile, DEFAULT_SORT_FILES);
-	}
-	
-	public boolean replaceFile(int index, GroupFile newFile, boolean sort) {
 		if(index < 0 || index >= m_files.size() || newFile == null || !newFile.isValid()) { return false; }
 		
 		m_files.set(index, newFile);
 		
-		if(sort) {
+		setChanged(true);
+		
+		if(shouldAutoSortFiles()) {
 			sortFiles();
 		}
 		
@@ -964,14 +999,16 @@ public abstract class Group implements Updatable {
 		
 		m_files.set(index, newGroupFile);
 		
-		if(sort) {
+		setChanged(true);
+		
+		if(shouldAutoSortFiles()) {
 			sortFiles();
 		}
 		
 		return true;
 	}
 	
-	public boolean replaceFile(GroupFile oldFile, GroupFile newFile, boolean sort) {
+	public boolean replaceFile(GroupFile oldFile, GroupFile newFile) {
 		if(oldFile == null || newFile == null || !oldFile.isValid() || !newFile.isValid()) { return false; }
 		
 		int fileIndex = indexOfFile(oldFile);
@@ -979,7 +1016,9 @@ public abstract class Group implements Updatable {
 		if(fileIndex != -1) {
 			m_files.set(fileIndex, newFile);
 			
-			if(sort) {
+			setChanged(true);
+			
+			if(shouldAutoSortFiles()) {
 				sortFiles();
 			}
 			
@@ -989,7 +1028,7 @@ public abstract class Group implements Updatable {
 		return false;
 	}
 
-	public boolean replaceFile(GroupFile oldFile, File newFile, boolean sort) {
+	public boolean replaceFile(GroupFile oldFile, File newFile) {
 		if(oldFile == null || newFile == null || !oldFile.isValid() || !newFile.exists() || !newFile.isFile()) { return false; }
 		
 		int fileIndex = indexOfFile(oldFile);
@@ -1012,8 +1051,10 @@ public abstract class Group implements Updatable {
 			}
 			
 			m_files.set(fileIndex, newGroupFile);
+
+			setChanged(true);
 			
-			if(sort) {
+			if(shouldAutoSortFiles()) {
 				sortFiles();
 			}
 			
@@ -1023,7 +1064,7 @@ public abstract class Group implements Updatable {
 		return false;
 	}
 	
-	public boolean replaceFile(String fileName, GroupFile newFile, boolean sort) {
+	public boolean replaceFile(String fileName, GroupFile newFile) {
 		if(fileName == null || fileName.length() == 0 || newFile == null || !newFile.isValid()) { return false; }
 		
 		String formattedFileName = fileName.trim();
@@ -1033,8 +1074,10 @@ public abstract class Group implements Updatable {
 		
 		if(fileIndex != -1) {
 			m_files.set(fileIndex, newFile);
+
+			setChanged(true);
 			
-			if(sort) {
+			if(shouldAutoSortFiles()) {
 				sortFiles();
 			}
 			
@@ -1044,7 +1087,7 @@ public abstract class Group implements Updatable {
 		return false;
 	}
 
-	public boolean replaceFile(String fileName, File newFile, boolean sort) {
+	public boolean replaceFile(String fileName, File newFile) {
 		if(fileName == null || fileName.length() == 0 || newFile == null || !newFile.exists() || !newFile.isFile()) { return false; }
 		
 		String formattedFileName = fileName.trim();
@@ -1070,8 +1113,10 @@ public abstract class Group implements Updatable {
 			}
 			
 			m_files.set(fileIndex, newGroupFile);
+
+			setChanged(true);
 			
-			if(sort) {
+			if(shouldAutoSortFiles()) {
 				sortFiles();
 			}
 			
@@ -1081,27 +1126,47 @@ public abstract class Group implements Updatable {
 		return false;
 	}
 	
-	public boolean replaceFile(File oldFile, GroupFile newFile, boolean sort) {
+	public boolean replaceFile(File oldFile, GroupFile newFile) {
 		if(oldFile == null || oldFile.getName().length() == 0 || newFile == null || !newFile.isValid()) { return false; }
 		
-		return replaceFile(oldFile.getName(), newFile, sort);
+		return replaceFile(oldFile.getName(), newFile);
 	}
 	
-	public boolean replaceFile(File oldFile, File newFile, boolean sort) {
+	public boolean replaceFile(File oldFile, File newFile) {
 		if(oldFile == null || oldFile.getName().length() == 0 || newFile == null || !newFile.exists() || !newFile.isFile()) { return false; }
 		
-		return replaceFile(oldFile.getName(), newFile, sort);
+		return replaceFile(oldFile.getName(), newFile);
 	}
 	
 	public boolean removeFile(int index) {
+		return removeFile(index, true);
+	}
+	
+	public boolean removeFile(String fileName) {
+		return removeFile(fileName, true);
+	}
+	
+	public boolean removeFile(File file) {
+		return removeFile(file, true);
+	}
+	
+	public boolean removeFile(GroupFile file) {
+		return removeFile(file, true);
+	}
+	
+	protected boolean removeFile(int index, boolean update) {
 		if(index < 0 || index >= m_files.size()) { return false; }
 		
 		m_files.remove(index);
 		
+		if(update) {
+			setChanged(true);
+		}
+		
 		return true;
 	}
 	
-	public boolean removeFile(String fileName) {
+	protected boolean removeFile(String fileName, boolean update) {
 		if(fileName == null) { return false; }
 		
 		String formattedFileName = fileName.trim();
@@ -1116,24 +1181,28 @@ public abstract class Group implements Updatable {
 			if(currentFileName != null && currentFileName.equalsIgnoreCase(formattedFileName)) {
 				m_files.remove(i);
 				
+				if(update) {
+					setChanged(true);
+				}
+				
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public boolean removeFile(File file) {
+	protected boolean removeFile(File file, boolean update) {
 		if(file == null) {
 			return false;
 		}
 		
-		return removeFile(file.getName());
+		return removeFile(file.getName(), update);
 	}
 	
-	public boolean removeFile(GroupFile file) {
+	protected boolean removeFile(GroupFile file, boolean update) {
 		if(file == null || !file.isValid()) { return false; }
 		
-		return removeFile(file.getFileName());
+		return removeFile(file.getFileName(), update);
 	}
 
 	public int removeFiles(String[] fileNames) {
@@ -1142,9 +1211,13 @@ public abstract class Group implements Updatable {
 		int numberOfFilesRemoved = 0;
 		
 		for(int i=0;i<fileNames.length;i++) {
-			if(removeFile(fileNames[i])) {
+			if(removeFile(fileNames[i], false)) {
 				numberOfFilesRemoved++;
 			}
+		}
+		
+		if(numberOfFilesRemoved > 0) {
+			setChanged(true);
 		}
 		
 		return numberOfFilesRemoved;
@@ -1156,9 +1229,13 @@ public abstract class Group implements Updatable {
 		int numberOfFilesRemoved = 0;
 		
 		for(int i=0;i<files.length;i++) {
-			if(removeFile(files[i])) {
+			if(removeFile(files[i], false)) {
 				numberOfFilesRemoved++;
 			}
+		}
+		
+		if(numberOfFilesRemoved > 0) {
+			setChanged(true);
 		}
 		
 		return numberOfFilesRemoved;
@@ -1170,9 +1247,13 @@ public abstract class Group implements Updatable {
 		int numberOfFilesRemoved = 0;
 		
 		for(int i=0;i<files.length;i++) {
-			if(removeFile(files[i])) {
+			if(removeFile(files[i], false)) {
 				numberOfFilesRemoved++;
 			}
+		}
+		
+		if(numberOfFilesRemoved > 0) {
+			setChanged(true);
 		}
 		
 		return numberOfFilesRemoved;
@@ -1184,9 +1265,13 @@ public abstract class Group implements Updatable {
 		int numberOfFilesRemoved = 0;
 		
 		for(int i=0;i<files.size();i++) {
-			if(removeFile(files.elementAt(i))) {
+			if(removeFile(files.elementAt(i), false)) {
 				numberOfFilesRemoved++;
 			}
+		}
+		
+		if(numberOfFilesRemoved > 0) {
+			setChanged(true);
 		}
 		
 		return numberOfFilesRemoved;
@@ -1194,6 +1279,8 @@ public abstract class Group implements Updatable {
 	
 	public void clearFiles() {
 		m_files.clear();
+		
+		setChanged(true);
 	}
 	
 	public boolean createFrom(File directory) {
@@ -1206,14 +1293,16 @@ public abstract class Group implements Updatable {
 	
 	public abstract boolean save() throws GroupWriteException;
 	
-	public void update() {
-		sortFiles();
-	}
-	
 	public void sortFiles() {
-		if(m_sortType == GroupFileSortType.Unsorted) { return; }
+		if(!shouldSortFiles()) { return; }
+		
+		notifySortStarted();
 		
 		m_files = mergeSortFiles(m_files);
+		
+		setChanged(true);
+		
+		notifySortFinished();
 	}
 	
 	protected Vector<GroupFile> mergeSortFiles(Vector<GroupFile> groupFiles) {
@@ -1254,10 +1343,12 @@ public abstract class Group implements Updatable {
 		
 		boolean addLeft = true;
 		
+		SortDirection sortDirection = SettingsManager.instance.sortAllGroups ? SettingsManager.instance.sortDirection : m_sortDirection;
+		
 		while(left.size() > 0 && right.size() > 0) {
-			switch(m_sortType) {
+			switch(SettingsManager.instance.sortAllGroups ? SettingsManager.instance.sortType : m_sortType) {
 				case FileName:
-					if(m_sortDirection == SortDirection.Ascending) {
+					if(sortDirection == SortDirection.Ascending) {
 						addLeft = left.elementAt(0).getFileName().compareToIgnoreCase(right.elementAt(0).getFileName()) <= 0;
 					}
 					else {
@@ -1270,7 +1361,7 @@ public abstract class Group implements Updatable {
 					String extensionRight = Utilities.getFileExtension(right.elementAt(0).getFileName());
 					
 					if(extensionLeft != null && extensionRight != null && extensionLeft.length() > 0 && extensionRight.length() > 0) {
-						if(m_sortDirection == SortDirection.Ascending) {
+						if(sortDirection == SortDirection.Ascending) {
 							addLeft = extensionLeft.compareToIgnoreCase(extensionRight) <= 0;
 						}
 						else {
@@ -1280,7 +1371,7 @@ public abstract class Group implements Updatable {
 					break;
 					
 				case FileSize:
-					if(m_sortDirection == SortDirection.Ascending) {
+					if(sortDirection == SortDirection.Ascending) {
 						addLeft = left.elementAt(0).getFileSize() <= right.elementAt(0).getFileSize();
 					}
 					else {
@@ -1312,6 +1403,118 @@ public abstract class Group implements Updatable {
 		}
 	
 		return result;
+	}
+	
+	public int numberOfGroupChangeListeners() {
+		return m_groupChangeListeners.size();
+	}
+	
+	public GroupChangeListener getGroupChangeListener(int index) {
+		if(index < 0 || index >= m_groupChangeListeners.size()) { return null; }
+		
+		return m_groupChangeListeners.elementAt(index);
+	}
+	
+	public boolean hasGroupChangeListener(GroupChangeListener c) {
+		return m_groupChangeListeners.contains(c);
+	}
+	
+	public int indexOfGroupChangeListener(GroupChangeListener c) {
+		return m_groupChangeListeners.indexOf(c);
+	}
+	
+	public boolean addGroupChangeListener(GroupChangeListener c) {
+		if(c == null || m_groupChangeListeners.contains(c)) { return false; }
+		
+		m_groupChangeListeners.add(c);
+		
+		return true;
+	}
+	
+	public boolean removeGroupChangeListener(int index) {
+		if(index < 0 || index >= m_groupChangeListeners.size()) { return false; }
+		
+		m_groupChangeListeners.remove(index);
+		
+		return true;
+	}
+	
+	public boolean removeGroupChangeListener(GroupChangeListener c) {
+		if(c == null) { return false; }
+		
+		return m_groupChangeListeners.remove(c);
+	}
+	
+	public void clearGroupChangeListeners() {
+		m_groupChangeListeners.clear();
+	}
+	
+	public void notifyGroupChanged() {
+		for(int i=0;i<m_groupChangeListeners.size();i++) {
+			m_groupChangeListeners.elementAt(i).handleGroupChange(this);
+		}
+	}
+	
+	public int numberOfGroupSortListeners() {
+		return m_groupSortListeners.size();
+	}
+	
+	public GroupSortListener getGroupSortListener(int index) {
+		if(index < 0 || index >= m_groupSortListeners.size()) { return null; }
+		
+		return m_groupSortListeners.elementAt(index);
+	}
+	
+	public boolean hasGroupSortListener(GroupSortListener s) {
+		return m_groupSortListeners.contains(s);
+	}
+	
+	public int indexOfGroupSortListener(GroupSortListener s) {
+		return m_groupSortListeners.indexOf(s);
+	}
+	
+	public boolean addGroupSortListener(GroupSortListener s) {
+		if(s == null || m_groupSortListeners.contains(s)) { return false; }
+		
+		m_groupSortListeners.add(s);
+		
+		return true;
+	}
+	
+	public boolean removeGroupSortListener(int index) {
+		if(index < 0 || index >= m_groupSortListeners.size()) { return false; }
+		
+		m_groupSortListeners.remove(index);
+		
+		return true;
+	}
+	
+	public boolean removeGroupSortListener(GroupSortListener s) {
+		if(s == null) { return false; }
+		
+		return m_groupSortListeners.remove(s);
+	}
+	
+	public void clearGroupSortListeners() {
+		m_groupSortListeners.clear();
+	}
+	
+	public void notifyGroupSortStateChanged() {
+		for(int i=0;i<m_groupSortListeners.size();i++) {
+			m_groupSortListeners.elementAt(i).handleGroupSortStateChanged(this);
+		}
+	}
+	
+	public void notifySortStarted() {
+		for(int i=0;i<m_groupSortListeners.size();i++) {
+			m_groupSortListeners.elementAt(i).handleGroupSortStarted(this);
+		}
+	}
+	
+	public void notifySortFinished() {
+		for(int i=0;i<m_groupSortListeners.size();i++) {
+			m_groupSortListeners.elementAt(i).handleGroupSortFinished(this);
+		}
 	}
 	
 	public boolean equals(Object o) {

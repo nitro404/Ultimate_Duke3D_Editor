@@ -445,6 +445,10 @@ public class GroupSSI extends Group {
 		m_description = description;
 		addFiles(groupFiles);
 		
+		if(!shouldSortFiles()) {
+			setChanged(false);
+		}
+		
 		m_loaded = true;
 		
 		SystemConsole.instance.writeLine(FILE_TYPE + " file parsed successfully, " + groupFiles.size() + " files loaded into memory.");
@@ -562,6 +566,8 @@ public class GroupSSI extends Group {
 		}
 		
 		SystemConsole.instance.writeLine(m_fileType.getName()  + " file writing complete!");
+		
+		setChanged(false);
 		
 		return true;
 	}

@@ -15,7 +15,7 @@ import group.*;
 import action.*;
 import version.*;
 
-public class GroupManagerWindow implements WindowListener, ComponentListener, ChangeListener, ActionListener, GroupActionListener, Updatable {
+public class GroupManagerWindow implements WindowListener, ComponentListener, ChangeListener, ActionListener, GroupActionListener, UpdateListener, Updatable {
 	
 	private JFrame m_frame;
 	private JTabbedPane m_mainTabbedPane;
@@ -45,6 +45,17 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	private JMenuItem m_selectRandomMenuItem;
 	private JMenuItem m_selectAllMenuItem;
 	private JMenuItem m_selectNoneMenuItem;
+	private JMenu m_sortMenu;
+	private JMenu m_sortTargetMenu;
+	private JMenu m_sortDirectionMenu;
+	private JMenu m_sortTypeMenu;
+	private JRadioButtonMenuItem m_sortAllGroupsMenuItem;
+	private JRadioButtonMenuItem m_sortPerGroupSortingMenuItem;
+	private JCheckBoxMenuItem m_sortAutoSortMenuItem;
+	private JRadioButtonMenuItem[] m_sortDirectionMenuItems;
+	private JRadioButtonMenuItem[] m_sortTypeMenuItems;
+	private ButtonGroup m_sortDirectionButtonGroup;
+	private ButtonGroup m_sortTypeButtonGroup;
 	private JMenu m_settingsMenu;
 	private JMenuItem m_settingsPluginDirectoryNameMenuItem;
 	private JMenuItem m_settingsConsoleLogFileNameMenuItem;
@@ -194,6 +205,26 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_selectAllMenuItem = new JMenuItem("All");
 		m_selectNoneMenuItem = new JMenuItem("None");
 		
+		m_sortMenu = new JMenu("Sort");
+		m_sortTargetMenu = new JMenu("Target");
+		m_sortDirectionMenu = new JMenu("Direction");
+		m_sortTypeMenu = new JMenu("Type");
+		m_sortAllGroupsMenuItem = new JRadioButtonMenuItem("Sort All Groups");
+		m_sortPerGroupSortingMenuItem = new JRadioButtonMenuItem("Per Group Sorting");
+		m_sortAutoSortMenuItem = new JCheckBoxMenuItem("Auto-Sort Group Files");
+		m_sortDirectionMenuItems = new JRadioButtonMenuItem[SortDirection.numberOfSortDirections()];
+		m_sortDirectionButtonGroup = new ButtonGroup();
+		for(int i=0;i<m_sortDirectionMenuItems.length;i++) {
+			m_sortDirectionMenuItems[i] = new JRadioButtonMenuItem(SortDirection.displayNames[i]);
+			m_sortDirectionButtonGroup.add(m_sortDirectionMenuItems[i]);
+		}
+		m_sortTypeMenuItems = new JRadioButtonMenuItem[GroupFileSortType.numberOfSortTypes()];
+		m_sortTypeButtonGroup = new ButtonGroup();
+		for(int i=0;i<m_sortTypeMenuItems.length;i++) {
+			m_sortTypeMenuItems[i] = new JRadioButtonMenuItem(GroupFileSortType.displayNames[i]);
+			m_sortTypeButtonGroup.add(m_sortTypeMenuItems[i]);
+		}
+		
 		m_settingsMenu = new JMenu("Settings");
 		m_settingsPluginDirectoryNameMenuItem = new JMenuItem("Plugin Directory Name");
 		m_settingsConsoleLogFileNameMenuItem = new JMenuItem("Console Log File Name");
@@ -245,6 +276,15 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_selectRandomMenuItem.addActionListener(this);
 		m_selectAllMenuItem.addActionListener(this);
 		m_selectNoneMenuItem.addActionListener(this);
+		m_sortAllGroupsMenuItem.addActionListener(this);
+		m_sortPerGroupSortingMenuItem.addActionListener(this);
+		m_sortAutoSortMenuItem.addActionListener(this);
+		for(int i=0;i<m_sortDirectionMenuItems.length;i++) {
+			m_sortDirectionMenuItems[i].addActionListener(this);
+		}
+		for(int i=0;i<m_sortTypeMenuItems.length;i++) {
+			m_sortTypeMenuItems[i].addActionListener(this);
+		}
 		m_settingsPluginDirectoryNameMenuItem.addActionListener(this);
 		m_settingsConsoleLogFileNameMenuItem.addActionListener(this);
 		m_settingsLogDirectoryNameMenuItem.addActionListener(this);
@@ -286,6 +326,19 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_selectMenu.add(m_selectAllMenuItem);
 		m_selectMenu.add(m_selectNoneMenuItem);
 		
+		m_sortTargetMenu.add(m_sortAllGroupsMenuItem);
+		m_sortTargetMenu.add(m_sortPerGroupSortingMenuItem);
+		m_sortMenu.add(m_sortTargetMenu);
+		for(int i=0;i<m_sortDirectionMenuItems.length;i++) {
+			m_sortDirectionMenu.add(m_sortDirectionMenuItems[i]);
+		}
+		m_sortMenu.add(m_sortDirectionMenu);
+		for(int i=0;i<m_sortTypeMenuItems.length;i++) {
+			m_sortTypeMenu.add(m_sortTypeMenuItems[i]);
+		}
+		m_sortMenu.add(m_sortTypeMenu);
+		m_sortMenu.add(m_sortAutoSortMenuItem);
+		
 		m_settingsMenu.add(m_settingsPluginDirectoryNameMenuItem);
 		m_settingsMenu.add(m_settingsConsoleLogFileNameMenuItem);
 		m_settingsMenu.add(m_settingsLogDirectoryNameMenuItem);
@@ -313,6 +366,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		m_menuBar.add(m_fileMenu);
 		m_menuBar.add(m_selectMenu);
+		m_menuBar.add(m_sortMenu);
 		m_menuBar.add(m_settingsMenu);
 		m_menuBar.add(m_pluginsMenu);
 		m_menuBar.add(m_windowMenu);
@@ -354,7 +408,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		if(groupPanel == null) { return; }
 		
 		groupPanel.setTransferHandler(m_transferHandler);
-		groupPanel.addGroupChangeListener(GroupManager.instance);
+		groupPanel.addUpdateListener(this);
 		m_groupPanels.add(groupPanel);
 		
 		JScrollPane groupScrollPane = new JScrollPane(groupPanel);
@@ -804,15 +858,13 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				duplicateFileAction = DuplicateFileAction.parseFrom(selection.toString());
 			}
 			
-			if(groupPanel.getGroup().addFile(selectedFiles[i], duplicateFileAction == DuplicateFileAction.Replace || duplicateFileAction == DuplicateFileAction.ReplaceAll, false)) {
+			if(groupPanel.getGroup().addFile(selectedFiles[i], duplicateFileAction == DuplicateFileAction.Replace || duplicateFileAction == DuplicateFileAction.ReplaceAll)) {
 				numberOfFilesAdded++;
 			}
 			else {
 				GroupManager.console.writeLine("Failed to add file " + formattedFileName + " to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\"."));
 			}
 		}
-		
-		groupPanel.getGroup().update();
 		
 		if(numberOfFilesAdded == 0) {
 			String message = "Failed to any files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
@@ -857,21 +909,21 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		if(numberOfFilesRemoved == 0) {
 			String message = "Failed to remove any files from group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
 			
-			SystemConsole.getInstance().writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "Failed to Remove Files", JOptionPane.ERROR_MESSAGE);
 		}
 		else if(numberOfFilesRemoved != selectedGroupFiles.size()) {
 			String message = "Only successfully removed " + numberOfFilesRemoved + " of " + selectedGroupFiles.size() + " files from group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
 			
-			SystemConsole.getInstance().writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "Some Files Removed", JOptionPane.INFORMATION_MESSAGE);
 		}
 		else {
 			String message = "Successfully removed " + numberOfFilesRemoved + " files from group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
 			
-			SystemConsole.getInstance().writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "All Selected Files Removed", JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -903,14 +955,14 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		if(fileReplaced) {
 			String message = "Successfully replaced selected file \"" + selectedGroupFile.getFileName() + "\" in group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
 			
-			SystemConsole.getInstance().writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "File Replaced", JOptionPane.INFORMATION_MESSAGE);
 		}
 		else {
 			String message = "Failed to replace selected file \"" + selectedGroupFile.getFileName() + "\" in group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
 			
-			SystemConsole.getInstance().writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "File Replacement Failed", JOptionPane.ERROR_MESSAGE);
 		}
@@ -1085,8 +1137,6 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		group.addFiles(importedGroup);
 		
-		groupPanel.setChanged(true);
-		
 		GroupManager.console.writeLine("Group file \"" + selectedFile.getName() +  "\" imported successfully!");
 		
 		update();
@@ -1250,7 +1300,26 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		return true;
 	}
 	
-	private void updateWindow() {
+	public void updateAll() {
+		if(m_updating) { return; }
+		
+		updateWindow();
+		
+		m_updating = true;
+		
+		for(int i=0;i<m_groupPanels.size();i++) {
+			m_groupPanels.elementAt(i).autoSort();
+			m_groupPanels.elementAt(i).updateWindow();
+		}
+		
+		m_updating = false;
+	}
+	
+	public void updateWindow() {
+		if(m_updating) { return; }
+		
+		m_updating = true;
+		
 		m_settingsAutoScrollConsoleMenuItem.setSelected(GroupManager.settings.autoScrollConsole);
 		m_settingsLogConsoleMenuItem.setSelected(GroupManager.settings.logConsole);
 		m_settingsSupressUpdatesMenuItem.setSelected(GroupManager.settings.supressUpdates);
@@ -1286,6 +1355,29 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_selectAllMenuItem.setEnabled(groupHasFiles);
 		m_selectNoneMenuItem.setEnabled(groupHasFiles);
 		
+		m_sortAllGroupsMenuItem.setSelected(SettingsManager.instance.sortAllGroups);
+		m_sortPerGroupSortingMenuItem.setSelected(!SettingsManager.instance.sortAllGroups);
+		if(SettingsManager.instance.sortAllGroups) {
+			if(SettingsManager.instance.sortDirection.isValid()) {
+				m_sortDirectionMenuItems[SettingsManager.instance.sortDirection.ordinal()].setSelected(true);
+			}
+			if(SettingsManager.instance.sortType.isValid()) {
+				m_sortTypeMenuItems[SettingsManager.instance.sortType.ordinal()].setSelected(true);
+			}
+			m_sortAutoSortMenuItem.setSelected(SettingsManager.instance.autoSortFiles);
+		}
+		else {
+			if(selectedGroupPanel != null) {
+				if(selectedGroupPanel.getGroup().getSortDirection().isValid()) {
+					m_sortDirectionMenuItems[selectedGroupPanel.getGroup().getSortDirection().ordinal()].setSelected(true);
+				}
+				if(selectedGroupPanel.getGroup().getSortType().isValid()) {
+					m_sortTypeMenuItems[selectedGroupPanel.getGroup().getSortType().ordinal()].setSelected(true);
+				}
+				m_sortAutoSortMenuItem.setSelected(selectedGroupPanel.getGroup().getAutoSortFiles());
+			}
+		}
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				GroupPanel groupPanel = null;
@@ -1301,6 +1393,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		updateLayout();
 		
+		m_updating = false;
+		
 		m_mainTabbedPane.revalidate();
 	}
 	
@@ -1312,7 +1406,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	
 	// update the server window
 	public void update() {
-		if(!m_initialized) { return; }
+		if(!m_initialized || m_updating) { return; }
 		
 		// update and automatically scroll to the end of the text
 		m_consoleText.setText(GroupManager.console.toString());
@@ -1329,9 +1423,13 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		m_updating = true;
 		
-		updateWindow();
+		for(int i=0;i<m_groupPanels.size();i++) {
+			m_groupPanels.elementAt(i).update();
+		}
 		
 		m_updating = false;
+		
+		updateWindow();
 	}
 	
 	public void resetWindowPosition() {
@@ -1448,6 +1546,36 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			
 			selectedGroupPanel.clearSelection();
 		}
+		// enable sorting for all groups
+		else if(e.getSource() == m_sortAllGroupsMenuItem) {
+			if(SettingsManager.instance.sortAllGroups) { return; }
+			
+			SettingsManager.instance.sortAllGroups = true;
+			
+			updateAll();
+		}
+		// enable per-group sorting
+		else if(e.getSource() == m_sortPerGroupSortingMenuItem) {
+			if(!SettingsManager.instance.sortAllGroups) { return; }
+			
+			SettingsManager.instance.sortAllGroups = false;
+			
+			updateAll();
+		}
+		// toggle file auto-sorting
+		else if(e.getSource() == m_sortAutoSortMenuItem) {
+			if(SettingsManager.instance.sortAllGroups) {
+				SettingsManager.instance.autoSortFiles = m_sortAutoSortMenuItem.isSelected();
+				
+				updateAll();
+			}
+			else {
+				GroupPanel selectedGroupPanel = getSelectedGroupPanel();
+				if(selectedGroupPanel == null) { return; }
+				
+				selectedGroupPanel.getGroup().setAutoSortFiles(m_sortAutoSortMenuItem.isSelected());
+			}
+		}
 		// change the plugins folder name
 		else if(e.getSource() == m_settingsPluginDirectoryNameMenuItem) {
 			// prompt for the plugin directory name
@@ -1533,9 +1661,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		else if(e.getSource() == m_settingsSupressUpdatesMenuItem) {
 			GroupManager.settings.supressUpdates = m_settingsSupressUpdatesMenuItem.isSelected();
 		}
+		// toggle auto-save settings
 		else if(e.getSource() == m_settingsAutoSaveSettingsMenuItem) {
 			GroupManager.settings.autoSaveSettings = m_settingsAutoSaveSettingsMenuItem.isSelected();
 		}
+		// save all settings to file
 		else if(e.getSource() == m_settingsSaveSettingsMenuItem) {
 			if(GroupManager.settings.save()) {
 				GroupManager.console.writeLine("Successfully saved settings to file: " + GroupManager.settings.settingsFileName);
@@ -1548,6 +1678,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				JOptionPane.showMessageDialog(m_frame, "Failed to save settings to file: " + GroupManager.settings.settingsFileName, "Settings Not Saved", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		// reload all settings from file
 		else if(e.getSource() == m_settingsReloadSettingsMenuItem) {
 			if(GroupManager.settings.load()) {
 				update();
@@ -1562,6 +1693,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				JOptionPane.showMessageDialog(m_frame, "Failed to load settings from file: " + GroupManager.settings.settingsFileName, "Settings Not Loaded", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		// reset all settings
 		else if(e.getSource() == m_settingsResetSettingsMenuItem) {
 			int choice = JOptionPane.showConfirmDialog(m_frame, "Are you sure you wish to reset all settings?", "Reset All Settings", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			
@@ -1606,6 +1738,49 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		// display help message
 		else if(e.getSource() == m_helpAboutMenuItem) {
 			JOptionPane.showMessageDialog(m_frame, "Group Manager Version " + GroupManager.VERSION + "\nCreated by Kevin Scroggins (a.k.a. nitro_glycerine)\nE-Mail: nitro404@gmail.com\nWebsite: http://www.nitro404.com", "About Group Manager", JOptionPane.INFORMATION_MESSAGE);
+		}
+		else {
+			// change group file sort direction
+			for(int i=0;i<m_sortDirectionMenuItems.length;i++) {
+				if(e.getSource() == m_sortDirectionMenuItems[i]) {
+					if(SettingsManager.instance.sortAllGroups) {
+						if(SettingsManager.instance.sortDirection == SortDirection.values()[i]) { return; }
+						
+						SettingsManager.instance.sortDirection = SortDirection.values()[i];
+						
+						updateAll();
+					}
+					else {
+						GroupPanel selectedGroupPanel = getSelectedGroupPanel();
+						if(selectedGroupPanel == null) { return; }
+						
+						selectedGroupPanel.getGroup().setSortDirection(SortDirection.values()[i]);
+					}
+					
+					return;
+				}
+			}
+			
+			// change group file sort type
+			for(int i=0;i<m_sortTypeMenuItems.length;i++) {
+				if(e.getSource() == m_sortTypeMenuItems[i]) {
+					if(SettingsManager.instance.sortAllGroups) {
+						if(SettingsManager.instance.sortType == GroupFileSortType.values()[i]) { return; }
+						
+						SettingsManager.instance.sortType = GroupFileSortType.values()[i];
+						
+						updateAll();
+					}
+					else {
+						GroupPanel selectedGroupPanel = getSelectedGroupPanel();
+						if(selectedGroupPanel == null) { return; }
+						
+						selectedGroupPanel.getGroup().setSortType(GroupFileSortType.values()[i]);
+					}
+					
+					return;
+				}
+			}
 		}
 	}
 	
