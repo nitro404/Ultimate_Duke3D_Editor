@@ -146,6 +146,8 @@ public class GroupSSI extends Group {
 		m_fileType = version.getFileType();
 		
 		if(versionChanged) {
+			reverseAllFileExtensions();
+			
 			setChanged(true);
 		}
 		
@@ -227,6 +229,12 @@ public class GroupSSI extends Group {
 			fileSize += FILE_HEADER_LENGTH + m_files.elementAt(i).getDataSize();
 		}
 		return fileSize;
+	}
+	
+	protected void reverseAllFileExtensions() {
+		for(int i=0;i<m_files.size();i++) {
+			m_files.elementAt(i).reverseFileExtension();
+		}
 	}
 	
 	public boolean load() throws GroupReadException {

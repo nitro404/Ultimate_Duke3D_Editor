@@ -68,6 +68,10 @@ public class GroupFile {
 		m_fileName = Utilities.truncateFileName(fileName, MAX_FILE_NAME_LENGTH);
 	}
 	
+	public void reverseFileExtension() {
+		m_fileName = Utilities.reverseFileExtension(m_fileName);
+	}
+	
 	public void setData(byte data[]) {
 		m_data = data;
 		m_fileSize = data == null ? 0 : data.length;
