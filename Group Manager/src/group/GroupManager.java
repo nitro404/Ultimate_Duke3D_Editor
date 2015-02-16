@@ -190,9 +190,11 @@ public class GroupManager extends GroupCollection {
 		
 		if(numberOfLoadedPlugins == pluginManager.numberOfPlugins()) {
 			if(!m_progressDialog.userCancelled()) {
-				console.writeLine("Failed to load plugin" + (pluginName == null ? "" : ": " + pluginName));
+				String message = "Failed to load plugin" + (pluginName == null ? "!" : ": " + pluginName);
 				
-				JOptionPane.showMessageDialog(groupManagerWindow.getFrame(), "Failed to load plugin " + (pluginName == null ? "" : ": " + pluginName), "Loading Failed", JOptionPane.ERROR_MESSAGE);
+				console.writeLine(message);
+				
+				JOptionPane.showMessageDialog(groupManagerWindow.getFrame(), message, "Loading Failed", JOptionPane.ERROR_MESSAGE);
 			}
 			
 			return false;

@@ -140,46 +140,82 @@ public class GroupSSI extends Group {
 	public boolean setVersion(SSIVersion version) {
 		if(!version.isValid()) { return false; }
 		
+		boolean versionChanged = m_version != version;
+		
 		m_version = version;
 		m_fileType = version.getFileType();
+		
+		if(versionChanged) {
+			setChanged(true);
+		}
 		
 		return true;
 	}
 	
 	public void setTitle(String title) {
+		boolean titleChanged = false;
+		
 		if(title == null) {
-			m_title = null;
+			titleChanged = m_title != null;
 			
-			return;
+			m_title = null;
+		}
+		else {
+			String formattedTitle = title.trim();
+			if(formattedTitle.length() > MAX_TITLE_LENGTH) {
+				formattedTitle = formattedTitle.substring(0, MAX_TITLE_LENGTH - 1);
+			}
+			
+			titleChanged = !m_title.equals(formattedTitle);
+			
+			m_title = formattedTitle;
 		}
 		
-		String formattedTitle = title.trim();
-		if(formattedTitle.length() > MAX_TITLE_LENGTH) {
-			formattedTitle = formattedTitle.substring(0, MAX_TITLE_LENGTH - 1);
+		if(titleChanged) {
+			setChanged(true);
 		}
-		
-		m_title = formattedTitle;
 	}
 	
 	public void setDescription(String description, int index) {
 		if(index < 0 || index >= NUMBER_OF_DESCRIPTIONS) { return; }
 		
+		boolean descriptionChanged = false; 
+		
 		if(description == null) {
-			m_description = new String[3];
+			descriptionChanged = m_description[index] != null;
 			
-			return;
+			m_description[index] = null;
+		}
+		else {
+			String formattedDescription = description.trim();
+			if(formattedDescription.length() > MAX_DESCRIPTION_LENGTH) {
+				formattedDescription = formattedDescription.substring(0, MAX_DESCRIPTION_LENGTH - 1);
+			}
+			
+			descriptionChanged = !formattedDescription.equals(m_description[index]);
+			
+			m_description[index] = formattedDescription;
 		}
 		
-		String formattedDescription = description.trim();
-		if(formattedDescription.length() > MAX_DESCRIPTION_LENGTH) {
-			formattedDescription = formattedDescription.substring(0, MAX_DESCRIPTION_LENGTH - 1);
+		if(descriptionChanged) {
+			setChanged(true);
 		}
-		
-		m_description[index] = formattedDescription;
 	}
 	
 	public void setRunFile(String runFile) {
-		m_runFile = Utilities.truncateFileName(runFile, MAX_RUNFILE_LENGTH);
+		boolean runFileChanged = false;
+		
+		String newRunFile = Utilities.truncateFileName(runFile, MAX_RUNFILE_LENGTH);
+		
+		runFileChanged = (m_runFile == null && newRunFile != null) ||
+						 (m_runFile != null && newRunFile == null) ||
+						 (m_runFile != null && newRunFile != null && !m_runFile.equals(newRunFile));
+		
+		m_runFile = newRunFile;
+		
+		if(runFileChanged) {
+			setChanged(true);
+		}
 	}
 	
 	public int getGroupFileSize() {

@@ -9,17 +9,19 @@ import group.*;
 
 public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, DocumentListener {
 	
-	private JPanel m_informationPanel;
-	private JScrollPane m_informationPanelScrollPane;
-	private GridBagLayout m_informationPanelLayout;
-	private JLabel m_titleLabel;
-	private JTextField m_titleTextField;
-	private JLabel m_versionLabel;
-	private JComboBox<String> m_versionComboBox;
-	private JLabel m_descriptionLabel;
-	private JTextField[] m_descriptionTextField;
-	private JLabel m_runFileLabel;
-	private JTextField m_runFileTextField;
+	protected boolean m_updatingDataUsingDocument;
+	
+	protected JPanel m_informationPanel;
+	protected JScrollPane m_informationPanelScrollPane;
+	protected GridBagLayout m_informationPanelLayout;
+	protected JLabel m_titleLabel;
+	protected JTextField m_titleTextField;
+	protected JLabel m_versionLabel;
+	protected JComboBox<String> m_versionComboBox;
+	protected JLabel m_descriptionLabel;
+	protected JTextField[] m_descriptionTextField;
+	protected JLabel m_runFileLabel;
+	protected JTextField m_runFileTextField;
 	
 	private static final long serialVersionUID = -9139327010877190279L;
 	
@@ -27,12 +29,14 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 		super(null);
 		
 		m_updatingWindow = false;
+		m_updatingDataUsingDocument = false;
 	}
 	
 	public GroupPanelSSI(Group group) {
 		super(group);
 		
 		m_updatingWindow = false;
+		m_updatingDataUsingDocument = false;
 	}
 	
 	public boolean init() {
@@ -240,7 +244,7 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	}
 	
 	public void updateWindow() {
-		if(!m_initialized || m_updatingWindow) { return; }
+		if(!m_initialized || m_updatingWindow || m_updatingDataUsingDocument) { return; }
 		
 		super.updateWindow();
 		
@@ -278,32 +282,30 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	protected boolean updateDataUsingDocument(Document d) {
 		if(d == null) { return false; }
 		
+		m_updatingDataUsingDocument = true;
+		
 		try {
 			if(m_group != null && m_group instanceof GroupSSI) {
 				GroupSSI ssiGroup = (GroupSSI) m_group;
 				
 				if(d == m_titleTextField.getDocument()) {
-System.out.println("m_titleTextField: \"" + d.getText(0, d.getLength()) + "\"");
 					ssiGroup.setTitle(d.getText(0, d.getLength()));
 				}
 				else if(d == m_runFileTextField.getDocument()) {
-System.out.println("m_runFileTextField: \"" + d.getText(0, d.getLength()) + "\"");
 					ssiGroup.setRunFile(d.getText(0, d.getLength()));
 				}
 				else {
 					for(int i=0;i<m_descriptionTextField.length;i++) {
 						if(d == m_descriptionTextField[i].getDocument()) {
-// TODO: test these!
-System.out.println("m_descriptionTextField[" + i + "]: \"" + d.getText(0, d.getLength()) + "\"");
 							ssiGroup.setDescription(d.getText(0, d.getLength()), i);
 						}
 					}
 				}
 			}
 		}
-		catch(BadLocationException e) {
-			return false;
-		}
+		catch(BadLocationException e) { }
+		
+		m_updatingDataUsingDocument = false;
 		
 		return false;
 	}
@@ -323,35 +325,39 @@ System.out.println("m_descriptionTextField[" + i + "]: \"" + d.getText(0, d.getL
 					ssiGroup.setVersion(ssiVersion);
 					
 					m_runFileTextField.setEnabled(ssiVersion == SSIVersion.V2);
-					
-					setChanged(true);
 				}
 			}
 		}
 	}
 
-	public void insertUpdate(DocumentEvent e) {
+	public void insertUpdate(final DocumentEvent e) {
 		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
 		
-		updateDataUsingDocument(e.getDocument());
-		
-		setChanged(true);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				updateDataUsingDocument(e.getDocument());
+			}
+		});
 	}
 	
-	public void removeUpdate(DocumentEvent e) {
+	public void removeUpdate(final DocumentEvent e) {
 		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
 		
-		updateDataUsingDocument(e.getDocument());
-		
-		setChanged(true);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				updateDataUsingDocument(e.getDocument());
+			}
+		});
 	}
 	
-	public void changedUpdate(DocumentEvent e) {
+	public void changedUpdate(final DocumentEvent e) {
 		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
 		
-		updateDataUsingDocument(e.getDocument());
-		
-		setChanged(true);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				updateDataUsingDocument(e.getDocument());
+			}
+		});
 	}
 	
 }

@@ -7,6 +7,7 @@ import javax.xml.stream.*;
 import javax.xml.stream.events.*;
 import javax.swing.*;
 import utilities.*;
+import console.*;
 import group.*;
 
 public class VersionChecker {
@@ -37,9 +38,11 @@ public class VersionChecker {
 	
 	private static boolean checkVersionHelper(boolean verbose) {
 		if(GroupManager.settings.versionFileURL == null) {
-			GroupManager.console.writeLine("Version file URL not set, maybe reset your settings?");
+			String message = "Version file URL not set, maybe reset your settings?";
 			
-			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "Version file URL not set, maybe reset your settings?", "Invalid Version File URL", JOptionPane.ERROR_MESSAGE); }
+			SystemConsole.instance.writeLine(message);
+			
+			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), message, "Invalid Version File URL", JOptionPane.ERROR_MESSAGE); }
 			
 			return false;
 		}
@@ -49,9 +52,11 @@ public class VersionChecker {
 			url = new URL(GroupManager.settings.versionFileURL);
 		}
 		catch(MalformedURLException e) {
-			GroupManager.console.writeLine("Version file URL is invalid or malformed, please check that it is correct or reset your settings:" + e.getMessage());
+			String message = "Version file URL is invalid or malformed, please check that it is correct or reset your settings:" + e.getMessage();
 			
-			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "Version file URL is invalid or malformed, please check that it is correct or reset your settings:" + e.getMessage(), "Invalid URL", JOptionPane.ERROR_MESSAGE); }
+			SystemConsole.instance.writeLine(message);
+			
+			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), message, "Invalid URL", JOptionPane.ERROR_MESSAGE); }
 			
 			return false;
 		}
@@ -61,9 +66,11 @@ public class VersionChecker {
 			in = url.openStream();
 		}
 		catch(IOException e) {
-			GroupManager.console.writeLine("Failed to open stream to version file, perhaps the url is wrong or the file is missing?");
+			String message = "Failed to open stream to version file, perhaps the url is wrong or the file is missing?";
 			
-			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "Failed to open stream to version file, perhaps the url is wrong or the file is missing?", "IO Exception", JOptionPane.ERROR_MESSAGE); }
+			SystemConsole.instance.writeLine(message);
+			
+			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), message, "IO Exception", JOptionPane.ERROR_MESSAGE); }
 			
 			return false;
 		}
@@ -89,7 +96,7 @@ public class VersionChecker {
 						temp = element.getAttributeByName(new QName(NAME));
 						if(temp != null) { name = temp.getValue().trim(); }
 						if(!name.equalsIgnoreCase("Duke Nukem 3D Group Manager")) {
-							GroupManager.console.writeLine("Program name in version file does not match name of program: \"" + name + "\".");
+							SystemConsole.instance.writeLine("Program name in version file does not match name of program: \"" + name + "\".");
 						}
 						
 						temp = element.getAttributeByName(new QName(VERSION));
@@ -107,16 +114,20 @@ public class VersionChecker {
 			in.close();
 		}
 		catch(XMLStreamException e) {
-			GroupManager.console.writeLine("XML stream exception thrown while attempting to read version file stream: " + e.getMessage());
+			String message = "XML stream exception thrown while attempting to read version file stream: " + e.getMessage();
 			
-			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "XML stream exception thrown while attempting to read version file stream: " + e.getMessage(), "XML Stream Exception", JOptionPane.ERROR_MESSAGE); }
+			SystemConsole.instance.writeLine(message);
+			
+			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), message, "XML Stream Exception", JOptionPane.ERROR_MESSAGE); }
 			
 			return false;
 		}
 		catch(IOException e) {
-			GroupManager.console.writeLine("Read exception thrown while parsing version file.");
+			String message = "Read exception thrown while parsing version file.";
 			
-			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "Read exception thrown while parsing version file.", "IO Exception", JOptionPane.ERROR_MESSAGE); }
+			SystemConsole.instance.writeLine(message);
+			
+			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), message, "IO Exception", JOptionPane.ERROR_MESSAGE); }
 			
 			return false;
 		}
@@ -124,19 +135,21 @@ public class VersionChecker {
 		try {
 			switch(Utilities.compareVersions(GroupManager.VERSION, version)) {
 				case -1:
-					GroupManager.console.writeLine("A new version of Duke Nukem 3D Group Manager is available! Download version " + version + " at the following link: \"" + link + "\".");
+					SystemConsole.instance.writeLine("A new version of Duke Nukem 3D Group Manager is available! Released " + date + ". Download version " + version + " at the following link: \"" + link + "\".");
 					
 					if(verbose || !GroupManager.settings.supressUpdates) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "A new version of Duke Nukem 3D Group Manager is available! Released " + date + ".\nDownload version " + version + " at the following link: \"" + link + "\".", "New Version Available", JOptionPane.INFORMATION_MESSAGE); }
 					
 					break;
 				case 0:
-					GroupManager.console.writeLine("Duke Nukem 3D Group Manager is up to date with version " + GroupManager.VERSION + ", released " + date + ".");
+					String message = "Duke Nukem 3D Group Manager is up to date with version " + GroupManager.VERSION + ", released " + date + ".";
 					
-					if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "Duke Nukem 3D Group Manager is up to date with version " + GroupManager.VERSION + ", released " + date + ".", "Up to Date", JOptionPane.INFORMATION_MESSAGE); }
+					SystemConsole.instance.writeLine(message);
+					
+					if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), message, "Up to Date", JOptionPane.INFORMATION_MESSAGE); }
 					
 					break;
 				case 1:
-					GroupManager.console.writeLine("Wow, you're from the future? Awesome. Hope you're enjoying your spiffy version " + GroupManager.VERSION + " of the Duke Nukem 3D Group Manager!");
+					SystemConsole.instance.writeLine("Wow, you're from the future? Awesome. Hope you're enjoying your spiffy version " + GroupManager.VERSION + " of the Duke Nukem 3D Group Manager!");
 					
 					JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "Wow, you're from the future? Awesome.\nHope you're enjoying your spiffy version " + GroupManager.VERSION + " of the Duke Nukem 3D Group Manager!", "Hello Time Traveller!", JOptionPane.INFORMATION_MESSAGE);
 					
@@ -144,9 +157,11 @@ public class VersionChecker {
 			}
 		}
 		catch(NumberFormatException e) {
-			GroupManager.console.writeLine("Version check failed: Illegal non-numerical value encountered while parsing version.");
+			String message = "Version check failed: Illegal non-numerical value encountered while parsing version.";
 			
-			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "Version check failed: Illegal non-numerical value encountered while parsing version.", "Invalid Version", JOptionPane.ERROR_MESSAGE); }
+			SystemConsole.instance.writeLine(message);
+			
+			if(verbose) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), message, "Invalid Version", JOptionPane.ERROR_MESSAGE); }
 			
 			return false;
 		}

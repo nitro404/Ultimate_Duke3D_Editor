@@ -6,6 +6,7 @@ import javax.swing.*;
 import exception.*;
 import utilities.*;
 import variable.*;
+import console.*;
 
 public class GroupPluginManager {
 	
@@ -279,7 +280,7 @@ public class GroupPluginManager {
 					}
 				}
 				catch(GroupPluginLoadException e) {
-					GroupManager.console.writeLine(e.getMessage());
+					SystemConsole.instance.writeLine(e.getMessage());
 					
 					return 0;
 				}
@@ -315,7 +316,7 @@ public class GroupPluginManager {
 				String name = null;
 				try { name = GroupPlugin.getGroupPluginName(file); }
 				catch(GroupPluginLoadException e) {
-					GroupManager.console.writeLine(e.getMessage());
+					SystemConsole.instance.writeLine(e.getMessage());
 				}
 				
 				if(name != null) {
@@ -373,7 +374,7 @@ public class GroupPluginManager {
 			newGroupPlugin = GroupPlugin.loadFrom(file);
 		}
 		catch(GroupPluginLoadException e) {
-			GroupManager.console.writeLine(e.getMessage());
+			SystemConsole.instance.writeLine(e.getMessage());
 			
 			JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), e.getMessage(), "Plugin Load Failed", JOptionPane.ERROR_MESSAGE);
 			
@@ -401,9 +402,11 @@ public class GroupPluginManager {
 			if(newGroupPlugin.hasSharedSupportedGroupFileType(m_plugins.elementAt(i))) {
 				String sharedSupportedGroupFileTypes = newGroupPlugin.getSharedSupportedGroupFileTypesAsString(m_plugins.elementAt(i));
 				
-				GroupManager.console.writeLine("Attempted to load \"" + newGroupPlugin.getName() + "\" plugin for where \"" + sharedSupportedGroupFileTypes + "\" group file type(s) were already supported in \"" + m_plugins.elementAt(i).getName() + "\" plugin.");
+				String message = "Attempted to load \"" + newGroupPlugin.getName() + "\" plugin where \"" + sharedSupportedGroupFileTypes + "\" group file type(s) were already supported in \"" + m_plugins.elementAt(i).getName() + "\" plugin.";
 				
-				JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "Attempted to load \"" + newGroupPlugin.getName() + "\" plugin where \"" + sharedSupportedGroupFileTypes + "\" group file type(s) were already supported in \"" + m_plugins.elementAt(i).getName() + "\" plugin.", "File Type(s) Already Supported", JOptionPane.ERROR_MESSAGE);
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), message, "File Type(s) Already Supported", JOptionPane.ERROR_MESSAGE);
 				
 				if(task != null) {
 					task.cancel();

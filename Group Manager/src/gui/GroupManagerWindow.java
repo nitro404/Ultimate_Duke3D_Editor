@@ -558,9 +558,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	public boolean promptNewGroup() {
 		Vector<GroupPlugin> loadedInstantiablePlugins = GroupManager.pluginManager.getLoadedInstantiablePlugins();
 		if(loadedInstantiablePlugins.size() == 0) {
-			GroupManager.console.writeLine("No group plugins found that support instantiation. Perhaps you forgot to load all plugins?");
+			String message = "No group plugins found that support instantiation. Perhaps you forgot to load all plugins?";
 			
-			JOptionPane.showMessageDialog(m_frame, "No group plugins found that support instantiation. Perhaps you forgot to load all plugins?", "No Plugins", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "No Plugins", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -582,14 +584,16 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			newGroup = loadedInstantiablePlugins.elementAt(pluginIndex).getGroupInstance(null);
 		}
 		catch(GroupInstantiationException e) {
-			GroupManager.console.writeLine("Failed to create instance of \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + "\"!");
+			String message = "Failed to create instance of \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + "\"!";
 			
-			JOptionPane.showMessageDialog(m_frame, "Failed to create instance of \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + "\"!", "Instantiation Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Instantiation Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		
-		GroupManager.console.writeLine(loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " group created successfully!");
+		SystemConsole.instance.writeLine(loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " group created successfully!");
 		
 		int fileTypeIndex = 0;
 		if(newGroup.numberOfGroupFileTypes() > 1) {
@@ -608,24 +612,28 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		GroupPanel newGroupPanel = null;
 		try { newGroupPanel = loadedInstantiablePlugins.elementAt(pluginIndex).getGroupPanelInstance(newGroup); }
 		catch(GroupPanelInstantiationException e) {
-			GroupManager.console.writeLine(e.getMessage());
+			SystemConsole.instance.writeLine(e.getMessage());
 			
 			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Group Panel Instantiation Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		if(newGroupPanel == null) {
-			GroupManager.console.writeLine("Failed to instantiate group panel for \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " plugin.");
+			String message = "Failed to instantiate group panel for \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " plugin.";
 			
-			JOptionPane.showMessageDialog(m_frame, "Failed to instantiate group panel for \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " plugin.", "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		
 		if(!newGroupPanel.init()) {
-			GroupManager.console.writeLine("Failed to initialize group panel for \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + "\" plugin.");
+			String message = "Failed to initialize group panel for \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + "\" plugin.";
 			
-			JOptionPane.showMessageDialog(m_frame, "Failed to initialize group panel for \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + "\" plugin..", "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -641,9 +649,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	
 	public void promptLoadGroups() {
 		if(GroupManager.pluginManager.numberOfLoadedPlugins() == 0) {
-			GroupManager.console.writeLine("No group plugins loaded. You must have at least one group plugin loaded to open a group file.");
+			String message = "No group plugins loaded. You must have at least one group plugin loaded to open a group file.";
 			
-			JOptionPane.showMessageDialog(m_frame, "No group plugins loaded. You must have at least one group plugin loaded to open a group file.", "No Group Plugins Loaded", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "No Group Plugins Loaded", JOptionPane.ERROR_MESSAGE);
 			
 			return;
 		}
@@ -672,10 +682,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		if(files.length > 0) {
 			int numberOfGroupsFailed = files.length - numberOfGroupsLoaded;
 			if(numberOfGroupsLoaded == 0 && numberOfGroupsFailed > 0) {
-				GroupManager.console.writeLine(numberOfGroupsFailed + " group file" + (numberOfGroupsFailed == 1 ? "" : "s") + " failed to load, no group files loaded.");
+				SystemConsole.instance.writeLine(numberOfGroupsFailed + " group file" + (numberOfGroupsFailed == 1 ? "" : "s") + " failed to load, no group files loaded.");
 			}
 			else if(numberOfGroupsLoaded > 1) {
-				GroupManager.console.writeLine(numberOfGroupsLoaded + " group files were loaded successfully" + (numberOfGroupsFailed == 0 ? "" : ", while " + numberOfGroupsFailed + " failed to load") + "!");
+				SystemConsole.instance.writeLine(numberOfGroupsLoaded + " group files were loaded successfully" + (numberOfGroupsFailed == 0 ? "" : ", while " + numberOfGroupsFailed + " failed to load") + "!");
 			}
 		}
 		
@@ -684,7 +694,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	
 	public boolean loadGroup(File file) {
 		if(file == null || !file.exists()) {
-			GroupManager.console.writeLine("File \"" + file.getName() + "\" does not exist.");
+			SystemConsole.instance.writeLine("File \"" + file.getName() + "\" does not exist.");
 			return false;
 		}
 		
@@ -692,9 +702,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			if(m_groupPanels.elementAt(i).isSameFile(file)) {
 				selectGroupPanel(m_groupPanels.elementAt(i));
 				
-				GroupManager.console.writeLine("Group file \"" + (file == null ? "null" : file.getName()) +  "\" already loaded!");
+				String message = "Group file \"" + (file == null ? "null" : file.getName()) +  "\" already loaded!";
 				
-				JOptionPane.showMessageDialog(m_frame, "Group file \"" + (file == null ? "null" : file.getName()) +  "\" already loaded!", "Already Loaded", JOptionPane.INFORMATION_MESSAGE);
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Already Loaded", JOptionPane.INFORMATION_MESSAGE);
 				
 				return true;
 			}
@@ -704,9 +716,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		GroupPlugin plugin = GroupManager.pluginManager.getPluginForFileType(extension);
 		if(plugin == null) {
-			GroupManager.console.writeLine("No plugin found to load " + extension + " file type. Perhaps you forgot to load all plugins?");
+			String message = "No plugin found to load " + extension + " file type. Perhaps you forgot to load all plugins?";
 			
-			JOptionPane.showMessageDialog(m_frame, "No plugin found to load " + extension + " file type. Perhaps you forgot to load all plugins?", "No Plugin Found", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "No Plugin Found", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -714,67 +728,77 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		Group group = null;
 		try { group = plugin.getGroupInstance(file); }
 		catch(GroupInstantiationException e) {
-			GroupManager.console.writeLine(e.getMessage());
+			SystemConsole.instance.writeLine(e.getMessage());
 			
 			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		if(group == null) {
-			GroupManager.console.writeLine("Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\" plugin when attempting to read group file: \"" + file.getName() + "\".");
+			String message = "Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\" plugin when attempting to read group file: \"" + file.getName() + "\".";
 			
-			JOptionPane.showMessageDialog(m_frame, "Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\" plugin when attempting to read group file: \"" + file.getName() + "\".", "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		
 		try {
 			if(!group.load()) {
-				GroupManager.console.writeLine("Failed to load group: \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\".");
+				String message = "Failed to load group: \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\".";
 				
-				JOptionPane.showMessageDialog(m_frame, "Failed to load group: \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\".", "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
 				
 				return false;
 			}
 		}
 		catch(HeadlessException e) {
-			GroupManager.console.writeLine("Exception thrown while loading group : \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + "): " + e.getMessage());
+			String message = "Exception thrown while loading group : \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + "): " + e.getMessage();
 			
-			JOptionPane.showMessageDialog(m_frame, "Exception thrown while loading group : \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + "): " + e.getMessage(), "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		catch(GroupReadException e) {
-			GroupManager.console.writeLine(e.getMessage());
+			SystemConsole.instance.writeLine(e.getMessage());
 			
 			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		
-		GroupManager.console.writeLine("Group file \"" + file.getName() +  "\" loaded successfully!");
+		SystemConsole.instance.writeLine("Group file \"" + file.getName() +  "\" loaded successfully!");
 		
 		GroupPanel groupPanel = null;
 		try { groupPanel = plugin.getGroupPanelInstance(group); }
 		catch(GroupPanelInstantiationException e) {
-			GroupManager.console.writeLine(e.getMessage());
+			SystemConsole.instance.writeLine(e.getMessage());
 			
 			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Group Panel Instantiation Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		if(groupPanel == null) {
-			GroupManager.console.writeLine("Failed to instantiate group panel for \"" + plugin.getName() + " plugin.");
+			String message = "Failed to instantiate group panel for \"" + plugin.getName() + " plugin.";
 			
-			JOptionPane.showMessageDialog(m_frame, "Failed to instantiate group panel for \"" + plugin.getName() + " plugin.", "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		
 		if(!groupPanel.init()) {
-			GroupManager.console.writeLine("Failed to initialize group panel for \"" + plugin.getName() + "\" plugin.");
+			String message = "Failed to initialize group panel for \"" + plugin.getName() + "\" plugin.";
 			
-			JOptionPane.showMessageDialog(m_frame, "Failed to initialize group panel for \"" + plugin.getName() + "\" plugin..", "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -810,22 +834,24 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		try {
 			if(groupPanel.save()) {
-				GroupManager.console.writeLine("Group successfully updated and saved to file: " + groupFile.getName() + "!");
+				SystemConsole.instance.writeLine("Group successfully updated and saved to file: " + groupFile.getName() + "!");
 				
 				update();
 				
 				return true;
 			}
 			else {
-				GroupManager.console.writeLine("Failed to update and save group!");
+				String message = "Failed to update and save group!";
 				
-				JOptionPane.showMessageDialog(m_frame, "Failed to update and save group!", "Save Failed", JOptionPane.ERROR_MESSAGE);
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Save Failed", JOptionPane.ERROR_MESSAGE);
 				
 				return false;
 			}
 		}
 		catch(GroupWriteException e) {
-			GroupManager.console.writeLine(e.getMessage());
+			SystemConsole.instance.writeLine(e.getMessage());
 			
 			return false;
 		}
@@ -916,28 +942,28 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				numberOfFilesAdded++;
 			}
 			else {
-				GroupManager.console.writeLine("Failed to add file " + formattedFileName + " to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\"."));
+				SystemConsole.instance.writeLine("Failed to add file " + formattedFileName + " to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\"."));
 			}
 		}
 		
 		if(numberOfFilesAdded == 0) {
 			String message = "Failed to any files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
 			
-			GroupManager.console.writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "Failed to Add Files", JOptionPane.ERROR_MESSAGE);
 		}
 		else if(numberOfFilesAdded != selectedFiles.length) {
 			String message = "Only successfully added " + numberOfFilesAdded + " of " + selectedFiles.length + " selected files to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
 			
-			GroupManager.console.writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "Some Files Added", JOptionPane.WARNING_MESSAGE);
 		}
 		else {
 			String message = "Successfully added all " + selectedFiles.length + " selected files to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
 			
-			GroupManager.console.writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "All Files Added", JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -1040,9 +1066,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		fileChooser.setMultiSelectionEnabled(false);
 		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return 0; }
 		if(fileChooser.getSelectedFile() == null || !fileChooser.getSelectedFile().isDirectory()) {
-			GroupManager.console.writeLine("Selected directory \"" + fileChooser.getSelectedFile().getName() + "\" is not a directory.");
+			String message = "Selected directory \"" + fileChooser.getSelectedFile().getName() + "\" is not a directory.";
 			
-			JOptionPane.showMessageDialog(m_frame, "Selected directory \"" + fileChooser.getSelectedFile().getName() + "\" is not a directory.", "Invalid Directory", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Invalid Directory", JOptionPane.ERROR_MESSAGE);
 			
 			return 0;
 		}
@@ -1057,7 +1085,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			catch(SecurityException e) {
 				String message = "Failed to create the specified directory or directory structure, please ensure that you have write permission for this location. Exception message: " + e.getMessage();
 				
-				GroupManager.console.writeLine(message);
+				SystemConsole.instance.writeLine(message);
 				
 				JOptionPane.showMessageDialog(m_frame, message, "Directory Creation Failed", JOptionPane.ERROR_MESSAGE);
 				
@@ -1073,32 +1101,32 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 					numberOfFilesExtracted++;
 				}
 				else {
-					GroupManager.console.writeLine("Failed to extract file \"" + selectedGroupFiles.elementAt(i).getFileName() + "\" to directory: \"" + fileChooser.getSelectedFile().getName() + "\".");
+					SystemConsole.instance.writeLine("Failed to extract file \"" + selectedGroupFiles.elementAt(i).getFileName() + "\" to directory: \"" + fileChooser.getSelectedFile().getName() + "\".");
 				}
 			}
 			catch(IOException e) {
-				GroupManager.console.writeLine("Exception thrown while extracting file \"" + selectedGroupFiles.elementAt(i).getFileName() + "\" to directory \"" + fileChooser.getSelectedFile().getName() + "\": " + e.getMessage());
+				SystemConsole.instance.writeLine("Exception thrown while extracting file \"" + selectedGroupFiles.elementAt(i).getFileName() + "\" to directory \"" + fileChooser.getSelectedFile().getName() + "\": " + e.getMessage());
 			}
 		}
 		
 		if(numberOfFilesExtracted == 0) {
 			String message = "Failed to any files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
 			
-			GroupManager.console.writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "Failed to Extract Files", JOptionPane.ERROR_MESSAGE);
 		}
 		else if(numberOfFilesExtracted != selectedGroupFiles.size()) {
 			String message = "Only successfully extracted " + numberOfFilesExtracted + " of " + selectedGroupFiles.size() + " selected files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
 			
-			GroupManager.console.writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "Some Files Extracted", JOptionPane.WARNING_MESSAGE);
 		}
 		else {
 			String message = "Successfully extracted all " + selectedGroupFiles.size() + " selected files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
 			
-			GroupManager.console.writeLine(message);
+			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "All Selected Files Extracted", JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -1122,9 +1150,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		fileChooser.setMultiSelectionEnabled(false);
 		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return false; }
 		if(!fileChooser.getSelectedFile().isFile() || !fileChooser.getSelectedFile().exists()) {
-			GroupManager.console.writeLine("Selected group file \"" + fileChooser.getSelectedFile().getName() + "\" is not a file or does not exist.");
+			String message = "Selected group file \"" + fileChooser.getSelectedFile().getName() + "\" is not a file or does not exist.";
 			
-			JOptionPane.showMessageDialog(m_frame, "Selected group file \"" + fileChooser.getSelectedFile().getName() + "\" is not a file or does not exist.", "Invalid or Missing File", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Invalid or Missing File", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -1133,9 +1163,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		GroupPlugin plugin = GroupManager.pluginManager.getPluginForFileType(extension);
 		if(plugin == null) {
-			GroupManager.console.writeLine("No plugin found to import " + extension + " file type. Perhaps you forgot to load all plugins?");
+			String message = "No plugin found to import " + extension + " file type. Perhaps you forgot to load all plugins?";
 			
-			JOptionPane.showMessageDialog(m_frame, "No plugin found to import " + extension + " file type. Perhaps you forgot to load all plugins?", "No Plugin Found", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "No Plugin Found", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -1143,38 +1175,44 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		Group importedGroup = null;
 		try { importedGroup = plugin.getGroupInstance(selectedFile); }
 		catch(GroupInstantiationException e) {
-			GroupManager.console.writeLine(e.getMessage());
+			SystemConsole.instance.writeLine(e.getMessage());
 			
 			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		if(importedGroup == null) {
-			GroupManager.console.writeLine("Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\" plugin when attempting to import group file: \"" + selectedFile.getName() + "\".");
+			String message = "Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\" plugin when attempting to import group file: \"" + selectedFile.getName() + "\".";
 			
-			JOptionPane.showMessageDialog(m_frame, "Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\" plugin when attempting to import group file: \"" + selectedFile.getName() + "\".", "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		
 		try {
 			if(!importedGroup.load()) {
-				GroupManager.console.writeLine("Failed to import group: \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\".");
+				String message = "Failed to import group: \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\".";
 				
-				JOptionPane.showMessageDialog(m_frame, "Failed to import group: \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\".", "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
 				
 				return false;
 			}
 		}
 		catch(HeadlessException e) {
-			GroupManager.console.writeLine("Exception thrown while importing group : \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + "): " + e.getMessage());
+			String message = "Exception thrown while importing group : \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + "): " + e.getMessage();
 			
-			JOptionPane.showMessageDialog(m_frame, "Exception thrown while importing group : \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + "): " + e.getMessage(), "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		catch(GroupReadException e) {
-			GroupManager.console.writeLine(e.getMessage());
+			SystemConsole.instance.writeLine(e.getMessage());
 			
 			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Group Importing Failed", JOptionPane.ERROR_MESSAGE);
 			
@@ -1182,16 +1220,18 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		
 		if(!importedGroup.verifyAllFiles()) {
-			GroupManager.console.writeLine("Found one or more invalid files when importing group: \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ").");
+			String message = "Found one or more invalid files when importing group: \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ").";
 			
-			JOptionPane.showMessageDialog(m_frame, "Found one or more invalid files when importing group: \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ").", "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Group Loading Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
 		
 		group.addFiles(importedGroup);
 		
-		GroupManager.console.writeLine("Group file \"" + selectedFile.getName() +  "\" imported successfully!");
+		SystemConsole.instance.writeLine("Group file \"" + selectedFile.getName() +  "\" imported successfully!");
 		
 		update();
 		
@@ -1209,9 +1249,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		Vector<GroupPlugin> loadedInstantiablePlugins = GroupManager.pluginManager.getLoadedInstantiablePluginsExcluding(group.getFileExtension());
 		if(loadedInstantiablePlugins.size() == 0) {
-			GroupManager.console.writeLine("No group plugins found that support instantiation / exporting. Perhaps you forgot to load all plugins?");
+			String message = "No group plugins found that support instantiation / exporting. Perhaps you forgot to load all plugins?";
 			
-			JOptionPane.showMessageDialog(m_frame, "No group plugins found that support instantiation / exporting. Perhaps you forgot to load all plugins?", "No Plugins", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "No Plugins", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -1233,9 +1275,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			newGroup = loadedInstantiablePlugins.elementAt(pluginIndex).getGroupInstance(null);
 		}
 		catch(GroupInstantiationException e) {
-			GroupManager.console.writeLine("Failed to create instance of export file: \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " (" + loadedInstantiablePlugins.elementAt(pluginIndex).getSupportedGroupFileTypesAsString() + ")!");
+			String message = "Failed to create instance of export file: \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " (" + loadedInstantiablePlugins.elementAt(pluginIndex).getSupportedGroupFileTypesAsString() + ")!";
 			
-			JOptionPane.showMessageDialog(m_frame, "Failed to create instance of export file: \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " (" + loadedInstantiablePlugins.elementAt(pluginIndex).getSupportedGroupFileTypesAsString() + ")!", "Instantiation Failed", JOptionPane.ERROR_MESSAGE);
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Instantiation Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -1287,18 +1331,20 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		try {
 			if(newGroup.save()) {
-				GroupManager.console.writeLine("Group successfully exported to new file: " + newGroup.getFile().getName() + "!");
+				SystemConsole.instance.writeLine("Group successfully exported to new file: " + newGroup.getFile().getName() + "!");
 			}
 			else {
-				GroupManager.console.writeLine("Failed to export group!");
+				String message = "Failed to export group!";
 				
-				JOptionPane.showMessageDialog(m_frame, "Failed to export group!", "Export Failed", JOptionPane.ERROR_MESSAGE);
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Export Failed", JOptionPane.ERROR_MESSAGE);
 				
 				return false;
 			}
 		}
 		catch(GroupWriteException e) {
-			GroupManager.console.writeLine(e.getMessage());
+			SystemConsole.instance.writeLine(e.getMessage());
 			
 			return false;
 		}
@@ -1731,14 +1777,18 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		// save all settings to file
 		else if(e.getSource() == m_settingsSaveSettingsMenuItem) {
 			if(GroupManager.settings.save()) {
-				GroupManager.console.writeLine("Successfully saved settings to file: " + GroupManager.settings.settingsFileName);
+				String message = "Successfully saved settings to file: " + GroupManager.settings.settingsFileName;
 				
-				JOptionPane.showMessageDialog(m_frame, "Successfully saved settings to file: " + GroupManager.settings.settingsFileName, "Settings Saved", JOptionPane.INFORMATION_MESSAGE);
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Settings Saved", JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				GroupManager.console.writeLine("Failed to save settings to file: " + GroupManager.settings.settingsFileName);
+				String message = "Failed to save settings to file: " + GroupManager.settings.settingsFileName;
 				
-				JOptionPane.showMessageDialog(m_frame, "Failed to save settings to file: " + GroupManager.settings.settingsFileName, "Settings Not Saved", JOptionPane.ERROR_MESSAGE);
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Settings Not Saved", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// reload all settings from file
@@ -1746,14 +1796,18 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			if(GroupManager.settings.load()) {
 				update();
 				
-				GroupManager.console.writeLine("Settings successfully loaded from file: " + GroupManager.settings.settingsFileName);
+				String message = "Settings successfully loaded from file: " + GroupManager.settings.settingsFileName;
 				
-				JOptionPane.showMessageDialog(m_frame, "Settings successfully loaded from file: " + GroupManager.settings.settingsFileName, "Settings Loaded", JOptionPane.INFORMATION_MESSAGE);
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Settings Loaded", JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				GroupManager.console.writeLine("Failed to load settings from file: " + GroupManager.settings.settingsFileName);
+				String message = "Failed to load settings from file: " + GroupManager.settings.settingsFileName;
 				
-				JOptionPane.showMessageDialog(m_frame, "Failed to load settings from file: " + GroupManager.settings.settingsFileName, "Settings Not Loaded", JOptionPane.ERROR_MESSAGE);
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Settings Not Loaded", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// reset all settings
@@ -1765,7 +1819,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				
 				update();
 				
-				GroupManager.console.writeLine("All settings reset to default values");
+				SystemConsole.instance.writeLine("All settings reset to default values");
 			}
 		}
 		// display a list of loaded plugins
