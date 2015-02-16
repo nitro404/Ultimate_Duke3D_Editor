@@ -1298,9 +1298,13 @@ public abstract class Group {
 		
 		notifySortStarted();
 		
-		m_files = mergeSortFiles(m_files);
+		Vector<GroupFile> sortedFiles = mergeSortFiles(m_files);
 		
-		setChanged(true);
+		if(!checkSameFileOrder(m_files, sortedFiles)) {
+			m_files = sortedFiles;
+			
+			setChanged(true);
+		}
 		
 		notifySortFinished();
 	}
@@ -1515,6 +1519,32 @@ public abstract class Group {
 		for(int i=0;i<m_groupSortListeners.size();i++) {
 			m_groupSortListeners.elementAt(i).handleGroupSortFinished(this);
 		}
+	}
+	
+	public boolean checkSameFileOrder(Vector<GroupFile> files) {
+		if(files == null) { return false; }
+		
+		if(m_files.size() != files.size()) { return false; }
+		
+		for(int i=0;i<m_files.size();i++) {
+			if(m_files.elementAt(i) != files.elementAt(i)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean checkSameFileOrder(Vector<GroupFile> a, Vector<GroupFile> b) {
+		if(a == null) { return b == null; }
+		
+		if(a.size() != b.size()) { return false; }
+		
+		for(int i=0;i<a.size();i++) {
+			if(a.elementAt(i) != b.elementAt(i)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public boolean equals(Object o) {
