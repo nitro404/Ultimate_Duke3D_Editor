@@ -7,6 +7,7 @@ import javax.xml.stream.*;
 import javax.xml.stream.events.*;
 import javax.swing.*;
 import utilities.*;
+import settings.*;
 import console.*;
 import group.*;
 
@@ -37,7 +38,7 @@ public class VersionChecker {
 	}
 	
 	private static boolean checkVersionHelper(boolean verbose) {
-		if(GroupManager.settings.versionFileURL == null) {
+		if(SettingsManager.instance.versionFileURL == null) {
 			String message = "Version file URL not set, maybe reset your settings?";
 			
 			SystemConsole.instance.writeLine(message);
@@ -49,7 +50,7 @@ public class VersionChecker {
 		
 		URL url;
 		try {
-			url = new URL(GroupManager.settings.versionFileURL);
+			url = new URL(SettingsManager.instance.versionFileURL);
 		}
 		catch(MalformedURLException e) {
 			String message = "Version file URL is invalid or malformed, please check that it is correct or reset your settings:" + e.getMessage();
@@ -137,7 +138,7 @@ public class VersionChecker {
 				case -1:
 					SystemConsole.instance.writeLine("A new version of Duke Nukem 3D Group Manager is available! Released " + date + ". Download version " + version + " at the following link: \"" + link + "\".");
 					
-					if(verbose || !GroupManager.settings.supressUpdates) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "A new version of Duke Nukem 3D Group Manager is available! Released " + date + ".\nDownload version " + version + " at the following link: \"" + link + "\".", "New Version Available", JOptionPane.INFORMATION_MESSAGE); }
+					if(verbose || !SettingsManager.instance.supressUpdates) { JOptionPane.showMessageDialog(GroupManager.groupManagerWindow.getFrame(), "A new version of Duke Nukem 3D Group Manager is available! Released " + date + ".\nDownload version " + version + " at the following link: \"" + link + "\".", "New Version Available", JOptionPane.INFORMATION_MESSAGE); }
 					
 					break;
 				case 0:

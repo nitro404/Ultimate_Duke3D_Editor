@@ -146,8 +146,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		updateWindow();
 		
-		m_frame.setLocation(GroupManager.settings.windowPositionX, GroupManager.settings.windowPositionY);
-		m_frame.setSize(GroupManager.settings.windowWidth, GroupManager.settings.windowHeight);
+		m_frame.setLocation(SettingsManager.instance.windowPositionX, SettingsManager.instance.windowPositionY);
+		m_frame.setSize(SettingsManager.instance.windowWidth, SettingsManager.instance.windowHeight);
 		
 		// update and show the gui window
 		update();
@@ -1420,11 +1420,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		m_updating = true;
 		
-		m_settingsAutoScrollConsoleMenuItem.setSelected(GroupManager.settings.autoScrollConsole);
-		m_settingsLogConsoleMenuItem.setSelected(GroupManager.settings.logConsole);
-		m_settingsSupressUpdatesMenuItem.setSelected(GroupManager.settings.supressUpdates);
-		m_pluginsAutoLoadMenuItem.setSelected(GroupManager.settings.autoLoadPlugins);
-		m_settingsAutoSaveSettingsMenuItem.setSelected(GroupManager.settings.autoSaveSettings);
+		m_settingsAutoScrollConsoleMenuItem.setSelected(SettingsManager.instance.autoScrollConsole);
+		m_settingsLogConsoleMenuItem.setSelected(SettingsManager.instance.logConsole);
+		m_settingsSupressUpdatesMenuItem.setSelected(SettingsManager.instance.supressUpdates);
+		m_pluginsAutoLoadMenuItem.setSelected(SettingsManager.instance.autoLoadPlugins);
+		m_settingsAutoSaveSettingsMenuItem.setSelected(SettingsManager.instance.autoSaveSettings);
 		
 		GroupPanel selectedGroupPanel = getSelectedGroupPanel();
 		Group selectedGroup = selectedGroupPanel != null ? selectedGroupPanel.getGroup() : null;
@@ -1513,7 +1513,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		// update and automatically scroll to the end of the text
 		m_consoleText.setText(GroupManager.console.toString());
 		
-		if(GroupManager.settings.autoScrollConsole) {
+		if(SettingsManager.instance.autoScrollConsole) {
 			JScrollBar hScrollBar = m_consoleScrollPane.getHorizontalScrollBar();
 			JScrollBar vScrollBar = m_consoleScrollPane.getVerticalScrollBar();
 			
@@ -1535,17 +1535,17 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	}
 	
 	public void resetWindowPosition() {
-		GroupManager.settings.windowPositionX = SettingsManager.defaultWindowPositionX;
-		GroupManager.settings.windowPositionY = SettingsManager.defaultWindowPositionY;
+		SettingsManager.instance.windowPositionX = SettingsManager.defaultWindowPositionX;
+		SettingsManager.instance.windowPositionY = SettingsManager.defaultWindowPositionY;
 		
-		m_frame.setLocation(GroupManager.settings.windowPositionX, GroupManager.settings.windowPositionY);
+		m_frame.setLocation(SettingsManager.instance.windowPositionX, SettingsManager.instance.windowPositionY);
 	}
 	
 	public void resetWindowSize() {
-		GroupManager.settings.windowWidth = SettingsManager.defaultWindowWidth;
-		GroupManager.settings.windowHeight = SettingsManager.defaultWindowHeight;
+		SettingsManager.instance.windowWidth = SettingsManager.defaultWindowWidth;
+		SettingsManager.instance.windowHeight = SettingsManager.defaultWindowHeight;
 		
-		m_frame.setSize(GroupManager.settings.windowWidth, GroupManager.settings.windowHeight);
+		m_frame.setSize(SettingsManager.instance.windowWidth, SettingsManager.instance.windowHeight);
 	}
 	
 	public void windowActivated(WindowEvent e) { }
@@ -1688,64 +1688,64 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		// change the plugins folder name
 		else if(e.getSource() == m_settingsPluginDirectoryNameMenuItem) {
 			// prompt for the plugin directory name
-			String input = JOptionPane.showInputDialog(m_frame, "Please enter the plugin directory name:", GroupManager.settings.pluginDirectoryName);
+			String input = JOptionPane.showInputDialog(m_frame, "Please enter the plugin directory name:", SettingsManager.instance.pluginDirectoryName);
 			if(input == null) { return; }
 			
 			String newPluginDirectoryName = input.trim();
 			if(newPluginDirectoryName.length() == 0) { return; }
 			
-			if(!newPluginDirectoryName.equalsIgnoreCase(GroupManager.settings.pluginDirectoryName)) {
-				GroupManager.settings.pluginDirectoryName = newPluginDirectoryName;
+			if(!newPluginDirectoryName.equalsIgnoreCase(SettingsManager.instance.pluginDirectoryName)) {
+				SettingsManager.instance.pluginDirectoryName = newPluginDirectoryName;
 			}
 		}
 		// change the console log file name
 		else if(e.getSource() == m_settingsConsoleLogFileNameMenuItem) {
 			// prompt for the console log file name
-			String input = JOptionPane.showInputDialog(m_frame, "Please enter the console log file name:", GroupManager.settings.consoleLogFileName);
+			String input = JOptionPane.showInputDialog(m_frame, "Please enter the console log file name:", SettingsManager.instance.consoleLogFileName);
 			if(input == null) { return; }
 			
 			String newConsoleLogFileName = input.trim();
 			if(newConsoleLogFileName.length() == 0) { return; }
 			
-			if(!newConsoleLogFileName.equalsIgnoreCase(GroupManager.settings.consoleLogFileName)) {
+			if(!newConsoleLogFileName.equalsIgnoreCase(SettingsManager.instance.consoleLogFileName)) {
 				GroupManager.console.resetConsoleLogFileHeader();
 				
-				GroupManager.settings.consoleLogFileName = newConsoleLogFileName;
+				SettingsManager.instance.consoleLogFileName = newConsoleLogFileName;
 			}
 		}
 		// change the log directory name
 		else if(e.getSource() == m_settingsLogDirectoryNameMenuItem) {
 			// prompt for the log directory name
-			String input = JOptionPane.showInputDialog(m_frame, "Please enter the log directory name:", GroupManager.settings.logDirectoryName);
+			String input = JOptionPane.showInputDialog(m_frame, "Please enter the log directory name:", SettingsManager.instance.logDirectoryName);
 			if(input == null) { return; }
 			
 			String newLogDirectoryName = input.trim();
 			if(newLogDirectoryName.length() == 0) { return; }
 			
-			if(!newLogDirectoryName.equalsIgnoreCase(GroupManager.settings.logDirectoryName)) {
-				GroupManager.settings.logDirectoryName = newLogDirectoryName;
+			if(!newLogDirectoryName.equalsIgnoreCase(SettingsManager.instance.logDirectoryName)) {
+				SettingsManager.instance.logDirectoryName = newLogDirectoryName;
 			}
 		}
 		else if(e.getSource() == m_settingsVersionFileURLMenuItem) {
 			// prompt for the version file url
-			String input = JOptionPane.showInputDialog(m_frame, "Please enter the version file URL:", GroupManager.settings.versionFileURL);
+			String input = JOptionPane.showInputDialog(m_frame, "Please enter the version file URL:", SettingsManager.instance.versionFileURL);
 			if(input == null) { return; }
 			
 			String newVersionFileURL = input.trim();
 			if(newVersionFileURL.length() == 0) { return; }
 			
-			if(!newVersionFileURL.equalsIgnoreCase(GroupManager.settings.versionFileURL)) {
-				GroupManager.settings.versionFileURL = newVersionFileURL;
+			if(!newVersionFileURL.equalsIgnoreCase(SettingsManager.instance.versionFileURL)) {
+				SettingsManager.instance.versionFileURL = newVersionFileURL;
 			}
 		}
 		// change the console auto scrolling
 		else if(e.getSource() == m_settingsAutoScrollConsoleMenuItem) {
-			GroupManager.settings.autoScrollConsole = m_settingsAutoScrollConsoleMenuItem.isSelected();
+			SettingsManager.instance.autoScrollConsole = m_settingsAutoScrollConsoleMenuItem.isSelected();
 		}
 		// change the maximum number of elements the console can hold
 		else if(e.getSource() == m_settingsMaxConsoleHistoryMenuItem) {
 			// prompt for the maximum console history size
-			String input = JOptionPane.showInputDialog(m_frame, "Please enter the maximum console history size:", GroupManager.settings.maxConsoleHistory);
+			String input = JOptionPane.showInputDialog(m_frame, "Please enter the maximum console history size:", SettingsManager.instance.maxConsoleHistory);
 			if(input == null) { return; }
 			
 			// set the new console history size
@@ -1759,32 +1759,32 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			}
 			
 			if(maxConsoleHistory > 1) {
-				GroupManager.settings.maxConsoleHistory = maxConsoleHistory;
+				SettingsManager.instance.maxConsoleHistory = maxConsoleHistory;
 			}
 		}
 		// change console logging
 		else if(e.getSource() == m_settingsLogConsoleMenuItem) {
-			GroupManager.settings.logConsole = m_settingsLogConsoleMenuItem.isSelected();
+			SettingsManager.instance.logConsole = m_settingsLogConsoleMenuItem.isSelected();
 		}
 		// change update notification supressing
 		else if(e.getSource() == m_settingsSupressUpdatesMenuItem) {
-			GroupManager.settings.supressUpdates = m_settingsSupressUpdatesMenuItem.isSelected();
+			SettingsManager.instance.supressUpdates = m_settingsSupressUpdatesMenuItem.isSelected();
 		}
 		// toggle auto-save settings
 		else if(e.getSource() == m_settingsAutoSaveSettingsMenuItem) {
-			GroupManager.settings.autoSaveSettings = m_settingsAutoSaveSettingsMenuItem.isSelected();
+			SettingsManager.instance.autoSaveSettings = m_settingsAutoSaveSettingsMenuItem.isSelected();
 		}
 		// save all settings to file
 		else if(e.getSource() == m_settingsSaveSettingsMenuItem) {
-			if(GroupManager.settings.save()) {
-				String message = "Successfully saved settings to file: " + GroupManager.settings.settingsFileName;
+			if(SettingsManager.instance.save()) {
+				String message = "Successfully saved settings to file: " + SettingsManager.instance.settingsFileName;
 				
 				SystemConsole.instance.writeLine(message);
 				
 				JOptionPane.showMessageDialog(m_frame, message, "Settings Saved", JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				String message = "Failed to save settings to file: " + GroupManager.settings.settingsFileName;
+				String message = "Failed to save settings to file: " + SettingsManager.instance.settingsFileName;
 				
 				SystemConsole.instance.writeLine(message);
 				
@@ -1793,17 +1793,17 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		// reload all settings from file
 		else if(e.getSource() == m_settingsReloadSettingsMenuItem) {
-			if(GroupManager.settings.load()) {
+			if(SettingsManager.instance.load()) {
 				update();
 				
-				String message = "Settings successfully loaded from file: " + GroupManager.settings.settingsFileName;
+				String message = "Settings successfully loaded from file: " + SettingsManager.instance.settingsFileName;
 				
 				SystemConsole.instance.writeLine(message);
 				
 				JOptionPane.showMessageDialog(m_frame, message, "Settings Loaded", JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				String message = "Failed to load settings from file: " + GroupManager.settings.settingsFileName;
+				String message = "Failed to load settings from file: " + SettingsManager.instance.settingsFileName;
 				
 				SystemConsole.instance.writeLine(message);
 				
@@ -1815,7 +1815,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			int choice = JOptionPane.showConfirmDialog(m_frame, "Are you sure you wish to reset all settings?", "Reset All Settings", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			
 			if(choice == JOptionPane.YES_OPTION) {
-				GroupManager.settings.reset();
+				SettingsManager.instance.reset();
 				
 				update();
 				
@@ -1836,7 +1836,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		// toggle auto-loading of plugins
 		else if(e.getSource() == m_pluginsAutoLoadMenuItem) {
-			GroupManager.settings.autoLoadPlugins = m_pluginsAutoLoadMenuItem.isSelected();
+			SettingsManager.instance.autoLoadPlugins = m_pluginsAutoLoadMenuItem.isSelected();
 			
 			update();
 		}
@@ -1978,10 +1978,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		// reset initialization variables
 		m_initialized = false;
 		
-		GroupManager.settings.windowPositionX = m_frame.getX();
-		GroupManager.settings.windowPositionY = m_frame.getY();
-		GroupManager.settings.windowWidth = m_frame.getWidth();
-		GroupManager.settings.windowHeight = m_frame.getHeight();
+		SettingsManager.instance.windowPositionX = m_frame.getX();
+		SettingsManager.instance.windowPositionY = m_frame.getY();
+		SettingsManager.instance.windowWidth = m_frame.getWidth();
+		SettingsManager.instance.windowHeight = m_frame.getHeight();
 		
 		// close the server
 		GroupManager.instance.close();

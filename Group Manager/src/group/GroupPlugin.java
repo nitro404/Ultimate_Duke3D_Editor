@@ -8,6 +8,7 @@ import java.lang.reflect.*;
 import exception.*;
 import utilities.*;
 import variable.*;
+import settings.*;
 import console.*;
 import gui.*;
 
@@ -295,7 +296,7 @@ public class GroupPlugin {
 		Class<?> c;
 		
 		try {
-			jarFile = new JarFile(Utilities.appendSlash(GroupManager.settings.pluginDirectoryName) + Utilities.appendSlash(m_directoryName) + "/" + m_jarFileName);
+			jarFile = new JarFile(Utilities.appendSlash(SettingsManager.instance.pluginDirectoryName) + Utilities.appendSlash(m_directoryName) + "/" + m_jarFileName);
 			
 			Pattern p = Pattern.compile(".*\\.class$", Pattern.CASE_INSENSITIVE);
 			
