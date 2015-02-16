@@ -32,6 +32,7 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	protected JMenu m_sortTypePopupMenu;
 	protected JRadioButtonMenuItem m_sortAllGroupsPopupMenuItem;
 	protected JRadioButtonMenuItem m_sortPerGroupSortingPopupMenuItem;
+	protected JMenuItem m_sortManualSortPopupMenuItem;
 	protected JCheckBoxMenuItem m_sortAutoSortPopupMenuItem;
 	protected JRadioButtonMenuItem[] m_sortDirectionPopupMenuItems;
 	protected JRadioButtonMenuItem[] m_sortTypePopupMenuItems;
@@ -84,6 +85,7 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_sortTypePopupMenu = new JMenu("Type");
 		m_sortAllGroupsPopupMenuItem = new JRadioButtonMenuItem("Sort All Groups");
 		m_sortPerGroupSortingPopupMenuItem = new JRadioButtonMenuItem("Per Group Sorting");
+		m_sortManualSortPopupMenuItem = new JMenuItem("Manual Sort");
 		m_sortAutoSortPopupMenuItem = new JCheckBoxMenuItem("Auto-Sort Group Files");
 		m_sortDirectionPopupMenuItems = new JRadioButtonMenuItem[SortDirection.numberOfSortDirections()];
 		m_sortDirectionButtonGroup = new ButtonGroup();
@@ -115,6 +117,7 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_selectNonePopupMenuItem.addActionListener(this);
 		m_sortAllGroupsPopupMenuItem.addActionListener(this);
 		m_sortPerGroupSortingPopupMenuItem.addActionListener(this);
+		m_sortManualSortPopupMenuItem.addActionListener(this);
 		m_sortAutoSortPopupMenuItem.addActionListener(this);
 		for(int i=0;i<m_sortDirectionPopupMenuItems.length;i++) {
 			m_sortDirectionPopupMenuItems[i].addActionListener(this);
@@ -149,6 +152,7 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 			m_sortTypePopupMenu.add(m_sortTypePopupMenuItems[i]);
 		}
 		m_sortPopupMenu.add(m_sortTypePopupMenu);
+		m_sortPopupMenu.add(m_sortManualSortPopupMenuItem);
 		m_sortPopupMenu.add(m_sortAutoSortPopupMenuItem);
 		
 		m_groupPanelPopupMenu.add(m_selectPopupMenu);
@@ -353,6 +357,8 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		
 		update();
 		updateWindow();
+		
+		notifyUpdateWindow();
 	}
 	
 	public void handleGroupSortStateChanged(Group group) {
@@ -401,10 +407,10 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		
 		m_updating = true;
 		
-		m_selectInversePopupMenuItem.setEnabled(m_group.numberOfFiles() > 0);
-		m_selectRandomPopupMenuItem.setEnabled(m_group.numberOfFiles() > 0);
-		m_selectAllPopupMenuItem.setEnabled(m_group.numberOfFiles() > 0);
-		m_selectNonePopupMenuItem.setEnabled(m_group.numberOfFiles() > 0);
+		m_selectInversePopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() > 0);
+		m_selectRandomPopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() > 0);
+		m_selectAllPopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() > 0);
+		m_selectNonePopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() > 0);
 		
 		m_sortAllGroupsPopupMenuItem.setSelected(SettingsManager.instance.sortAllGroups);
 		m_sortPerGroupSortingPopupMenuItem.setSelected(!SettingsManager.instance.sortAllGroups);
@@ -418,14 +424,17 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 			m_sortAutoSortPopupMenuItem.setSelected(SettingsManager.instance.autoSortFiles);
 		}
 		else {
-			if(m_group.getSortDirection().isValid()) {
-				m_sortDirectionPopupMenuItems[m_group.getSortDirection().ordinal()].setSelected(true);
+			if(m_group != null) {
+				if(m_group.getSortDirection().isValid()) {
+					m_sortDirectionPopupMenuItems[m_group.getSortDirection().ordinal()].setSelected(true);
+				}
+				if(m_group.getSortType().isValid()) {
+					m_sortTypePopupMenuItems[m_group.getSortType().ordinal()].setSelected(true);
+				}
+				m_sortAutoSortPopupMenuItem.setSelected(m_group.getAutoSortFiles());
 			}
-			if(m_group.getSortType().isValid()) {
-				m_sortTypePopupMenuItems[m_group.getSortType().ordinal()].setSelected(true);
-			}
-			m_sortAutoSortPopupMenuItem.setSelected(m_group.getAutoSortFiles());
 		}
+		m_sortManualSortPopupMenuItem.setEnabled(m_group == null ? false : m_group.shouldSortFiles());
 		
 		m_removeFilesPopupMenuItem.setText("Remove File" + (numberOfSelectedFiles() == 1 ? "" : "s"));
 		m_extractFilesPopupMenuItem.setText("Extract File" + (numberOfSelectedFiles() == 1 ? "" : "s"));
@@ -481,6 +490,12 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 			SettingsManager.instance.sortAllGroups = false;
 			
 			notifyUpdateAll();
+		}
+		// manual sorting
+		else if(e.getSource() == m_sortManualSortPopupMenuItem) {
+			if(m_group == null) { return; }
+			
+			m_group.sortFiles();
 		}
 		// toggle file auto-sorting
 		else if(e.getSource() == m_sortAutoSortPopupMenuItem) {

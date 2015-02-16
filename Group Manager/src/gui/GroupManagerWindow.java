@@ -51,6 +51,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	private JMenu m_sortTypeMenu;
 	private JRadioButtonMenuItem m_sortAllGroupsMenuItem;
 	private JRadioButtonMenuItem m_sortPerGroupSortingMenuItem;
+	private JMenuItem m_sortManualSortMenuItem;
 	private JCheckBoxMenuItem m_sortAutoSortMenuItem;
 	private JRadioButtonMenuItem[] m_sortDirectionMenuItems;
 	private JRadioButtonMenuItem[] m_sortTypeMenuItems;
@@ -211,6 +212,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_sortTypeMenu = new JMenu("Type");
 		m_sortAllGroupsMenuItem = new JRadioButtonMenuItem("Sort All Groups");
 		m_sortPerGroupSortingMenuItem = new JRadioButtonMenuItem("Per Group Sorting");
+		m_sortManualSortMenuItem = new JMenuItem("Manual Sort");
 		m_sortAutoSortMenuItem = new JCheckBoxMenuItem("Auto-Sort Group Files");
 		m_sortDirectionMenuItems = new JRadioButtonMenuItem[SortDirection.numberOfSortDirections()];
 		m_sortDirectionButtonGroup = new ButtonGroup();
@@ -278,6 +280,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_selectNoneMenuItem.addActionListener(this);
 		m_sortAllGroupsMenuItem.addActionListener(this);
 		m_sortPerGroupSortingMenuItem.addActionListener(this);
+		m_sortManualSortMenuItem.addActionListener(this);
 		m_sortAutoSortMenuItem.addActionListener(this);
 		for(int i=0;i<m_sortDirectionMenuItems.length;i++) {
 			m_sortDirectionMenuItems[i].addActionListener(this);
@@ -337,6 +340,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			m_sortTypeMenu.add(m_sortTypeMenuItems[i]);
 		}
 		m_sortMenu.add(m_sortTypeMenu);
+		m_sortMenu.add(m_sortManualSortMenuItem);
 		m_sortMenu.add(m_sortAutoSortMenuItem);
 		
 		m_settingsMenu.add(m_settingsPluginDirectoryNameMenuItem);
@@ -455,6 +459,12 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		return (GroupPanel) selectedScrollPaneComponent;
 	}
 	
+	protected Group getSelectedGroup() {
+		GroupPanel selectedGroupPanel = getSelectedGroupPanel();
+		if(selectedGroupPanel == null) { return null; }
+		return selectedGroupPanel.getGroup();
+	}
+	
 	protected GroupPanel getGroupPanelFrom(Component component) {
 		if(component == null || !(component instanceof JScrollPane)) { return null; }
 		JScrollPane scrollPane = (JScrollPane) component;
@@ -463,6 +473,12 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		Component scrollPaneComponent = viewport.getComponent(0);
 		if(scrollPaneComponent == null || !(scrollPaneComponent instanceof GroupPanel)) { return null; }
 		return (GroupPanel) scrollPaneComponent;
+	}
+	
+	protected Group getGroupFrom(Component component) {
+		GroupPanel groupPanel = getGroupPanelFrom(component);
+		if(groupPanel == null) { return null; }
+		return groupPanel.getGroup();
 	}
 	
 	protected Component getTabComponentWith(GroupPanel groupPanel) {
@@ -483,6 +499,25 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		return null;
 	}
 	
+	protected Component getTabComponentWith(Group group) {
+		if(group == null) { return null; }
+		Component component = null;
+		for(int i=0;i<m_mainTabbedPane.getComponentCount();i++) {
+			component = m_mainTabbedPane.getComponent(i);
+			if(!(component instanceof JScrollPane)) { continue; }
+			JScrollPane scrollPane = (JScrollPane) component;
+			JViewport viewport = scrollPane.getViewport();
+			if(viewport == null || viewport.getComponentCount() < 1) { continue; }
+			Component scrollPaneComponent = viewport.getComponent(0);
+			if(scrollPaneComponent == null || !(scrollPaneComponent instanceof GroupPanel)) { continue; }
+			GroupPanel groupPanel = (GroupPanel) scrollPaneComponent;
+			if(group.equals(groupPanel.getGroup())) {
+				return component;
+			}
+		}
+		return null;
+	}
+	
 	protected int indexOfTabComponentWith(GroupPanel groupPanel) {
 		if(groupPanel == null) { return -1; }
 		Component component = null;
@@ -494,7 +529,26 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			if(viewport == null || viewport.getComponentCount() < 1) { continue; }
 			Component scrollPaneComponent = viewport.getComponent(0);
 			if(scrollPaneComponent == null || !(scrollPaneComponent instanceof GroupPanel)) { continue; }
-			if(scrollPaneComponent == groupPanel) {
+			if((GroupPanel) scrollPaneComponent == groupPanel) {
+				m_mainTabbedPane.indexOfComponent(scrollPaneComponent);
+			}
+		}
+		return -1;
+	}
+
+	protected int indexOfTabComponentWith(Group group) {
+		if(group == null) { return -1; }
+		Component component = null;
+		for(int i=0;i<m_mainTabbedPane.getComponentCount();i++) {
+			component = m_mainTabbedPane.getComponent(i);
+			if(!(component instanceof JScrollPane)) { continue; }
+			JScrollPane scrollPane = (JScrollPane) component;
+			JViewport viewport = scrollPane.getViewport();
+			if(viewport == null || viewport.getComponentCount() < 1) { continue; }
+			Component scrollPaneComponent = viewport.getComponent(0);
+			if(scrollPaneComponent == null || !(scrollPaneComponent instanceof GroupPanel)) { continue; }
+			GroupPanel groupPanel = (GroupPanel) scrollPaneComponent;
+			if(group.equals(groupPanel.getGroup())) {
 				m_mainTabbedPane.indexOfComponent(scrollPaneComponent);
 			}
 		}
@@ -1327,6 +1381,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_settingsAutoSaveSettingsMenuItem.setSelected(GroupManager.settings.autoSaveSettings);
 		
 		GroupPanel selectedGroupPanel = getSelectedGroupPanel();
+		Group selectedGroup = selectedGroupPanel != null ? selectedGroupPanel.getGroup() : null;
 		boolean groupTabSelected = m_mainTabbedPane.getSelectedIndex() != m_mainTabbedPane.getTabCount() - 1;
 		m_fileSaveMenuItem.setEnabled(groupTabSelected);
 		m_fileSaveAsMenuItem.setEnabled(groupTabSelected);
@@ -1349,7 +1404,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileCloseMenuItem.setEnabled(groupTabSelected);
 		m_fileCloseAllMenuItem.setEnabled(m_groupPanels.size() > 0);
 		
-		boolean groupHasFiles = selectedGroupPanel != null && selectedGroupPanel.getGroup().numberOfFiles() > 0;
+		boolean groupHasFiles = selectedGroup != null && selectedGroup.numberOfFiles() > 0;
 		m_selectInverseMenuItem.setEnabled(groupHasFiles);
 		m_selectRandomMenuItem.setEnabled(groupHasFiles);
 		m_selectAllMenuItem.setEnabled(groupHasFiles);
@@ -1367,16 +1422,17 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			m_sortAutoSortMenuItem.setSelected(SettingsManager.instance.autoSortFiles);
 		}
 		else {
-			if(selectedGroupPanel != null) {
-				if(selectedGroupPanel.getGroup().getSortDirection().isValid()) {
-					m_sortDirectionMenuItems[selectedGroupPanel.getGroup().getSortDirection().ordinal()].setSelected(true);
+			if(selectedGroup != null) {
+				if(selectedGroup.getSortDirection().isValid()) {
+					m_sortDirectionMenuItems[selectedGroup.getSortDirection().ordinal()].setSelected(true);
 				}
-				if(selectedGroupPanel.getGroup().getSortType().isValid()) {
-					m_sortTypeMenuItems[selectedGroupPanel.getGroup().getSortType().ordinal()].setSelected(true);
+				if(selectedGroup.getSortType().isValid()) {
+					m_sortTypeMenuItems[selectedGroup.getSortType().ordinal()].setSelected(true);
 				}
-				m_sortAutoSortMenuItem.setSelected(selectedGroupPanel.getGroup().getAutoSortFiles());
+				m_sortAutoSortMenuItem.setSelected(selectedGroup.getAutoSortFiles());
 			}
 		}
+		m_sortManualSortMenuItem.setEnabled(selectedGroup == null ? false : selectedGroup.shouldSortFiles());
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -1561,6 +1617,13 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			SettingsManager.instance.sortAllGroups = false;
 			
 			updateAll();
+		}
+		// manual sorting
+		else if(e.getSource() == m_sortManualSortMenuItem) {
+			Group selectedGroup = getSelectedGroup();
+			if(selectedGroup == null) { return; }
+			
+			selectedGroup.sortFiles();
 		}
 		// toggle file auto-sorting
 		else if(e.getSource() == m_sortAutoSortMenuItem) {
