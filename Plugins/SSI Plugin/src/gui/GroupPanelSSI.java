@@ -1,5 +1,6 @@
 package gui;
 
+import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -22,6 +23,9 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	protected JTextField[] m_descriptionTextField;
 	protected JLabel m_runFileLabel;
 	protected JTextField m_runFileTextField;
+	
+	protected Vector<JLabel> m_labels;
+	protected Vector<JTextField> m_textFields;
 	
 	private static final long serialVersionUID = -9139327010877190279L;
 	
@@ -97,122 +101,26 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 		}
 		m_informationPanel.add(m_runFileLabel);
 		m_informationPanel.add(m_runFileTextField);
+		
+		m_labels = new Vector<JLabel>();
+		m_textFields = new Vector<JTextField>();
+		
+		m_labels.add(m_titleLabel);
+		m_labels.add(m_versionLabel);
+		m_labels.add(m_descriptionLabel);
+		m_labels.add(m_runFileLabel);
+		
+		m_textFields.add(m_titleTextField);
+		for(int i=0;i<m_descriptionTextField.length;i++) {
+			m_textFields.add(m_descriptionTextField[i]);
+		}
+		m_textFields.add(m_runFileTextField);
 	}
 	
 	private void initLayout() {
 		setLayout(new GridLayout(1, 2));
 		
-		m_informationPanelLayout = new GridBagLayout();
-		m_informationPanel.setLayout(m_informationPanelLayout);
-		
-		GridBagConstraints c = null;
-		
-		int insetValue = 4;
-		int insetTop = insetValue;
-		int insetLeft = insetValue;
-		int insetBottom = insetValue;
-		int insetRight = insetValue;
-		
-		float leftColumnWeight = 0.2f;
-		float rightColumnWeight = 0.8f;
-		
-		c = new GridBagConstraints();
-		c.insets = new Insets(insetTop, insetLeft, insetBottom, insetRight);
-		c.gridx = 0;
-		c.gridy = 0;
-		c.gridwidth = 1;
-		c.gridheight = 1;
-		c.weightx = leftColumnWeight;
-		c.weighty = 1;
-		c.anchor = GridBagConstraints.EAST;
-		c.fill = GridBagConstraints.NONE;
-		m_informationPanelLayout.setConstraints(m_titleLabel, c);
-
-		c = new GridBagConstraints();
-		c.insets = new Insets(insetTop, insetLeft, insetBottom, insetRight);
-		c.gridx = 1;
-		c.gridy = 0;
-		c.gridwidth = 1;
-		c.gridheight = 1;
-		c.weightx = rightColumnWeight;
-		c.weighty = 1;
-		c.anchor = GridBagConstraints.WEST;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		m_informationPanelLayout.setConstraints(m_titleTextField, c);
-
-		c = new GridBagConstraints();
-		c.insets = new Insets(insetTop, insetLeft, insetBottom, insetRight);
-		c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		c.gridheight = 1;
-		c.weightx = leftColumnWeight;
-		c.weighty = 1;
-		c.anchor = GridBagConstraints.EAST;
-		c.fill = GridBagConstraints.NONE;
-		m_informationPanelLayout.setConstraints(m_versionLabel, c);
-
-		c = new GridBagConstraints();
-		c.insets = new Insets(insetTop, insetLeft, insetBottom, insetRight);
-		c.gridx = 1;
-		c.gridy = 1;
-		c.gridwidth = 1;
-		c.gridheight = 1;
-		c.weightx = rightColumnWeight;
-		c.weighty = 1;
-		c.anchor = GridBagConstraints.WEST;
-		c.fill = GridBagConstraints.NONE;
-		m_informationPanelLayout.setConstraints(m_versionComboBox, c);
-		
-		c = new GridBagConstraints();
-		c.insets = new Insets(insetTop, insetLeft, insetBottom, insetRight);
-		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 1;
-		c.gridheight = 1;
-		c.weightx = leftColumnWeight;
-		c.weighty = 1;
-		c.anchor = GridBagConstraints.EAST;
-		c.fill = GridBagConstraints.NONE;
-		m_informationPanelLayout.setConstraints(m_descriptionLabel, c);
-		
-		for(int i=0;i<m_descriptionTextField.length;i++) {
-			c = new GridBagConstraints();
-			c.insets = new Insets(insetTop, insetLeft, insetBottom, insetRight);
-			c.gridx = 1;
-			c.gridy = 2 + i;
-			c.gridwidth = 1;
-			c.gridheight = 1;
-			c.weightx = rightColumnWeight;
-			c.weighty = 1;
-			c.anchor = GridBagConstraints.WEST;
-			c.fill = GridBagConstraints.HORIZONTAL;
-			m_informationPanelLayout.setConstraints(m_descriptionTextField[i], c);
-		}
-		
-		c = new GridBagConstraints();
-		c.insets = new Insets(insetTop, insetLeft, insetBottom, insetRight);
-		c.gridx = 0;
-		c.gridy = 5;
-		c.gridwidth = 1;
-		c.gridheight = 1;
-		c.weightx = leftColumnWeight;
-		c.weighty = 1;
-		c.anchor = GridBagConstraints.EAST;
-		c.fill = GridBagConstraints.NONE;
-		m_informationPanelLayout.setConstraints(m_runFileLabel, c);
-
-		c = new GridBagConstraints();
-		c.insets = new Insets(insetTop, insetLeft, insetBottom, insetRight);
-		c.gridx = 1;
-		c.gridy = 5;
-		c.gridwidth = 1;
-		c.gridheight = 1;
-		c.weightx = rightColumnWeight;
-		c.weighty = 1;
-		c.anchor = GridBagConstraints.WEST;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		m_informationPanelLayout.setConstraints(m_runFileTextField, c);
+		m_informationPanel.setLayout(null);
 	}
 	
 	public boolean setGroup(Group group) {
@@ -266,17 +174,82 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 			}
 			
 			m_runFileTextField.setEnabled(ssiGroup.getVersion() == SSIVersion.V2);
-			
-			updateLayout();
 		}
+		
+		updateLayout();
 		
 		m_updatingWindow = false;
 	}
 	
 	public void updateLayout() {
-		if(m_group == null || !m_initialized) { return; }
+		if(!m_initialized || m_group == null) { return; }
 		
 		super.updateLayout();
+		
+		Component parent = getParent();
+		int panelWidth = parent == null ? 0 : parent.getWidth() / 2;
+		int panelHeight = parent == null ? 0 : parent.getHeight();
+		
+		int padding = 4;
+		Dimension preferredSize = null;
+		
+		int maxLabelWidth = 0;
+		int maxLabelHeight = 0;
+		for(int i=0;i<m_labels.size();i++) {
+			preferredSize = m_labels.elementAt(i).getPreferredSize();
+			if(preferredSize.width  > maxLabelWidth)  { maxLabelWidth  = preferredSize.width;  }
+			if(preferredSize.height > maxLabelHeight) { maxLabelHeight = preferredSize.height; }
+		}
+		
+		int maxTextFieldWidth = 0;
+		int maxTextFieldHeight = 0;
+		for(int i=0;i<m_textFields.size();i++) {
+			preferredSize = m_textFields.elementAt(i).getPreferredSize();
+			if(preferredSize.width  > maxTextFieldWidth)  { maxTextFieldWidth  = preferredSize.width;  }
+			if(preferredSize.height > maxTextFieldHeight) { maxTextFieldHeight = preferredSize.height; }
+		}
+		
+		int comboBoxHeight = m_versionComboBox.getPreferredSize().height;
+		int elementHeight = maxLabelHeight < maxTextFieldHeight ? maxTextFieldHeight : (maxLabelHeight < comboBoxHeight ? comboBoxHeight : maxLabelHeight);
+		int textFieldWidth = panelWidth - maxLabelWidth - (padding * 4);
+		
+		m_titleLabel.setPreferredSize(new Dimension(maxLabelWidth, elementHeight));
+		m_titleLabel.setSize(m_titleLabel.getPreferredSize());
+		m_titleLabel.setLocation(padding, padding);
+		
+		m_titleTextField.setPreferredSize(new Dimension(textFieldWidth, elementHeight));
+		m_titleTextField.setSize(m_titleTextField.getPreferredSize());
+		m_titleTextField.setLocation(m_titleLabel.getLocation().x + m_titleLabel.getSize().width + padding, m_titleLabel.getLocation().y);
+		
+		m_versionLabel.setPreferredSize(new Dimension(maxLabelWidth, elementHeight));
+		m_versionLabel.setSize(m_versionLabel.getPreferredSize());
+		m_versionLabel.setLocation(m_titleLabel.getLocation().x, m_titleLabel.getLocation().y + m_titleLabel.getSize().height + padding);
+		
+		m_versionComboBox.setSize(m_versionComboBox.getPreferredSize());
+		m_versionComboBox.setLocation(m_versionLabel.getLocation().x + m_versionLabel.getSize().width + padding, m_versionLabel.getLocation().y);
+		
+		m_descriptionLabel.setPreferredSize(new Dimension(maxLabelWidth, elementHeight));
+		m_descriptionLabel.setSize(m_descriptionLabel.getPreferredSize());
+		m_descriptionLabel.setLocation(m_versionLabel.getLocation().x, m_versionLabel.getLocation().y + m_versionLabel.getSize().height + padding);
+		
+		for(int i=0;i<m_descriptionTextField.length;i++) {
+			m_descriptionTextField[i].setPreferredSize(new Dimension(textFieldWidth, elementHeight));
+			m_descriptionTextField[i].setSize(m_descriptionTextField[i].getPreferredSize());
+			m_descriptionTextField[i].setLocation(m_descriptionLabel.getLocation().x + m_descriptionLabel.getSize().width + padding, m_descriptionLabel.getLocation().y + ((elementHeight + padding) * i));
+		}
+		
+		m_runFileLabel.setPreferredSize(new Dimension(maxLabelWidth, elementHeight));
+		m_runFileLabel.setSize(m_runFileLabel.getPreferredSize());
+		m_runFileLabel.setLocation(m_descriptionLabel.getLocation().x, m_descriptionLabel.getLocation().y + ((elementHeight + padding) * 3));
+		
+		m_runFileTextField.setPreferredSize(new Dimension(textFieldWidth, elementHeight));
+		m_runFileTextField.setSize(m_runFileTextField.getPreferredSize());
+		m_runFileTextField.setLocation(m_runFileLabel.getLocation().x + m_runFileLabel.getSize().width + padding, m_runFileLabel.getLocation().y);
+		
+		panelHeight = m_runFileTextField.getLocation().y + m_runFileTextField.getSize().height + padding;
+		
+		m_informationPanel.setPreferredSize(new Dimension(panelWidth - padding, panelHeight));
+		m_informationPanel.setSize(m_informationPanel.getPreferredSize());
 	}
 	
 	protected boolean updateDataUsingDocument(Document d) {
