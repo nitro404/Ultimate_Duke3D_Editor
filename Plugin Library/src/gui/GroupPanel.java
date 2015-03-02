@@ -15,9 +15,9 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	
 	protected int m_groupNumber;
 	protected Group m_group;
-	protected Vector<GroupActionListener> m_groupActionListeners;
 	protected boolean m_initialized;
 	protected boolean m_updating;
+	protected Vector<GroupActionListener> m_groupActionListeners;
 	protected Vector<UpdateListener> m_updateListeners;
 	
 	protected JPopupMenu m_groupPanelPopupMenu;
@@ -56,9 +56,9 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	}
 	
 	public GroupPanel(Group group) {
-		m_groupActionListeners = new Vector<GroupActionListener>();
 		m_initialized = false;
 		m_updating = false;
+		m_groupActionListeners = new Vector<GroupActionListener>();
 		m_updateListeners = new Vector<UpdateListener>();
 		
 		initPopupMenu();

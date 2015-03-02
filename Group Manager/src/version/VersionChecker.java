@@ -124,7 +124,7 @@ public class VersionChecker {
 			return false;
 		}
 		catch(IOException e) {
-			String message = "Read exception thrown while parsing version file.";
+			String message = "Read exception thrown while parsing version file: " + e.getMessage();
 			
 			SystemConsole.instance.writeLine(message);
 			

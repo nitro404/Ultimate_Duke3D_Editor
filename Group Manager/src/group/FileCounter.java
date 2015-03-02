@@ -15,10 +15,12 @@ public class FileCounter extends GroupProcessor {
 		return m_numberOfFiles;
 	}
 	
-	public void processGroup(Group group) {
-		if(group == null) { return; }
+	public boolean processGroup(Group group) {
+		if(group == null) { return false; }
 		
 		m_numberOfFiles += group.numberOfFiles();
+		
+		return true;
 	}
 
 	public void groupProcessingCompleted() {

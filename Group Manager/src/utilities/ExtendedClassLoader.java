@@ -6,12 +6,22 @@ import console.*;
 
 public class ExtendedClassLoader extends ClassLoader {
 	
+	public static ExtendedClassLoader instance = null;
+	
     public ExtendedClassLoader() {
     	this(ClassLoader.getSystemClassLoader());
     }
     
     public ExtendedClassLoader(ClassLoader parent) {
     	super(parent);
+    	
+    	if(instance == null) {
+    		updateInstance();
+    	}
+    }
+    
+    public void updateInstance() {
+    	instance = this;
     }
     
     // calls loadClass and links it to the class loader

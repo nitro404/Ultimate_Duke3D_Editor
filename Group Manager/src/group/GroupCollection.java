@@ -2,7 +2,6 @@ package group;
 
 import java.util.*;
 import java.io.*;
-import utilities.*;
 
 public class GroupCollection {
 	
@@ -226,6 +225,10 @@ public class GroupCollection {
 		return getGroupsWithFile(file.getFileName());
 	}
 	
+	public Vector<Group> getGroups() {
+		return m_groups;
+	}
+	
 	public boolean addGroup(Group group) {
 		if(group == null || hasGroup(group)) { return false; }
 		
@@ -289,15 +292,6 @@ public class GroupCollection {
 	
 	public void clearGroups() {
 		m_groups.clear();
-	}
-	
-	public void processGroupsUsingPlugin(GroupProcessor processor) {
-		Task task = new Task(m_groups.size());
-		
-// TODO: implement
-//		task.addTaskListener(this);
-		
-		processor.processGroups(m_groups, task);
 	}
 	
 	public boolean equals(Object o) {

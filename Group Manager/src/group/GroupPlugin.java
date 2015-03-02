@@ -315,7 +315,7 @@ public class GroupPlugin {
 					
 					name = e.getName().replaceAll("[\\\\/]", ".").replaceAll("\\.[Cc][Ll][Aa][Ss][Ss]$", "");
 					
-					c = GroupManager.classLoader.deserializeClass(name, data);
+					c = ExtendedClassLoader.instance.deserializeClass(name, data);
 					if(c == null) {
 						jarFile.close();
 						
@@ -831,14 +831,14 @@ public class GroupPlugin {
 		}
 		
 		groupPlugin.m_groupClass = null;
-		try { groupPlugin.m_groupClass = GroupManager.classLoader.loadClass(groupPlugin.m_groupClassName); }
+		try { groupPlugin.m_groupClass = ExtendedClassLoader.instance.loadClass(groupPlugin.m_groupClassName); }
 		catch(ClassNotFoundException e) { throw new GroupPluginLoadException("Class " + groupPlugin.m_groupClassName + " is missing or not loaded."); }
 		if(!(Group.class.isAssignableFrom(groupPlugin.m_groupClass))) {
 			throw new GroupPluginLoadException("Class " + groupPlugin.m_groupClassName + " does not extend Group class.");
 		}
 		
 		groupPlugin.m_groupPanelClass = null;
-		try { groupPlugin.m_groupPanelClass = GroupManager.classLoader.loadClass(groupPlugin.m_groupPanelClassName); }
+		try { groupPlugin.m_groupPanelClass = ExtendedClassLoader.instance.loadClass(groupPlugin.m_groupPanelClassName); }
 		catch(ClassNotFoundException e) { throw new GroupPluginLoadException("Class " + groupPlugin.m_groupPanelClassName + " is missing or not loaded."); }
 		if(!(GroupPanel.class.isAssignableFrom(groupPlugin.m_groupPanelClass))) {
 			throw new GroupPluginLoadException("Class " + groupPlugin.m_groupPanelClassName + " does not extend GroupPanel class.");

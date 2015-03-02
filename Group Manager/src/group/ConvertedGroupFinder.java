@@ -18,12 +18,14 @@ public class ConvertedGroupFinder extends GroupProcessor {
 		return m_convertedGroups;
 	}
 	
-	public void processGroup(Group group) {
-		if(group == null) { return; }
+	public boolean processGroup(Group group) {
+		if(group == null) { return false; }
 		
 		if(group.hasFile(atomicConFileName)) {
 			m_convertedGroups.add(group);
 		}
+		
+		return true;
 	}
 
 	public void groupProcessingCompleted() {

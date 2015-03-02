@@ -24,6 +24,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	private Font m_consoleFont;
 	private JScrollPane m_consoleScrollPane;
 	
+	private ProgressDialog m_progressDialog;
+	
 	private JMenuBar m_menuBar;
 	private JMenu m_fileMenu;
 	private JMenuItem m_fileNewMenuItem;
@@ -152,6 +154,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		// update and show the gui window
 		update();
 		m_frame.setVisible(true);
+		
+		m_progressDialog = new ProgressDialog(m_frame);
 		
 		m_initialized = true;
 		
@@ -638,10 +642,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			return false;
 		}
 		
+		newGroupPanel.addGroupActionListener(this);
+		
 		addGroup(newGroupPanel);
 		
 		newGroupPanel.setGroupNumber(GroupManager.getGroupNumber());
-		newGroupPanel.addGroupActionListener(this);
 		newGroupPanel.setChanged(true);
 		
 		return true;
@@ -756,7 +761,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			}
 		}
 		catch(HeadlessException e) {
-			String message = "Exception thrown while loading group : \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + "): " + e.getMessage();
+			String message = "Exception thrown while loading group: \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + "): " + e.getMessage();
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -1400,6 +1405,95 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		return true;
 	}
 	
+	public void processGroupDirectory(final File directory, final GroupProcessor processor) {
+		processGroupDirectory(directory, processor, GroupProcessor.DEFAULT_RECURSIVE);
+	}
+	
+	public void processGroupDirectory(final File directory, final GroupProcessor processor, boolean recursive) {
+		if(directory == null || !directory.exists() || !directory.isDirectory() || processor == null) { return; }
+		
+		int numberOfGroupsInDirectory = processor.numberOfGroupsInDirectory(directory, recursive);
+		
+		if(numberOfGroupsInDirectory > 0) {
+			final Task task = new Task(numberOfGroupsInDirectory, m_progressDialog);
+			
+			Thread groupProcessorThread = new Thread(new Runnable() {
+				public void run() {
+					processor.processGroups(directory, task);
+				}
+			});
+			
+			processGroupsHelper(task, groupProcessorThread);
+		}
+		else {
+			SystemConsole.instance.writeLine("No groups files to process.");
+		}
+	}
+	
+	public void processGroups(final GroupCollection groups, final GroupProcessor processor) {
+		if(groups == null || processor == null) { return; }
+		
+		processGroups(groups.getGroups(), processor);
+	}
+	
+	public void processOpenGroups(final GroupProcessor processor) {
+		if(processor == null) { return; }
+		
+		final Vector<Group> openGroups = new Vector<Group>(m_groupPanels.size());
+		for(int i=0;i<m_groupPanels.size();i++) {
+			openGroups.add(getGroupFrom(m_groupPanels.elementAt(i)));
+		}
+		
+		processGroups(openGroups, processor);
+	}
+	
+	public void processGroups(final Vector<Group> groups, final GroupProcessor processor) {
+		if(groups == null || processor == null) { return; }
+		
+		if(groups.size() > 0) {
+			final Task task = new Task(groups.size(), m_progressDialog);
+			
+			Thread groupProcessorThread = new Thread(new Runnable() {
+				public void run() {
+					processor.processGroups(groups, task);
+				}
+			});
+			
+			processGroupsHelper(task, groupProcessorThread);
+		}
+		else {
+			SystemConsole.instance.writeLine("No groups to process.");
+		}
+	}
+	
+	private void processGroupsHelper(Task task, Thread groupProcessorThread) {
+		if(task == null || task.isCancelled() || task.isCompleted() || groupProcessorThread == null || groupProcessorThread.isAlive()) { return; }
+		
+		groupProcessorThread.start();
+		
+		m_progressDialog.display("Processing", "Processing groups...", 0, task.getTaskLength());
+		
+		if(m_progressDialog.userCancelled() || !task.isCompleted()) {
+			task.cancel();
+			
+			groupProcessorThread.interrupt();
+			try { groupProcessorThread.join(); } catch(InterruptedException e) { }
+			
+			m_progressDialog.clear();
+		}
+		
+		int numberOfGroupsProcessed = task.getProgress();
+		
+		if(numberOfGroupsProcessed == 0) {
+			SystemConsole.instance.writeLine("No groups were processed.");
+		}
+		else {
+			SystemConsole.instance.writeLine("Successfully processed " + numberOfGroupsProcessed + " group" + (numberOfGroupsProcessed == 1 ? "" : "s") + ".");
+			
+			updateAll();
+		}
+	}
+	
 	public void updateAll() {
 		if(m_updating) { return; }
 		
@@ -1824,15 +1918,15 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		// display a list of loaded plugins
 		else if(e.getSource() == m_pluginsListLoadedMenuItem) {
-			GroupManager.instance.displayLoadedPlugins();
+			GroupPluginManager.instance.displayLoadedPlugins();
 		}
 		// prompt for a plugin to load
 		else if(e.getSource() == m_pluginsLoadMenuItem) {
-			GroupManager.instance.loadPluginPrompt();
+			GroupPluginManager.instance.loadPluginPrompt();
 		}
 		// load all plugins
 		else if(e.getSource() == m_pluginsLoadAllMenuItem) {
-			GroupManager.instance.loadPlugins();
+			GroupPluginManager.instance.loadPlugins();
 		}
 		// toggle auto-loading of plugins
 		else if(e.getSource() == m_pluginsAutoLoadMenuItem) {
