@@ -82,6 +82,12 @@ public class GroupManager extends GroupCollection {
 			}
 		}
 		
+		if(!pluginManager.initialize(groupManagerWindow.getFrame())) {
+			JOptionPane.showMessageDialog(groupManagerWindow.getFrame(), "Failed to initialize plugin manager!", "Initialization Failed", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
+		
 		if(settings.autoLoadPlugins) {
 			pluginManager.loadPlugins();
 		}
@@ -93,7 +99,7 @@ public class GroupManager extends GroupCollection {
 		console.addTarget(groupManagerWindow);
 		
 		if(!groupManagerWindow.initialize()) {
-			JOptionPane.showMessageDialog(null, "Failed to initialize Group Manager window!", "Group Manager Init Failed", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(groupManagerWindow.getFrame(), "Failed to initialize Group Manager window!", "Initialization Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}

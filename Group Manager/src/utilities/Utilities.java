@@ -284,4 +284,19 @@ public class Utilities {
 		}
 	}
 	
+	public static boolean isComment(String data) {
+		return isComment(data, "//");
+	}
+	
+	public static boolean isComment(String data, String comment) {
+		if(data == null || comment == null || comment.length() == 0) { return false; }
+		
+		String formattedData = data.trim();
+		if(formattedData.length() == 0) { return false; }
+		
+		if(formattedData.length() < comment.length()) { return false; }
+		
+		return formattedData.startsWith(comment);
+	}
+	
 }

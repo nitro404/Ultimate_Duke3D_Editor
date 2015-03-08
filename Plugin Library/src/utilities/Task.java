@@ -4,10 +4,11 @@ import java.util.*;
 
 public class Task {
 	
-	private int m_progress;
-	private int m_length;
-	private boolean m_cancelled;
-	private Vector<TaskListener> m_listeners;
+	protected int m_progress;
+	protected int m_length;
+	protected boolean m_completed;
+	protected boolean m_cancelled;
+	protected Vector<TaskListener> m_listeners;
 	
 	public Task(int length) {
 		this(length, null);
@@ -18,6 +19,7 @@ public class Task {
 		
 		m_progress = 0;
 		m_length = length;
+		m_completed = false;
 		m_cancelled = false;
 		m_listeners = new Vector<TaskListener>();
 		
@@ -37,7 +39,7 @@ public class Task {
 	}
 	
 	public boolean isCompleted() {
-		return m_progress >= m_length;
+		return m_completed;
 	}
 	
 	public boolean isCancelled() {
@@ -65,7 +67,7 @@ public class Task {
 	}
 	
 	public void setCompleted() {
-		m_progress = m_length;
+		m_completed = true;
 		
 		notifyTaskListeners();
 	}

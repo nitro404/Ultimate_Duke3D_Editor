@@ -560,8 +560,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	}
 	
 	public boolean promptNewGroup() {
-		Vector<GroupPlugin> loadedInstantiablePlugins = GroupManager.pluginManager.getLoadedInstantiablePlugins();
-		if(loadedInstantiablePlugins.size() == 0) {
+		Vector<GroupPlugin> loadedGroupPlugins = GroupPluginManager.instance.getLoadedPlugins(GroupPlugin.class);
+		if(loadedGroupPlugins.size() == 0) {
 			String message = "No group plugins found that support instantiation. Perhaps you forgot to load all plugins?";
 			
 			SystemConsole.instance.writeLine(message);
@@ -572,7 +572,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		
 		int pluginIndex = -1;
-		Object choices[] = loadedInstantiablePlugins.toArray();
+		Object choices[] = loadedGroupPlugins.toArray();
 		Object value = JOptionPane.showInputDialog(m_frame, "Choose a group type to create:", "Choose New Group Type", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 		if(value == null) { return false; }
 		for(int i=0;i<choices.length;i++) {
@@ -581,14 +581,14 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				break;
 			}
 		}
-		if(pluginIndex < 0 || pluginIndex >= loadedInstantiablePlugins.size()) { return false; }
+		if(pluginIndex < 0 || pluginIndex >= loadedGroupPlugins.size()) { return false; }
 		
 		Group newGroup = null;
 		try {
-			newGroup = loadedInstantiablePlugins.elementAt(pluginIndex).getGroupInstance(null);
+			newGroup = loadedGroupPlugins.elementAt(pluginIndex).getNewGroupInstance(null);
 		}
 		catch(GroupInstantiationException e) {
-			String message = "Failed to create instance of \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + "\"!";
+			String message = "Failed to create instance of \"" + loadedGroupPlugins.elementAt(pluginIndex).getName() + "\"!";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -597,7 +597,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			return false;
 		}
 		
-		SystemConsole.instance.writeLine(loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " group created successfully!");
+		SystemConsole.instance.writeLine(loadedGroupPlugins.elementAt(pluginIndex).getName() + " group created successfully!");
 		
 		int fileTypeIndex = 0;
 		if(newGroup.numberOfGroupFileTypes() > 1) {
@@ -614,7 +614,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		
 		GroupPanel newGroupPanel = null;
-		try { newGroupPanel = loadedInstantiablePlugins.elementAt(pluginIndex).getGroupPanelInstance(newGroup); }
+		try { newGroupPanel = loadedGroupPlugins.elementAt(pluginIndex).getNewGroupPanelInstance(newGroup); }
 		catch(GroupPanelInstantiationException e) {
 			SystemConsole.instance.writeLine(e.getMessage());
 			
@@ -623,7 +623,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			return false;
 		}
 		if(newGroupPanel == null) {
-			String message = "Failed to instantiate group panel for \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " plugin.";
+			String message = "Failed to instantiate group panel for \"" + loadedGroupPlugins.elementAt(pluginIndex).getName() + " plugin.";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -633,7 +633,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		
 		if(!newGroupPanel.init()) {
-			String message = "Failed to initialize group panel for \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + "\" plugin.";
+			String message = "Failed to initialize group panel for \"" + loadedGroupPlugins.elementAt(pluginIndex).getName() + "\" plugin.";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -653,7 +653,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	}
 	
 	public void promptLoadGroups() {
-		if(GroupManager.pluginManager.numberOfLoadedPlugins() == 0) {
+		if(GroupPluginManager.instance.numberOfLoadedPlugins(GroupPlugin.class) == 0) {
 			String message = "No group plugins loaded. You must have at least one group plugin loaded to open a group file.";
 			
 			SystemConsole.instance.writeLine(message);
@@ -687,10 +687,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		if(files.length > 0) {
 			int numberOfGroupsFailed = files.length - numberOfGroupsLoaded;
 			if(numberOfGroupsLoaded == 0 && numberOfGroupsFailed > 0) {
-				SystemConsole.instance.writeLine(numberOfGroupsFailed + " group file" + (numberOfGroupsFailed == 1 ? "" : "s") + " failed to load, no group files loaded.");
+				SystemConsole.instance.writeLine("Failed to load " + numberOfGroupsFailed + " group file" + (numberOfGroupsFailed == 1 ? "" : "s") + ", no group files loaded.");
 			}
 			else if(numberOfGroupsLoaded > 1) {
-				SystemConsole.instance.writeLine(numberOfGroupsLoaded + " group files were loaded successfully" + (numberOfGroupsFailed == 0 ? "" : ", while " + numberOfGroupsFailed + " failed to load") + "!");
+				SystemConsole.instance.writeLine("Successfully loaded " + numberOfGroupsLoaded + " group files " + (numberOfGroupsFailed == 0 ? "" : ", while " + numberOfGroupsFailed + " failed to load") + "!");
 			}
 		}
 		
@@ -719,7 +719,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		String extension = Utilities.getFileExtension(file.getName());
 		
-		GroupPlugin plugin = GroupManager.pluginManager.getPluginForFileType(extension);
+		GroupPlugin plugin = GroupPluginManager.instance.getGroupPluginForFileFormat(extension);
 		if(plugin == null) {
 			String message = "No plugin found to load " + extension + " file type. Perhaps you forgot to load all plugins?";
 			
@@ -731,7 +731,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		
 		Group group = null;
-		try { group = plugin.getGroupInstance(file); }
+		try { group = plugin.getNewGroupInstance(file); }
 		catch(GroupInstantiationException e) {
 			SystemConsole.instance.writeLine(e.getMessage());
 			
@@ -740,7 +740,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			return false;
 		}
 		if(group == null) {
-			String message = "Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\" plugin when attempting to read group file: \"" + file.getName() + "\".";
+			String message = "Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileFormatsAsString() + ")\" plugin when attempting to read group file: \"" + file.getName() + "\".";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -751,7 +751,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		try {
 			if(!group.load()) {
-				String message = "Failed to load group: \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\".";
+				String message = "Failed to load group: \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileFormatsAsString() + ")\".";
 				
 				SystemConsole.instance.writeLine(message);
 				
@@ -761,7 +761,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			}
 		}
 		catch(HeadlessException e) {
-			String message = "Exception thrown while loading group: \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + "): " + e.getMessage();
+			String message = "Exception thrown while loading group: \"" + file.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileFormatsAsString() + "): " + e.getMessage();
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -780,7 +780,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		SystemConsole.instance.writeLine("Group file \"" + file.getName() +  "\" loaded successfully!");
 		
 		GroupPanel groupPanel = null;
-		try { groupPanel = plugin.getGroupPanelInstance(group); }
+		try { groupPanel = plugin.getNewGroupPanelInstance(group); }
 		catch(GroupPanelInstantiationException e) {
 			SystemConsole.instance.writeLine(e.getMessage());
 			
@@ -1166,7 +1166,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		File selectedFile = fileChooser.getSelectedFile();
 		String extension = Utilities.getFileExtension(selectedFile.getName());
 		
-		GroupPlugin plugin = GroupManager.pluginManager.getPluginForFileType(extension);
+		GroupPlugin plugin = GroupPluginManager.instance.getGroupPluginForFileFormat(extension);
 		if(plugin == null) {
 			String message = "No plugin found to import " + extension + " file type. Perhaps you forgot to load all plugins?";
 			
@@ -1178,7 +1178,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		
 		Group importedGroup = null;
-		try { importedGroup = plugin.getGroupInstance(selectedFile); }
+		try { importedGroup = plugin.getNewGroupInstance(selectedFile); }
 		catch(GroupInstantiationException e) {
 			SystemConsole.instance.writeLine(e.getMessage());
 			
@@ -1187,7 +1187,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			return false;
 		}
 		if(importedGroup == null) {
-			String message = "Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\" plugin when attempting to import group file: \"" + selectedFile.getName() + "\".";
+			String message = "Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileFormatsAsString() + ")\" plugin when attempting to import group file: \"" + selectedFile.getName() + "\".";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -1198,7 +1198,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		try {
 			if(!importedGroup.load()) {
-				String message = "Failed to import group: \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ")\".";
+				String message = "Failed to import group: \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileFormatsAsString() + ")\".";
 				
 				SystemConsole.instance.writeLine(message);
 				
@@ -1208,7 +1208,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			}
 		}
 		catch(HeadlessException e) {
-			String message = "Exception thrown while importing group : \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + "): " + e.getMessage();
+			String message = "Exception thrown while importing group : \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileFormatsAsString() + "): " + e.getMessage();
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -1225,7 +1225,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		
 		if(!importedGroup.verifyAllFiles()) {
-			String message = "Found one or more invalid files when importing group: \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileTypesAsString() + ").";
+			String message = "Found one or more invalid files when importing group: \"" + selectedFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedGroupFileFormatsAsString() + ").";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -1252,8 +1252,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		Group group = groupPanel.getGroup();
 		
-		Vector<GroupPlugin> loadedInstantiablePlugins = GroupManager.pluginManager.getLoadedInstantiablePluginsExcluding(group.getFileExtension());
-		if(loadedInstantiablePlugins.size() == 0) {
+		Vector<GroupPlugin> loadedGroupPlugins = GroupPluginManager.instance.getLoadedGroupPluginsExcludingFileFormat(group.getFileExtension());
+		if(loadedGroupPlugins.size() == 0) {
 			String message = "No group plugins found that support instantiation / exporting. Perhaps you forgot to load all plugins?";
 			
 			SystemConsole.instance.writeLine(message);
@@ -1264,7 +1264,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		
 		int pluginIndex = -1;
-		Object choices[] = loadedInstantiablePlugins.toArray();
+		Object choices[] = loadedGroupPlugins.toArray();
 		Object value = JOptionPane.showInputDialog(m_frame, "Choose a group type to export to:", "Choose Group Type", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 		if(value == null) { return false; }
 		for(int i=0;i<choices.length;i++) {
@@ -1273,14 +1273,14 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				break;
 			}
 		}
-		if(pluginIndex < 0 || pluginIndex >= loadedInstantiablePlugins.size()) { return false; }
+		if(pluginIndex < 0 || pluginIndex >= loadedGroupPlugins.size()) { return false; }
 		
 		Group newGroup = null;
 		try {
-			newGroup = loadedInstantiablePlugins.elementAt(pluginIndex).getGroupInstance(null);
+			newGroup = loadedGroupPlugins.elementAt(pluginIndex).getNewGroupInstance(null);
 		}
 		catch(GroupInstantiationException e) {
-			String message = "Failed to create instance of export file: \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " (" + loadedInstantiablePlugins.elementAt(pluginIndex).getSupportedGroupFileTypesAsString() + ")!";
+			String message = "Failed to create instance of export file: \"" + loadedGroupPlugins.elementAt(pluginIndex).getName() + " (" + loadedGroupPlugins.elementAt(pluginIndex).getSupportedGroupFileFormatsAsString() + ")!";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -1307,7 +1307,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		fileChooser.setDialogTitle("Export Group File");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
-		String extension = loadedInstantiablePlugins.elementAt(pluginIndex).getSupportedGroupFileType(fileTypeIndex);
+		String extension = loadedGroupPlugins.elementAt(pluginIndex).getSupportedGroupFileFormat(fileTypeIndex);
 		if(group.getFile() != null) {
 			String fileName = group.getFile().getName();
 			fileChooser.setSelectedFile(new File(Utilities.getFileNameNoExtension(fileName) + (Utilities.compareCasePercentage(fileName) < 0 ? "_copy" : "_COPY") + "." + (Utilities.compareCasePercentage(fileName) < 0 ? extension.toLowerCase() : extension.toUpperCase())));
