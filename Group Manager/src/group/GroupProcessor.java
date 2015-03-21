@@ -13,11 +13,15 @@ public abstract class GroupProcessor {
 	
 	protected Task m_task;
 	protected Vector<GroupProcessorListener> m_listeners;
+	protected boolean m_initialized;
 	
 	public GroupProcessor() {
 		m_task = null;
 		m_listeners = new Vector<GroupProcessorListener>();
+		m_initialized = true;
 	}
+	
+	public abstract boolean initialize();
 	
 	public Task getTask() {
 		return m_task;
@@ -93,6 +97,8 @@ public abstract class GroupProcessor {
 	}
 	
 	public void notifyGroupProcessingCompleted() {
+		groupProcessingCompleted();
+		
 		for(int i=0;i<m_listeners.size();i++) {
 			m_listeners.elementAt(i).groupProcessingCompleted();
 		}
@@ -162,6 +168,10 @@ public abstract class GroupProcessor {
 			}
 		}
 		
+		if(task != null) {
+			task.setCompleted();
+		}
+		
 		notifyGroupProcessingCompleted();
 	}
 	
@@ -178,28 +188,36 @@ public abstract class GroupProcessor {
 			}
 		}
 		
+		if(task != null) {
+			task.setCompleted();
+		}
+		
 		notifyGroupProcessingCompleted();
 	}
 	
-	public void processGroups(File directory, Task task) {
-		processGroups(directory, task, DEFAULT_RECURSIVE);
+	public void processGroups(File files[], Task task) {
+		processGroups(files, task, DEFAULT_RECURSIVE, 0);
 	}
 	
-	public void processGroups(File directory, Task task, boolean recursive) {
-		if(directory == null || !directory.exists() || !directory.isDirectory() || (task != null && task.isCancelled())) { return; }
+	public void processGroups(File files[], Task task, boolean recursive) {
+		processGroups(files, task, recursive, 0);
+	}
+	
+	public void processGroups(File files[], Task task, boolean recursive, int depth) {
+		if(files == null || files.length == 0 || (task != null && task.isCancelled())) { return; }
 		
 		m_task = task;
 		
-		File contents[] = directory.listFiles();
-		
-		for(int i=0;i<contents.length;i++) {
-			if(contents[i].isDirectory()) {
-				if(recursive) {
-					processGroups(contents[i], task, recursive);
-				}
+		for(int i=0;i<files.length;i++) {
+			if(files[i] == null || !files[i].exists()) { continue; }
+			
+			if(files[i].isDirectory()) {
+				if(!recursive && depth > 0) { continue; }
+				
+				processGroups(files[i].listFiles(), task, recursive, depth + 1);
 			}
-			else if(contents[i].isFile()) {
-				if(processGroup(contents[i])) {
+			else if(files[i].isFile()) {
+				if(processGroup(files[i])) {
 					if(task != null) {
 						task.addProgress(1);
 					}
@@ -207,29 +225,43 @@ public abstract class GroupProcessor {
 			}
 		}
 		
-		notifyGroupProcessingCompleted();
+		if(depth == 0 && task != null) {
+			task.setCompleted();
+			
+			notifyGroupProcessingCompleted();
+		}
 	}
 	
-	public int numberOfGroupsInDirectory(File directory) {
-		return numberOfGroupsInDirectory(directory, DEFAULT_RECURSIVE);
+	public abstract void groupProcessingCompleted();
+	
+	public int numberOfGroupsInFiles(File files[]) {
+		return numberOfGroupsInFiles(files, DEFAULT_RECURSIVE, 0);
 	}
 	
-	public int numberOfGroupsInDirectory(File directory, boolean recursive) {
-		if(directory == null || !directory.exists() || !directory.isDirectory()) { return -1; }
+	public int numberOfGroupsInFiles(File files[], boolean recursive) {
+		return numberOfGroupsInFiles(files, recursive, 0);
+	}
+	
+	protected int numberOfGroupsInFiles(File files[], boolean recursive, int depth) {
+		if(files == null || files.length == 0) { return 0; }
 		
 		int numberOfGroups = 0;
-		File contents[] = directory.listFiles();
 		
-		for(int i=0;i<contents.length;i++) {
-			if(contents[i].isDirectory()) {
-				if(recursive) {
-					numberOfGroups += numberOfGroupsInDirectory(contents[i], recursive);
+		for(int i=0;i<files.length;i++) {
+			if(files[i] == null || !files[i].exists()) { continue; }
+			
+			if(files[i].isDirectory()) {
+				if(!recursive && depth > 0) { continue; }
+				
+				numberOfGroups += numberOfGroupsInFiles(files[i].listFiles(), recursive, depth + 1);
+			}
+			else if(files[i].isFile()) {
+				if(GroupPluginManager.instance.hasGroupPluginForFileFormat(Utilities.getFileExtension(files[i].getName()))) {
+					numberOfGroups++;
 				}
 			}
-			else if(contents[i].isFile()) {
-				numberOfGroups++;
-			}
 		}
+		
 		return numberOfGroups;
 	}
 	

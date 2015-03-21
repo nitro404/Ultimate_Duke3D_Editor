@@ -214,8 +214,8 @@ public class GroupPlugin extends Plugin {
 		
 		return newGroupPanel;
 	}
-
-	public static boolean isGroupPlugin(File file) throws GroupPluginLoadException {
+	
+	public static boolean isGroupPlugin(File file) {
 		return Plugin.isPluginOfType(file, PLUGIN_TYPE);
 	}
 	
@@ -572,10 +572,6 @@ public class GroupPlugin extends Plugin {
 		if(m_name == null || p.m_name == null) { return false; }
 		
 		return m_name.equalsIgnoreCase(p.m_name);
-	}
-	
-	public String toString() {
-		return m_name;
 	}
 	
 }

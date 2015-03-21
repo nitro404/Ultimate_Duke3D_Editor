@@ -13,6 +13,14 @@ public class ConvertedGroupFinder extends GroupProcessor {
 	public ConvertedGroupFinder() {
 		m_convertedGroups = new Vector<Group>();
 	}
+
+	public boolean initialize() {
+		if(m_initialized) { return true; }
+		
+		m_initialized = true;
+		
+		return true;
+	}
 	
 	public Vector<Group> getConvertedGroups() {
 		return m_convertedGroups;
@@ -32,7 +40,7 @@ public class ConvertedGroupFinder extends GroupProcessor {
 		if(m_convertedGroups.size() == 0) {
 			SystemConsole.instance.writeLine("No converted groups found.");
 			
-			JOptionPane.showMessageDialog(null, "No converted groups found.", "No Converted Groups", JOptionPane.OK_OPTION);
+			JOptionPane.showMessageDialog(null, "No converted groups found.", "No Converted Groups", JOptionPane.INFORMATION_MESSAGE);
 		}
 		else {
 			SystemConsole.instance.writeLine("Found " + m_convertedGroups.size() + " convered groups:");
@@ -43,7 +51,7 @@ public class ConvertedGroupFinder extends GroupProcessor {
 				}
 			}
 			
-			JOptionPane.showMessageDialog(null, "Found " + m_convertedGroups.size() + " convered groups, check console for details.", m_convertedGroups.size() + " Converted Groups", JOptionPane.OK_OPTION);
+			JOptionPane.showMessageDialog(null, "Found " + m_convertedGroups.size() + " convered groups, check console for details.", m_convertedGroups.size() + " Converted Groups", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 	

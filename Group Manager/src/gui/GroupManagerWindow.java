@@ -59,6 +59,9 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	private JRadioButtonMenuItem[] m_sortTypeMenuItems;
 	private ButtonGroup m_sortDirectionButtonGroup;
 	private ButtonGroup m_sortTypeButtonGroup;
+	private JMenu m_processMenu;
+	private JMenuItem m_processGroupFilesMenuItem;
+	private JMenuItem m_processOpenGroupsMenuItem;
 	private JMenu m_settingsMenu;
 	private JMenuItem m_settingsPluginDirectoryNameMenuItem;
 	private JMenuItem m_settingsConsoleLogFileNameMenuItem;
@@ -231,6 +234,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			m_sortTypeButtonGroup.add(m_sortTypeMenuItems[i]);
 		}
 		
+		m_processMenu = new JMenu("Process");
+		m_processGroupFilesMenuItem = new JMenuItem("Group Files");
+		m_processOpenGroupsMenuItem = new JMenuItem("Open Groups");
+		
 		m_settingsMenu = new JMenu("Settings");
 		m_settingsPluginDirectoryNameMenuItem = new JMenuItem("Plugin Directory Name");
 		m_settingsConsoleLogFileNameMenuItem = new JMenuItem("Console Log File Name");
@@ -292,6 +299,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		for(int i=0;i<m_sortTypeMenuItems.length;i++) {
 			m_sortTypeMenuItems[i].addActionListener(this);
 		}
+		m_processGroupFilesMenuItem.addActionListener(this);
+		m_processOpenGroupsMenuItem.addActionListener(this);
 		m_settingsPluginDirectoryNameMenuItem.addActionListener(this);
 		m_settingsConsoleLogFileNameMenuItem.addActionListener(this);
 		m_settingsLogDirectoryNameMenuItem.addActionListener(this);
@@ -347,6 +356,9 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_sortMenu.add(m_sortManualSortMenuItem);
 		m_sortMenu.add(m_sortAutoSortMenuItem);
 		
+		m_processMenu.add(m_processGroupFilesMenuItem);
+		m_processMenu.add(m_processOpenGroupsMenuItem);
+		
 		m_settingsMenu.add(m_settingsPluginDirectoryNameMenuItem);
 		m_settingsMenu.add(m_settingsConsoleLogFileNameMenuItem);
 		m_settingsMenu.add(m_settingsLogDirectoryNameMenuItem);
@@ -375,6 +387,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_menuBar.add(m_fileMenu);
 		m_menuBar.add(m_selectMenu);
 		m_menuBar.add(m_sortMenu);
+		m_menuBar.add(m_processMenu);
 		m_menuBar.add(m_settingsMenu);
 		m_menuBar.add(m_pluginsMenu);
 		m_menuBar.add(m_windowMenu);
@@ -410,6 +423,18 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	
 	public TransferHandler getTransferHandler() {
 		return m_transferHandler;
+	}
+	
+	public Vector<Group> getOpenGroups() {
+		Vector<Group> groups = new Vector<Group>();
+		Group group = null;
+		for(int i=0;i<m_groupPanels.size();i++) {
+			group = getGroupFrom(m_groupPanels.elementAt(i));
+			if(group == null) { continue; }
+			
+			groups.add(group);
+		}
+		return groups;
 	}
 	
 	public void addGroup(GroupPanel groupPanel) {
@@ -810,6 +835,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		groupPanel.setGroupNumber(GroupManager.getGroupNumber());
 		groupPanel.addGroupActionListener(this);
+		
 		addGroup(groupPanel);
 		
 		return true;
@@ -1405,21 +1431,113 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		return true;
 	}
 	
-	public void processGroupDirectory(final File directory, final GroupProcessor processor) {
-		processGroupDirectory(directory, processor, GroupProcessor.DEFAULT_RECURSIVE);
+	public GroupProcessor promptSelectGroupProcessor() {
+		if(GroupPluginManager.instance.numberOfLoadedPlugins(GroupProcessorPlugin.class) == 0) {
+			String message = "No group processor plugins loaded. You must have at least one group processor plugin loaded.";
+			
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "No Group Processor Plugins Loaded", JOptionPane.ERROR_MESSAGE);
+			
+			return null;
+		}
+		
+		Vector<GroupProcessorPlugin> loadedGroupProcessorPlugins = GroupPluginManager.instance.getLoadedPlugins(GroupProcessorPlugin.class);
+		Object choices[] = loadedGroupProcessorPlugins.toArray();
+		Object selectedChoice = JOptionPane.showInputDialog(m_frame, "Choose a group processor to use:", "Choose Group Processor", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+		if(selectedChoice == null) { return null; }
+		
+		GroupProcessorPlugin selectedGroupProcessorPlugin = (GroupProcessorPlugin) selectedChoice;
+		
+		GroupProcessor selectedGroupProcessor = null;
+		
+		try {
+			selectedGroupProcessor = selectedGroupProcessorPlugin.getNewGroupProcessorInstance();
+		}
+		catch(GroupProcessorInstantiationException e) {
+			SystemConsole.instance.writeLine(e.getMessage());
+			
+			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Group Processor Creation Failed", JOptionPane.ERROR_MESSAGE);
+			
+			return null;
+		}
+		
+		return selectedGroupProcessor;
 	}
 	
-	public void processGroupDirectory(final File directory, final GroupProcessor processor, boolean recursive) {
-		if(directory == null || !directory.exists() || !directory.isDirectory() || processor == null) { return; }
+	public boolean checkAndPromptForRecursion(File file) {
+		if(file == null || !file.exists() || !file.isDirectory()) { return false; }
 		
-		int numberOfGroupsInDirectory = processor.numberOfGroupsInDirectory(directory, recursive);
+		return checkAndPromptForRecursion(new File[] { file });
+	}
+	
+	public boolean checkAndPromptForRecursion(File files[]) {
+		if(files == null || files.length == 0) { return false; }
 		
-		if(numberOfGroupsInDirectory > 0) {
-			final Task task = new Task(numberOfGroupsInDirectory, m_progressDialog);
+		boolean hasSubDirectory = false;
+		File contents[] = null;
+		for(int i=0;i<files.length;i++) {
+			if(files[i] == null || !files[i].exists() || !files[i].isDirectory()) { continue; }
+			
+			contents = files[i].listFiles();
+			for(int j=0;j<contents.length;j++) {
+				if(contents[j] == null || !contents[j].exists() || !contents[j].isDirectory()) { continue; }
+				
+				if(contents[j].isDirectory()) {
+					hasSubDirectory = true;
+					break;
+				}
+			}
+		}
+		
+		boolean recursive = false;
+		if(hasSubDirectory) {
+			int choice = JOptionPane.showConfirmDialog(m_frame, "Recursively process subdirectories?", "Recursive Processing", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if(choice == JOptionPane.CANCEL_OPTION) { return false; }
+			
+			recursive = choice == JOptionPane.YES_OPTION;
+		}
+		
+		return recursive;
+	}
+	
+	public void promptRunGroupProcessorOnFiles() {
+		GroupProcessor groupProcessor = promptSelectGroupProcessor();
+		if(groupProcessor == null || !groupProcessor.initialize()) { return; }
+		
+		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+		fileChooser.setDialogTitle("Process Directory");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fileChooser.setMultiSelectionEnabled(true);
+		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return; }
+		
+		File selectedFiles[] = fileChooser.getSelectedFiles();
+		
+		processGroups(selectedFiles, groupProcessor, checkAndPromptForRecursion(selectedFiles));
+	}
+	
+	public void promptRunGroupProcessorOnOpenGroups() {
+		GroupProcessor groupProcessor = promptSelectGroupProcessor();
+		if(groupProcessor == null || !groupProcessor.initialize()) { return; }
+		
+		processOpenGroups(groupProcessor);
+	}
+	
+	public void processGroups(final File[] files, final GroupProcessor groupProcessor) {
+		processGroups(files, groupProcessor, GroupProcessor.DEFAULT_RECURSIVE);
+	}
+	
+	public void processGroups(final File[] files, final GroupProcessor groupProcessor, final boolean recursive) {
+		if(files == null || files.length == 0 || groupProcessor == null) { return; }
+		
+		int numberOfGroups = groupProcessor.numberOfGroupsInFiles(files, recursive);
+		
+		if(numberOfGroups > 0) {
+			final Task task = new Task(numberOfGroups, m_progressDialog);
 			
 			Thread groupProcessorThread = new Thread(new Runnable() {
 				public void run() {
-					processor.processGroups(directory, task);
+					groupProcessor.processGroups(files, task, recursive);
 				}
 			});
 			
@@ -1430,32 +1548,27 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 	}
 	
-	public void processGroups(final GroupCollection groups, final GroupProcessor processor) {
-		if(groups == null || processor == null) { return; }
+	public void processGroups(final GroupCollection groups, final GroupProcessor groupProcessor) {
+		if(groups == null || groupProcessor == null) { return; }
 		
-		processGroups(groups.getGroups(), processor);
+		processGroups(groups.getGroups(), groupProcessor);
 	}
 	
-	public void processOpenGroups(final GroupProcessor processor) {
-		if(processor == null) { return; }
+	public void processOpenGroups(final GroupProcessor groupProcessor) {
+		if(groupProcessor == null) { return; }
 		
-		final Vector<Group> openGroups = new Vector<Group>(m_groupPanels.size());
-		for(int i=0;i<m_groupPanels.size();i++) {
-			openGroups.add(getGroupFrom(m_groupPanels.elementAt(i)));
-		}
-		
-		processGroups(openGroups, processor);
+		processGroups(getOpenGroups(), groupProcessor);
 	}
 	
-	public void processGroups(final Vector<Group> groups, final GroupProcessor processor) {
-		if(groups == null || processor == null) { return; }
+	public void processGroups(final Vector<Group> groups, final GroupProcessor groupProcessor) {
+		if(groups == null || groupProcessor == null) { return; }
 		
 		if(groups.size() > 0) {
 			final Task task = new Task(groups.size(), m_progressDialog);
 			
 			Thread groupProcessorThread = new Thread(new Runnable() {
 				public void run() {
-					processor.processGroups(groups, task);
+					groupProcessor.processGroups(groups, task);
 				}
 			});
 			
@@ -1573,6 +1686,11 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			}
 		}
 		m_sortManualSortMenuItem.setEnabled(selectedGroup == null ? false : selectedGroup.shouldSortFiles());
+		
+		int numberOfLoadedGroupProcessorPlugins = GroupPluginManager.instance.numberOfLoadedPlugins(GroupProcessorPlugin.class);
+		
+		m_processGroupFilesMenuItem.setEnabled(numberOfLoadedGroupProcessorPlugins > 0);
+		m_processOpenGroupsMenuItem.setEnabled(numberOfLoadedGroupProcessorPlugins > 0 && m_groupPanels.size() > 0);
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -1778,6 +1896,14 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				
 				selectedGroupPanel.getGroup().setAutoSortFiles(m_sortAutoSortMenuItem.isSelected());
 			}
+		}
+		// prompt to run a group processor on a set of selected files and / or directories
+		else if(e.getSource() == m_processGroupFilesMenuItem) {
+			promptRunGroupProcessorOnFiles();
+		}
+		// prompt to run a group processor on currently open groups
+		else if(e.getSource() == m_processOpenGroupsMenuItem) {
+			promptRunGroupProcessorOnOpenGroups();
 		}
 		// change the plugins folder name
 		else if(e.getSource() == m_settingsPluginDirectoryNameMenuItem) {

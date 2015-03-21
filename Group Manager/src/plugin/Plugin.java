@@ -201,7 +201,7 @@ public abstract class Plugin {
 	protected static String readCFGPluginDefinitionFileVersion(BufferedReader in, File file) throws IOException, PluginLoadException {
 		if(in == null || file == null) { return null; }
 		
-		String input, header;
+		String input, line;
 		while(true) {
 			input = in.readLine();
 			if(input == null) {
@@ -209,21 +209,21 @@ public abstract class Plugin {
 				throw new PluginLoadException("Plugin definition file \"" + file.getName() + "\" incomplete or corrupted, no header found.");
 			}
 			
-			header = input.trim();
-			if(header.length() == 0) { continue; }
+			line = input.trim();
+			if(line.length() == 0 || Utilities.isComment(line)) { continue; }
 			
-			if(!header.matches("^.* ([0-9]\\.?)+$")) {
+			if(!line.matches("^.* ([0-9]\\.?)+$")) {
 				in.close();
-				throw new PluginLoadException("Plugin definition file \"" + file.getName() + "\" has an invalid header: \"" + header + "\".");
+				throw new PluginLoadException("Plugin definition file \"" + file.getName() + "\" has an invalid header: \"" + line + "\".");
 			}
 			String[] headerData = new String[2];
-			int separatorIndex = header.lastIndexOf(' ');
+			int separatorIndex = line.lastIndexOf(' ');
 			if(separatorIndex < 0) {
 				in.close();
 				throw new PluginLoadException("Plugin definition file \"" + file.getName() + "\" is missing version number in header.");
 			}
-			headerData[0] = header.substring(0, separatorIndex);
-			headerData[1] = header.substring(separatorIndex + 1, header.length());
+			headerData[0] = line.substring(0, separatorIndex);
+			headerData[1] = line.substring(separatorIndex + 1, line.length());
 			
 			if(!headerData[0].trim().equalsIgnoreCase(CFG_PLUGIN_DEFINITION_FILE_HEADER)) {
 				in.close();

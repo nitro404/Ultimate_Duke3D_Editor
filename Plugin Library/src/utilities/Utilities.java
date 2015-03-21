@@ -291,12 +291,46 @@ public class Utilities {
 	public static boolean isComment(String data, String comment) {
 		if(data == null || comment == null || comment.length() == 0) { return false; }
 		
-		String formattedData = data.trim();
-		if(formattedData.length() == 0) { return false; }
+		int commentStartIndex = -1;
+		for(int i=0;i<data.length();i++) {
+			if(data.charAt(i) == ' ' || data.charAt(i) == '\t') { continue; }
+			
+			if(data.charAt(i) == comment.charAt(0)) {
+				commentStartIndex = i;
+				break;
+			}
+			else {
+				return false;
+			}
+		}
 		
-		if(formattedData.length() < comment.length()) { return false; }
+		if(commentStartIndex < 0 || data.length() - commentStartIndex < comment.length()) { return false; }
 		
-		return formattedData.startsWith(comment);
+		for(int i=commentStartIndex;i<data.length();i++) {
+			if(i - commentStartIndex >= comment.length()) { break; }
+			
+			if(data.charAt(i) != comment.charAt(i - commentStartIndex)) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static byte[] getResourceBytes(String resourcePath) {
+		if(resourcePath == null) { return null; }
+		InputStream in = null;
+		byte data[] = null;
+		try {
+			in = System.class.getResourceAsStream(resourcePath);
+			if(in == null) { return null; }
+			data = new byte[in.available()];
+			in.read(data);
+			in.close();
+		}
+		catch(FileNotFoundException e) { return null; }
+		catch(IOException e) { return null; }
+		return data;
 	}
 	
 }

@@ -51,6 +51,8 @@ public class Task {
 		
 		m_progress += progress;
 		
+		checkCompleted();
+		
 		notifyTaskListeners();
 		
 		return true;
@@ -61,9 +63,19 @@ public class Task {
 		
 		m_progress = progress;
 		
+		checkCompleted();
+		
 		notifyTaskListeners();
 		
 		return true;
+	}
+	
+	protected boolean checkCompleted() {
+		if(m_progress >= m_length) {
+			m_completed = true;
+		}
+		
+		return m_completed;
 	}
 	
 	public void setCompleted() {

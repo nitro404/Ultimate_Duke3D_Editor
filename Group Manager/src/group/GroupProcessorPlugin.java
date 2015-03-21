@@ -3,10 +3,8 @@ package group;
 import java.util.*;
 import java.io.*;
 import java.lang.reflect.*;
-
 import javax.xml.stream.*;
 import javax.xml.stream.events.*;
-
 import exception.*;
 import utilities.*;
 import variable.*;
@@ -366,10 +364,6 @@ public class GroupProcessorPlugin extends Plugin {
 		if(m_name == null || p.m_name == null) { return false; }
 		
 		return m_name.equalsIgnoreCase(p.m_name);
-	}
-	
-	public String toString() {
-		return m_name;
 	}
 	
 }

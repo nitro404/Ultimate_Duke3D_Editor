@@ -2,6 +2,7 @@ package variable;
 
 import java.util.*;
 import java.io.*;
+import utilities.*;
 
 public class VariableCollection {
 	
@@ -948,6 +949,9 @@ public class VariableCollection {
 			// read until the end of the file
 			while((input = in.readLine()) != null) {
 				data = input.trim();
+				
+				if(Utilities.isComment(data)) { continue; }
+				
 				if(data.length() == 0) {
 					category = null;
 					categoryIndex = Variable.NO_CATEGORY;
