@@ -194,7 +194,7 @@ public class GroupPlugin extends Plugin {
 	}
 	
 	public GroupPanel getNewGroupPanelInstance(Group group) throws GroupPanelInstantiationException {
-		if(m_groupPanelClass == null) { return null; }
+		if(m_groupPanelClass == null || group == null) { return null; }
 		
 		Constructor<?> constructor = null;
 		try { constructor = m_groupPanelClass.getDeclaredConstructor(Group.class); }
