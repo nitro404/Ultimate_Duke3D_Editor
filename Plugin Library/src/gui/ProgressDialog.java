@@ -124,8 +124,8 @@ public class ProgressDialog extends JDialog implements TaskListener, ActionListe
 		m_progressBar.setValue(0);
 	}
 	
-	public void display(String title, String message, int minimum, int maximum) {
-		if(title == null || title.trim().length() == 0 || minimum < 0 || maximum <= minimum) { return; }
+	public void display(String title, String message, int minimum, int maximum, Task task) {
+		if(title == null || title.trim().length() == 0 || minimum < 0 || maximum <= minimum || task == null || task.isCancelled() || task.isCompleted()) { return; }
 		
 		setTitle(title.trim());
 		
@@ -140,6 +140,16 @@ public class ProgressDialog extends JDialog implements TaskListener, ActionListe
 		setLocation((d.width / 2) - (getWidth() / 2), (d.height / 2) - (getHeight() / 2));
 		
 		setVisible(true);
+		
+		if(task.isCompleted()) {
+			System.out.println("Premature progress dialog task completion, closing.");
+			close();
+		}
+		
+		if(task.isCancelled()) {
+			System.out.println("Premature progress dialog task cancellation, closing.");
+			cancel();
+		}
 	}
 	
 	public void keyTyped(KeyEvent e) { }
@@ -171,7 +181,7 @@ public class ProgressDialog extends JDialog implements TaskListener, ActionListe
 			close();
 		}
 	}
-
+	
 	public void taskCancelled(Task t) {
 		cancel();
 	}
