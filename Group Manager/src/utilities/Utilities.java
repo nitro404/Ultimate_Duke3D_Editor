@@ -166,16 +166,18 @@ public class Utilities {
 			path = file.getAbsolutePath();
 		}
 		
-		int index = -1;
-		for(int i=path.length() - 1;i>=0;i--) {
-			if(path.charAt(i) == '/' || path.charAt(i) == '\\') {
-				index = i;
-				break;
+		if(file.isFile()) {
+			int index = -1;
+			for(int i=path.length() - 1;i>=0;i--) {
+				if(path.charAt(i) == '/' || path.charAt(i) == '\\') {
+					index = i;
+					break;
+				}
 			}
-		}
-		
-		if(index >= 0) {
-			path = path.substring(0, index + 1);
+			
+			if(index >= 0) {
+				path = path.substring(0, index + 1);
+			}
 		}
 		
 		if(path.charAt(path.length() - 1) != '/' && path.charAt(path.length() - 1) != '\\') {
