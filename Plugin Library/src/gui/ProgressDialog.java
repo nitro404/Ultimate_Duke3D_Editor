@@ -142,12 +142,10 @@ public class ProgressDialog extends JDialog implements TaskListener, ActionListe
 		setVisible(true);
 		
 		if(task.isCompleted()) {
-			System.out.println("Premature progress dialog task completion, closing.");
 			close();
 		}
 		
 		if(task.isCancelled()) {
-			System.out.println("Premature progress dialog task cancellation, closing.");
 			cancel();
 		}
 	}
