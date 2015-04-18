@@ -835,7 +835,7 @@ public class PluginManager {
 		});
 		pluginLoaderThread.start();
 		
-		m_progressDialog.display("Loading", "Loading plugin...", 0, 1);
+		m_progressDialog.display("Loading", "Loading plugin...", 0, 1, task);
 		
 		if(m_progressDialog.userCancelled() || !task.isCompleted()) {
 			task.cancel();
@@ -887,7 +887,7 @@ public class PluginManager {
 			});
 			pluginLoaderThread.start();
 			
-			m_progressDialog.display("Loading", "Loading plugins...", 0, numberOfUnloadedPlugins);
+			m_progressDialog.display("Loading", "Loading plugins...", 0, numberOfUnloadedPlugins, task);
 			
 			if(m_progressDialog.userCancelled() || !task.isCompleted()) {
 				task.cancel();
