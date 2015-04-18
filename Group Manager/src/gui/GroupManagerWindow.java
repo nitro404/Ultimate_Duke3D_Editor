@@ -688,11 +688,13 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			return;
 		}
 		
-		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+		JFileChooser fileChooser = new JFileChooser(SettingsManager.instance.previousOpenDirectory);
 		fileChooser.setDialogTitle("Load Group Files");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(true);
 		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return; }
+		
+		SettingsManager.instance.previousOpenDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
 		
 		loadGroups(fileChooser.getSelectedFiles());
 	}
@@ -897,7 +899,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		File groupFile = groupPanel.getGroup().getFile();
 		
-		JFileChooser fileChooser = new JFileChooser(groupFile == null ? System.getProperty("user.dir") : Utilities.getFilePath(groupFile));
+		JFileChooser fileChooser = new JFileChooser(groupFile == null ? SettingsManager.instance.previousSaveDirectory : Utilities.getFilePath(groupFile));
 		fileChooser.setDialogTitle("Save Group File As");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
@@ -926,6 +928,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			}
 		}
 		
+		SettingsManager.instance.previousSaveDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
+		
 		groupPanel.getGroup().setFile(fileChooser.getSelectedFile());
 		
 		return saveGroup(groupPanel, true);
@@ -948,11 +952,13 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	public int addFilesToGroup(GroupPanel groupPanel) {
 		if(groupPanel == null) { return 0; }
 		
-		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+		JFileChooser fileChooser = new JFileChooser(SettingsManager.instance.previousGroupFileDirectory);
 		fileChooser.setDialogTitle("Select Files to Add");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(true);
 		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION || fileChooser.getSelectedFiles().length == 0) { return 0; }
+		
+		SettingsManager.instance.previousGroupFileDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
 		
 		int numberOfFilesAdded = 0;
 		String formattedFileName = null;
@@ -1054,12 +1060,14 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		GroupFile selectedGroupFile = selectedGroupFiles.elementAt(0);
 		
-		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+		JFileChooser fileChooser = new JFileChooser(SettingsManager.instance.previousGroupFileDirectory);
 		fileChooser.setDialogTitle("Select Replacement File");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
 		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return false; }
 		if(fileChooser.getSelectedFile() == null || !fileChooser.getSelectedFile().isFile() || !fileChooser.getSelectedFile().exists()) { return false; }
+		
+		SettingsManager.instance.previousGroupFileDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
 		
 		boolean fileReplaced = groupPanel.getGroup().replaceFile(selectedGroupFile, fileChooser.getSelectedFile());
 		
@@ -1091,7 +1099,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		Vector<GroupFile> selectedGroupFiles = groupPanel.getSelectedFiles();
 		if(selectedGroupFiles.size() == 0) { return 0; }
 		
-		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+		JFileChooser fileChooser = new JFileChooser(SettingsManager.instance.previousExtractDirectory);
 		fileChooser.setDialogTitle("Extract Files");
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
@@ -1105,6 +1113,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			
 			return 0;
 		}
+		
+		SettingsManager.instance.previousExtractDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
 		
 		if(!fileChooser.getSelectedFile().exists()) {
 			int choice = JOptionPane.showConfirmDialog(m_frame, "The specified directory does not exist, create it?", "Non-Existant Directory", JOptionPane.YES_NO_CANCEL_OPTION);
@@ -1175,7 +1185,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		Group group = groupPanel.getGroup();
 		if(group == null) { return false; }
 		
-		JFileChooser fileChooser = new JFileChooser(group.getFile() == null ? System.getProperty("user.dir") : Utilities.getFilePath(group.getFile()));
+		JFileChooser fileChooser = new JFileChooser(group.getFile() == null ? SettingsManager.instance.previousOpenDirectory : Utilities.getFilePath(group.getFile()));
 		fileChooser.setDialogTitle("Import Group File");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
@@ -1189,6 +1199,9 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			
 			return false;
 		}
+		
+		SettingsManager.instance.previousOpenDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
+		
 		File selectedFile = fileChooser.getSelectedFile();
 		String extension = Utilities.getFileExtension(selectedFile.getName());
 		
@@ -1329,7 +1342,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			newGroup.setGroupFileType(newGroup.getGroupFileTypes()[fileTypeIndex]);
 		}
 		
-		JFileChooser fileChooser = new JFileChooser(group.getFile() == null ? System.getProperty("user.dir") : Utilities.getFilePath(group.getFile()));
+		JFileChooser fileChooser = new JFileChooser(group.getFile() == null ? SettingsManager.instance.previousSaveDirectory : Utilities.getFilePath(group.getFile()));
 		fileChooser.setDialogTitle("Export Group File");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
@@ -1356,6 +1369,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				break;
 			}
 		}
+		
+		SettingsManager.instance.previousSaveDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
 		
 		newGroup.setFile(fileChooser.getSelectedFile());
 		newGroup.addFiles(group);
@@ -1505,11 +1520,13 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		GroupProcessor groupProcessor = promptSelectGroupProcessor();
 		if(groupProcessor == null || !groupProcessor.initialize()) { return; }
 		
-		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+		JFileChooser fileChooser = new JFileChooser(SettingsManager.instance.previousProcessingDirectory);
 		fileChooser.setDialogTitle("Process Directory");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		fileChooser.setMultiSelectionEnabled(true);
 		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return; }
+		
+		SettingsManager.instance.previousProcessingDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
 		
 		File selectedFiles[] = fileChooser.getSelectedFiles();
 		
@@ -1584,7 +1601,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		groupProcessorThread.start();
 		
-		m_progressDialog.display("Processing", "Processing groups...", 0, task.getTaskLength());
+		m_progressDialog.display("Processing", "Processing groups...", 0, task.getTaskLength(), task);
 		
 		if(m_progressDialog.userCancelled() || !task.isCompleted()) {
 			task.cancel();
