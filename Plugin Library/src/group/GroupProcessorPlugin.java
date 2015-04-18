@@ -72,7 +72,7 @@ public class GroupProcessorPlugin extends Plugin {
 	}
 	
 	public GroupProcessorPanel getNewGroupProcessorPanelInstance(GroupProcessor groupProcessor) throws GroupProcessorPanelInstantiationException {
-		if(m_groupProcessorPanelClass == null) { return null; }
+		if(m_groupProcessorPanelClass == null || groupProcessor == null) { return null; }
 		
 		Constructor<?> constructor = null;
 		try { constructor = m_groupProcessorPanelClass.getDeclaredConstructor(GroupProcessor.class); }
