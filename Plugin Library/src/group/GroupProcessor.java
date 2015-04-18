@@ -222,6 +222,8 @@ public abstract class GroupProcessor {
 						task.addProgress(1);
 					}
 				}
+				
+				System.gc();
 			}
 		}
 		
