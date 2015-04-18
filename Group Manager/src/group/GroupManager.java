@@ -47,6 +47,8 @@ public class GroupManager extends GroupCollection {
 			String temp = args[0].trim();
 			if(temp.length() > 0) {
 				settings.settingsFileName = temp;
+				
+				console.writeLine("Using alternate settings file: " + settings.settingsFileName);
 			}
 		}
 		
