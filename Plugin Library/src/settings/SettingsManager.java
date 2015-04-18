@@ -13,6 +13,11 @@ public class SettingsManager {
 	
 	public String settingsFileName = defaultSettingsFileName;
 	public String versionFileURL = defaultVersionFileURL;
+	public String previousOpenDirectory;
+	public String previousSaveDirectory;
+	public String previousGroupFileDirectory;
+	public String previousExtractDirectory;
+	public String previousProcessingDirectory;
 	public boolean sortAllGroups;
 	public boolean autoSortFiles;
 	public GroupFileSortType sortType;
@@ -34,6 +39,11 @@ public class SettingsManager {
 	
 	public static final String defaultSettingsFileName = "Group Manager.ini";
 	public static final String defaultVersionFileURL = "http://www.nitro404.com/version/duke3d_group_manager.xml";
+	public static final String defaultOpenDirectory = System.getProperty("user.dir");
+	public static final String defaultSaveDirectory = System.getProperty("user.dir");
+	public static final String defaultGroupFileDirectory = System.getProperty("user.dir");
+	public static final String defaultExtractDirectory = System.getProperty("user.dir");
+	public static final String defaultProcessingDirectory = System.getProperty("user.dir");
 	public static final boolean defaultSortAllGroups = false;
 	public static final boolean defaultAutoSortFiles = true;
 	public static final GroupFileSortType defaultSortType = GroupFileSortType.defaultSortType;
@@ -69,6 +79,11 @@ public class SettingsManager {
 	
 	public void reset() {
 		versionFileURL = defaultVersionFileURL;
+		previousOpenDirectory = defaultOpenDirectory;
+		previousSaveDirectory = defaultSaveDirectory;
+		previousGroupFileDirectory = defaultGroupFileDirectory;
+		previousExtractDirectory = defaultExtractDirectory;
+		previousProcessingDirectory = defaultProcessingDirectory;
 		sortAllGroups = defaultSortAllGroups;
 		autoSortFiles = defaultAutoSortFiles;
 		sortType = defaultSortType;
@@ -109,6 +124,36 @@ public class SettingsManager {
 		tempString = m_settings.getValue("Version File URL", "Paths");
 		if(tempString != null) {
 			versionFileURL = tempString;
+		}
+		
+		// parse open directory path
+		tempString = m_settings.getValue("Open Directory", "Paths");
+		if(tempString != null) {
+			previousOpenDirectory = tempString;
+		}
+
+		// parse save directory path
+		tempString = m_settings.getValue("Save Directory", "Paths");
+		if(tempString != null) {
+			previousSaveDirectory = tempString;
+		}
+
+		// parse group file directory path
+		tempString = m_settings.getValue("Group File Directory", "Paths");
+		if(tempString != null) {
+			previousGroupFileDirectory = tempString;
+		}
+
+		// parse extract directory path
+		tempString = m_settings.getValue("Extract Directory", "Paths");
+		if(tempString != null) {
+			previousExtractDirectory = tempString;
+		}
+		
+		// parse processing directory path
+		tempString = m_settings.getValue("Open Directory", "Paths");
+		if(tempString != null) {
+			previousProcessingDirectory = tempString;
 		}
 		
 		// parse sort all groups flag
@@ -256,6 +301,11 @@ public class SettingsManager {
 	public boolean saveTo(String fileName) {
 		// update variables collection
 		m_settings.setValue("Version File URL", versionFileURL, "Paths");
+		m_settings.setValue("Open Directory", previousOpenDirectory, "Paths");
+		m_settings.setValue("Save Directory", previousSaveDirectory, "Paths");
+		m_settings.setValue("Group File Directory", previousGroupFileDirectory, "Paths");
+		m_settings.setValue("Extract Directory", previousExtractDirectory, "Paths");
+		m_settings.setValue("Processing Directory", previousProcessingDirectory, "Paths");
 		m_settings.setValue("Sort All Groups", sortAllGroups, "Sorting");
 		m_settings.setValue("Auto-Sort Files", autoSortFiles, "Sorting");
 		m_settings.setValue("Sort Type", sortType.getDisplayName(), "Sorting");
