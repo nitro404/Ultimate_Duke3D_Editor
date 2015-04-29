@@ -450,6 +450,12 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_mainTabbedPane.insertTab(groupPanel.getTabName(), null, groupScrollPane, groupPanel.getTabDescription(), index);
 		
 		m_mainTabbedPane.setSelectedIndex(index);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				GroupManager.groupManagerWindow.getSelectedGroupPanel().updateLayout();
+			}
+		});
 	}
 	
 	public boolean unsavedChanges() {

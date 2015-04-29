@@ -15,7 +15,7 @@ public abstract class Plugin {
 	
 	protected String m_name;
 	protected String m_version;
-	protected String m_directoryName;
+	protected String m_directoryPath;
 	protected String m_configFileName;
 	protected String m_jarFileName;
 	protected HashMap<String, Class<?>> m_classes;
@@ -25,14 +25,14 @@ public abstract class Plugin {
 	public static final String CFG_PLUGIN_DEFINITION_FILE_VERSION = "1.0";
 	public static final String CONFIG_FILE_TYPES[] = new String[] { "CFG", "XML" };
 	
-	protected Plugin(String pluginName, String pluginVersion, String jarFileName, String configFileName, String directoryName) throws IllegalArgumentException {
+	protected Plugin(String pluginName, String pluginVersion, String jarFileName, String configFileName, String directoryPath) throws IllegalArgumentException {
 		if(pluginName == null || pluginName.trim().length() == 0) { throw new IllegalArgumentException("Plugin name cannot be null or empty."); }
 		if(pluginVersion == null || pluginVersion.trim().length() == 0) { throw new IllegalArgumentException("Plugin version cannot be null or empty."); }
 		if(configFileName == null || configFileName.trim().length() == 0) { throw new IllegalArgumentException("Plugin config file name cannot be null or empty."); }
 		
 		m_name = pluginName.trim();
 		m_version = pluginVersion.trim();
-		m_directoryName = directoryName == null ? null : directoryName.trim();
+		m_directoryPath = directoryPath == null ? null : directoryPath.trim();
 		m_configFileName = configFileName.trim();
 		m_jarFileName = jarFileName;
 		m_classes = new HashMap<String, Class<?>>();
@@ -49,8 +49,8 @@ public abstract class Plugin {
 	
 	public abstract String getType();
 	
-	public String getDirectoryName() {
-		return m_directoryName;
+	public String getDirectoryPath() {
+		return m_directoryPath;
 	}
 	
 	public String getConfigFileName() {
@@ -151,7 +151,7 @@ public abstract class Plugin {
 		Class<?> c;
 		
 		try {
-			jarFile = new JarFile(Utilities.appendSlash(SettingsManager.instance.pluginDirectoryName) + Utilities.appendSlash(m_directoryName) + "/" + m_jarFileName);
+			jarFile = new JarFile(Utilities.appendSlash(SettingsManager.instance.pluginDirectoryName) + Utilities.appendSlash(m_directoryPath) + m_jarFileName);
 			
 			Pattern p = Pattern.compile(".*\\.class$", Pattern.CASE_INSENSITIVE);
 			
