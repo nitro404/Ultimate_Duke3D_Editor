@@ -1605,9 +1605,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	private void processGroupsHelper(Task task, Thread groupProcessorThread) {
 		if(task == null || task.isCancelled() || task.isCompleted() || groupProcessorThread == null || groupProcessorThread.isAlive()) { return; }
 		
-		groupProcessorThread.start();
-		
-		m_progressDialog.display("Processing", "Processing groups...", 0, task.getTaskLength(), task);
+		m_progressDialog.display("Processing", "Processing groups...", 0, task.getTaskLength(), task, groupProcessorThread);
 		
 		if(m_progressDialog.userCancelled() || !task.isCompleted()) {
 			task.cancel();
