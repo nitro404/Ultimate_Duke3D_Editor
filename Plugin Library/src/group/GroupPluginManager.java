@@ -20,12 +20,13 @@ public class GroupPluginManager extends PluginManager {
 		instance = this;
 	}
 	
-	public GroupPlugin getGroupPluginForFileFormat(String fileFormat) {
+	public Vector<GroupPlugin> getGroupPluginsForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
 		if(formattedFileFormat.length() == 0) { return null; }
 		
 		GroupPlugin groupPlugin = null;
+		Vector<GroupPlugin> groupPlugins = new Vector<GroupPlugin>();
 		for(int i=0;i<m_plugins.size();i++) {
 			if(!(m_plugins.elementAt(i) instanceof GroupPlugin)) { continue; }
 			
@@ -33,11 +34,11 @@ public class GroupPluginManager extends PluginManager {
 			
 			for(int j=0;j<groupPlugin.numberOfSupportedGroupFileFormats();j++) {
 				if(groupPlugin.getSupportedGroupFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
-					return groupPlugin;
+					groupPlugins.add(groupPlugin);
 				}
 			}
 		}
-		return null;
+		return groupPlugins;
 	}
 	
 	public boolean hasGroupPluginForFileFormat(String fileFormat) {
@@ -60,7 +61,29 @@ public class GroupPluginManager extends PluginManager {
 		return false;
 	}
 	
-	public int indexOfGroupPluginForFileFormat(String fileFormat) {
+	public int numberOfGroupPluginsForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return 0; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.length() == 0) { return 0; }
+		
+		int numberOfGroupPlugins = 0;
+		
+		GroupPlugin groupPlugin = null;
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof GroupPlugin)) { continue; }
+			
+			groupPlugin = (GroupPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<groupPlugin.numberOfSupportedGroupFileFormats();j++) {
+				if(groupPlugin.getSupportedGroupFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					numberOfGroupPlugins++;
+				}
+			}
+		}
+		return numberOfGroupPlugins;
+	}
+	
+	public int indexOfFirstGroupPluginForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return -1; }
 		String formattedFileFormat = fileFormat.trim();
 		if(formattedFileFormat.length() == 0) { return -1; }
