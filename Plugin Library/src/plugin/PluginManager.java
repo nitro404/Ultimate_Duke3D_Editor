@@ -822,9 +822,8 @@ public class PluginManager {
 				}
 			}
 		});
-		pluginLoaderThread.start();
 		
-		m_progressDialog.display("Loading", "Loading plugin...", 0, 1, task);
+		m_progressDialog.display("Loading", "Loading plugin...", 0, 1, task, pluginLoaderThread);
 		
 		if(m_progressDialog.userCancelled() || !task.isCompleted()) {
 			task.cancel();
@@ -874,9 +873,8 @@ public class PluginManager {
 					loadPlugins(new File(SettingsManager.instance.pluginDirectoryName), task);
 				}
 			});
-			pluginLoaderThread.start();
 			
-			m_progressDialog.display("Loading", "Loading plugins...", 0, numberOfUnloadedPlugins, task);
+			m_progressDialog.display("Loading", "Loading plugins...", 0, numberOfUnloadedPlugins, task, pluginLoaderThread);
 			
 			if(m_progressDialog.userCancelled() || !task.isCompleted()) {
 				task.cancel();
