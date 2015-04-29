@@ -21,8 +21,8 @@ public class GroupProcessorPlugin extends Plugin {
 	
 	public static final String PLUGIN_TYPE = "Group Processor";
 	
-	public GroupProcessorPlugin(String pluginName, String pluginVersion, String jarFileName, String configFileName, String directoryName) {
-		super(pluginName, pluginVersion, jarFileName, configFileName, directoryName);
+	public GroupProcessorPlugin(String pluginName, String pluginVersion, String jarFileName, String configFileName, String directoryPath) {
+		super(pluginName, pluginVersion, jarFileName, configFileName, directoryPath);
 		m_groupProcessorClassName = null;
 		m_groupProcessorPanelClassName = null;
 		m_groupProcessorClass = null;

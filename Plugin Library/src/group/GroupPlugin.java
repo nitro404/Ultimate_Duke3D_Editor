@@ -22,8 +22,8 @@ public class GroupPlugin extends Plugin {
 	
 	public static final String PLUGIN_TYPE = "Group";
 	
-	public GroupPlugin(String pluginName, String pluginVersion, String jarFileName, String configFileName, String directoryName) {
-		super(pluginName, pluginVersion, jarFileName, configFileName, directoryName);
+	public GroupPlugin(String pluginName, String pluginVersion, String jarFileName, String configFileName, String directoryPath) {
+		super(pluginName, pluginVersion, jarFileName, configFileName, directoryPath);
 		m_supportedGroupFileFormats = new Vector<String>();
 		m_groupClassName = null;
 		m_groupPanelClassName = null;

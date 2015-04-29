@@ -2,6 +2,7 @@ package utilities;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.file.*;
 
 public class Utilities {
 	
@@ -185,6 +186,12 @@ public class Utilities {
 		}
 		
 		return path;
+	}
+	
+	public static String getRelativizedPath(String currentPath, String basePath) {
+		if(currentPath == null || basePath == null) { return null; }
+		
+		return Paths.get(new File(basePath).getAbsolutePath()).relativize(Paths.get(new File(currentPath).getAbsolutePath())).toString();
 	}
 	
 	public static String appendSlash(String path) {

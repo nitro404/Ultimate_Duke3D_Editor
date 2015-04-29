@@ -431,18 +431,22 @@ public class PluginManager {
 			throw new PluginLoadException("Plugin definition file \"" + file.getName() + "\" is missing or invalid.");
 		}
 		
-		String directoryName;
+		String directoryPath = Utilities.getRelativizedPath(Utilities.getFilePath(file), "Plugins");
+		
+System.out.println(directoryPath);
+		
+		/*String directoryPath;
 		if(file.getPath().matches(".*[\\\\/].*")) {
-			directoryName = file.getPath().replaceAll("[\\\\/][^\\\\/]*$", "").replaceAll("^.*[\\\\/]", "");
+			directoryPath = file.getPath().replaceAll("[\\\\/][^\\\\/]*$", "").replaceAll("^.*[\\\\/]", "");
 		}
 		else {
-			directoryName = "/";
-		}
+			directoryPath = "/";
+		}*/
 		
-		String formattedDirectoryName = directoryName.trim();
-		if(formattedDirectoryName.length() == 0) {
+		/*String formattedDirectoryPath = directoryPath.trim();
+		if(formattedDirectoryPath.length() == 0) {
 			throw new PluginLoadException("Plugin must have a non-empty directory name.");
-		}
+		}*/
 		
 		String fileExtension = Utilities.getFileExtension(file.getName());
 		if(fileExtension == null) {
@@ -451,10 +455,10 @@ public class PluginManager {
 		
 		Plugin newPlugin = null;
 		if(fileExtension.equalsIgnoreCase("cfg")) {
-			newPlugin = loadPluginFromCFGFile(file, formattedDirectoryName);
+			newPlugin = loadPluginFromCFGFile(file, directoryPath);
 		}
 		else if(fileExtension.equalsIgnoreCase("xml")) {
-			newPlugin = loadPluginFromXMLFile(file, formattedDirectoryName);
+			newPlugin = loadPluginFromXMLFile(file, directoryPath);
 		}
 		else {
 			throw new PluginLoadException("Unsupported plugin configuration file type: \"" + fileExtension + "\".");
