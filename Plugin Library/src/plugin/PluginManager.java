@@ -433,21 +433,6 @@ public class PluginManager {
 		
 		String directoryPath = Utilities.getRelativizedPath(Utilities.getFilePath(file), "Plugins");
 		
-System.out.println(directoryPath);
-		
-		/*String directoryPath;
-		if(file.getPath().matches(".*[\\\\/].*")) {
-			directoryPath = file.getPath().replaceAll("[\\\\/][^\\\\/]*$", "").replaceAll("^.*[\\\\/]", "");
-		}
-		else {
-			directoryPath = "/";
-		}*/
-		
-		/*String formattedDirectoryPath = directoryPath.trim();
-		if(formattedDirectoryPath.length() == 0) {
-			throw new PluginLoadException("Plugin must have a non-empty directory name.");
-		}*/
-		
 		String fileExtension = Utilities.getFileExtension(file.getName());
 		if(fileExtension == null) {
 			throw new PluginLoadException("Plugin definition file is missing extension: \"" + file.getName() + "\".");
