@@ -16,6 +16,7 @@ public class PluginManager {
 	
 	protected Vector<Plugin> m_plugins;
 	protected HashMap<String, PluginType> m_pluginTypes;
+	protected HashMap<String, HashMap<String, String>> m_preferredPlugins;
 	
 	protected ProgressDialog m_progressDialog;
 	
@@ -26,6 +27,8 @@ public class PluginManager {
 	public PluginManager() {
 		m_plugins = new Vector<Plugin>();
 		m_pluginTypes = new HashMap<String, PluginType>();
+		m_preferredPlugins = new HashMap<String, HashMap<String, String>>();
+		
 		m_progressDialog = null;
 		m_targetFrame = null;
 		
@@ -65,6 +68,102 @@ public class PluginManager {
 		return m_pluginTypes.containsKey(pluginType.getPluginType());
 	}
 	
+	public <T extends Plugin> boolean hasPluginTypeWithClass(Class<T> pluginClass) {
+		if(pluginClass == null) { return false; }
+		
+		for(String pluginTypeName : m_pluginTypes.keySet()) {
+			if(m_pluginTypes.get(pluginTypeName).getPluginClass().equals(pluginClass)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasPluginTypeWithClass(String pluginClassName) {
+		if(pluginClassName == null) { return false; }
+		
+		String formattedPluginClassName = pluginClassName.trim();
+		if(formattedPluginClassName.length() == 0) { return false; }
+		
+		for(String pluginTypeName : m_pluginTypes.keySet()) {
+			if(m_pluginTypes.get(pluginTypeName).getPluginClass().getName().equals(pluginClassName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public int indexOfPluginType(String pluginType) {
+		if(pluginType == null) { return -1; }
+		
+		String formattedPluginType = pluginType.trim().toUpperCase();
+		if(formattedPluginType.length() == 0) { return -1; }
+		
+		int i = 0;
+		for(String currentPluginType : m_pluginTypes.keySet()) {
+			if(pluginType.equalsIgnoreCase(currentPluginType)) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
+	}
+	
+	public int indexOfPluginType(PluginType pluginType) {
+		if(!PluginType.isValid(pluginType)) { return -1; }
+		
+		int i = 0;
+		for(PluginType currentPluginType : m_pluginTypes.values()) {
+			if(pluginType.equals(currentPluginType)) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
+	}
+	
+	public <T extends Plugin> int indexOfPluginTypeWithClass(Class<T> pluginClass) {
+		if(pluginClass == null) { return -1; }
+		
+		int i = 0;
+		for(String pluginTypeName : m_pluginTypes.keySet()) {
+			if(m_pluginTypes.get(pluginTypeName).getPluginClass().equals(pluginClass)) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
+	}
+	
+	public int indexOfPluginTypeWithClass(String pluginClassName) {
+		if(pluginClassName == null) { return -1; }
+
+		String formattedPluginClassName = pluginClassName.trim();
+		if(formattedPluginClassName.length() == 0) { return -1; }
+		
+		int i = 0;
+		for(String pluginTypeName : m_pluginTypes.keySet()) {
+			if(m_pluginTypes.get(pluginTypeName).getPluginClass().getName().equals(formattedPluginClassName)) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
+	}
+	
+	public PluginType getPluginType(int index) {
+		if(index < 0 || index >= m_pluginTypes.keySet().size()) { return null; }
+		
+		int i = 0;
+		for(String currentPluginType : m_pluginTypes.keySet()) {
+			if(i == index) {
+				return m_pluginTypes.get(currentPluginType);
+			}
+			i++;
+		}
+		return null;
+	}
+	
 	public PluginType getPluginType(String pluginType) {
 		if(pluginType == null) { return null; }
 		
@@ -72,6 +171,37 @@ public class PluginManager {
 		if(formattedPluginType.length() == 0) { return null; }
 		
 		return m_pluginTypes.get(formattedPluginType);
+	}
+	
+	public <T extends Plugin> PluginType getPluginTypeWithClass(Class<T> pluginClass) {
+		if(pluginClass == null) { return null; }
+		
+		PluginType pluginType = null;
+		for(String pluginTypeName : m_pluginTypes.keySet()) {
+			pluginType = m_pluginTypes.get(pluginTypeName);
+			
+			if(pluginType.getPluginClass().equals(pluginClass)) {
+				return pluginType;
+			}
+		}
+		return null;
+	}
+
+	public PluginType getPluginTypeWithClass(String pluginClassName) {
+		if(pluginClassName == null) { return null; }
+
+		String formattedPluginClassName = pluginClassName.trim();
+		if(formattedPluginClassName.length() == 0) { return null; }
+		
+		PluginType pluginType = null;
+		for(String pluginTypeName : m_pluginTypes.keySet()) {
+			pluginType = m_pluginTypes.get(pluginTypeName);
+			
+			if(pluginType.getPluginClass().getName().equals(formattedPluginClassName)) {
+				return pluginType;
+			}
+		}
+		return null;
 	}
 	
 	public boolean addPluginType(String pluginType, Class<?> pluginClass) {
@@ -99,6 +229,20 @@ public class PluginManager {
 		return true;
 	}
 	
+	public boolean removePluginType(int index) {
+		if(index < 0 || index >= m_pluginTypes.keySet().size()) { return false; }
+		
+		int i = 0;
+		for(String currentPluginType : m_pluginTypes.keySet()) {
+			if(i == index) {
+				m_pluginTypes.remove(currentPluginType);
+				return true;
+			}
+			i++;
+		}
+		return false;
+	}
+	
 	public boolean removePluginType(String pluginType) {
 		if(pluginType == null) { return false; }
 		
@@ -120,8 +264,366 @@ public class PluginManager {
 		return true;
 	}
 	
+	public <T extends Plugin> boolean removePluginTypeWithClass(Class<T> pluginClass) {
+		if(pluginClass == null) { return false; }
+		
+		for(String pluginTypeName : m_pluginTypes.keySet()) {
+			if(m_pluginTypes.get(pluginTypeName).getPluginClass().equals(pluginClass)) {
+				m_pluginTypes.remove(pluginTypeName);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean removePluginTypeWithClass(String pluginClassName) {
+		if(pluginClassName == null) { return false; }
+
+		String formattedPluginClassName = pluginClassName.trim();
+		if(formattedPluginClassName.length() == 0) { return false; }
+		
+		for(String pluginTypeName : m_pluginTypes.keySet()) {
+			if(m_pluginTypes.get(pluginTypeName).getPluginClass().getName().equals(formattedPluginClassName)) {
+				m_pluginTypes.remove(pluginTypeName);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void clearPluginTypes() {
 		m_pluginTypes.clear();
+	}
+
+	public <T extends Plugin> int numberOfPreferredPlugins(Class<T> pluginClass) {
+		if(pluginClass == null) { return 0; }
+		
+		return numberOfPreferredPlugins(pluginClass.getName());
+	}
+	
+	public int numberOfPreferredPlugins(String pluginClassName) {
+		if(pluginClassName == null) { return 0; }
+		
+		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
+		if(pluginType == null) { return 0; }
+		
+		HashMap<String, String> preferredPluginsForPluginType = m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
+		if(preferredPluginsForPluginType == null) { return 0; }
+		
+		return preferredPluginsForPluginType.keySet().size();
+	}
+	
+	public boolean hasPreferredPlugin(String pluginName) {
+		if(pluginName == null) { return false; }
+		
+		String formattedPluginName = pluginName.trim();
+		if(formattedPluginName.length() == 0) { return false; }
+		
+		HashMap<String, String> preferredPluginsForPluginType = null;
+		for(String pluginTypeName : m_preferredPlugins.keySet()) {
+			preferredPluginsForPluginType = m_preferredPlugins.get(pluginTypeName);
+			
+			for(String extension : preferredPluginsForPluginType.keySet()) {
+				if(preferredPluginsForPluginType.get(extension).equalsIgnoreCase(formattedPluginName)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public <T extends Plugin> boolean hasPreferredPluginForFileFormat(String fileFormat, Class<T> pluginClass) {
+		if(fileFormat == null || pluginClass == null) { return false; }
+		
+		return hasPreferredPluginForFileFormat(fileFormat, pluginClass.getName());
+	}
+	
+	public boolean hasPreferredPluginForFileFormat(String fileFormat, String pluginClassName) {
+		if(fileFormat == null || pluginClassName == null) { return false; }
+		
+		String formattedFileFormat = fileFormat.trim().toUpperCase();
+		if(formattedFileFormat.length() == 0) { return false; }
+		
+		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
+		if(pluginType == null) { return false; }
+		
+		HashMap<String, String> preferredPluginsForPluginType = m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
+		if(preferredPluginsForPluginType == null) { return false; }
+		
+		return preferredPluginsForPluginType.containsKey(formattedFileFormat);
+	}
+
+	public <T extends Plugin> int indexOfPreferredPluginForFileFormat(String fileFormat, Class<T> pluginClass) {
+		if(fileFormat == null || pluginClass == null) { return -1; }
+		
+		return indexOfPreferredPluginForFileFormat(fileFormat, pluginClass.getName());
+	}
+	
+	public int indexOfPreferredPluginForFileFormat(String fileFormat, String pluginClassName) {
+		if(fileFormat == null || pluginClassName == null) { return -1; }
+		
+		String formattedFileFormat = fileFormat.trim().toUpperCase();
+		if(formattedFileFormat.length() == 0) { return -1; }
+		
+		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
+		if(pluginType == null) { return -1; }
+		
+		HashMap<String, String> preferredPluginsForPluginType = m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
+		if(preferredPluginsForPluginType == null) { return -1; }
+		
+		int i = 0;
+		for(String extension : preferredPluginsForPluginType.keySet()) {
+			if(extension.contentEquals(formattedFileFormat)) {
+				return i;
+			}
+			i++;
+		}
+		
+		return -1;
+	}
+	
+	public <T extends Plugin> String getPreferredPluginForFileFormat(String fileFormat, Class<T> pluginClass) {
+		if(fileFormat == null || pluginClass == null) { return null; }
+		
+		return getPreferredPluginForFileFormat(fileFormat, pluginClass.getName());
+	}
+	
+	public String getPreferredPluginForFileFormat(String fileFormat, String pluginClassName) {
+		if(fileFormat == null || pluginClassName == null) { return null; }
+		
+		String formattedFileFormat = fileFormat.trim().toUpperCase();
+		if(formattedFileFormat.length() == 0) { return null; }
+		
+		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
+		if(pluginType == null) { return null; }
+		
+		HashMap<String, String> preferredPluginsForPluginType = m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
+		if(preferredPluginsForPluginType == null) { return null; }
+		
+		return preferredPluginsForPluginType.get(formattedFileFormat);
+	}
+	
+	public <T extends Plugin> HashMap<String, String> getPreferredPluginsForPluginType(Class<T> pluginClass) {
+		if(pluginClass == null) { return null; }
+		
+		return getPreferredPluginsForPluginType(pluginClass.getName());
+	}
+	
+	public HashMap<String, String> getPreferredPluginsForPluginType(String pluginClassName) {
+		if(pluginClassName == null) { return null; }
+		
+		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
+		if(pluginType == null) { return null; }
+		
+ 		return m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
+	}
+
+	public VariableCollection getPreferredPluginsAsVariableCollection() {
+		VariableCollection variables = new VariableCollection();
+		
+		PluginType pluginType = null;
+		HashMap<String, String> preferredPluginsForPluginType = null;
+		for(String pluginTypeName : m_preferredPlugins.keySet()) {
+			preferredPluginsForPluginType = m_preferredPlugins.get(pluginTypeName);
+			
+			pluginType = getPluginType(pluginTypeName);
+			if(pluginType == null) {
+				SystemConsole.instance.writeLine("Unexpected missing plugin type: \"" + pluginTypeName + "\".");
+				continue;
+			}
+
+			for(String extension : preferredPluginsForPluginType.keySet()) {
+				variables.addVariable(extension, preferredPluginsForPluginType.get(extension), pluginType.getPluginType());
+			}
+		}
+		
+		return variables;
+	}
+	
+	public <T extends Plugin> boolean setPreferredPluginForFileFormat(String fileFormat, String pluginName, Class<T> pluginClass) {
+		if(fileFormat == null || pluginName == null || pluginClass == null) { return false; }
+		
+		return setPreferredPluginForFileFormat(fileFormat, pluginName, pluginClass.getName());
+	}
+	
+	public boolean setPreferredPluginForFileFormat(String fileFormat, String pluginName, String pluginClassName) {
+		if(fileFormat == null || pluginName == null || pluginClassName == null) { return false; }
+		
+		String formattedFileFormat = fileFormat.trim().toUpperCase();
+		if(formattedFileFormat.length() == 0) { return false; }
+		
+		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
+		if(pluginType == null) { return false; }
+		
+		HashMap<String, String> preferredPluginsForPluginType = m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
+		if(preferredPluginsForPluginType == null) {
+			preferredPluginsForPluginType = new HashMap<String, String>();
+			m_preferredPlugins.put(pluginType.getPluginType().toUpperCase(), preferredPluginsForPluginType);
+		}
+		
+		preferredPluginsForPluginType.put(formattedFileFormat, pluginName);
+		
+		return true;
+	}
+	
+	public boolean setPreferredPlugins(VariableCollection variables) {
+		if(variables == null) { return false; }
+		
+		return setPreferredPlugins(variables, true);
+	}
+	
+	public boolean setPreferredPlugins(VariableCollection variables, boolean clear) {
+		if(variables == null) { return false; }
+		
+		if(clear) {
+			clearPreferredPlugins();
+		}
+		
+		String formattedPluginTypeName = null;
+		for(int i=0;i<variables.numberOfCategories();i++) {
+			formattedPluginTypeName = variables.getCategory(i).toUpperCase();
+			
+			if(!hasPluginType(variables.getCategory(i))) { continue; }
+			
+			if(!m_preferredPlugins.containsKey(formattedPluginTypeName)) {
+				m_preferredPlugins.put(formattedPluginTypeName, new HashMap<String, String>());
+			}
+		}
+		
+		Variable v = null;
+		HashMap<String, String> preferredPluginsForPluginType = null;
+		for(int i=0;i<variables.numberOfVariables();i++) {
+			v = variables.getVariable(i);
+			formattedPluginTypeName = variables.getCategory(v.getCategory()).toUpperCase();
+			
+			if(!hasPluginType(variables.getCategory(v.getCategory()))) { continue; }
+			
+			preferredPluginsForPluginType = m_preferredPlugins.get(formattedPluginTypeName);
+			if(preferredPluginsForPluginType == null) {
+				SystemConsole.instance.writeLine("Failed to set preferred plugin \"" + v.getValue() + "\" (" + v.getID() + ") to plugin type: \"" + variables.getCategory(v.getCategory()) + "\" due to unexpected missing category.");
+				continue;
+			}
+			
+			preferredPluginsForPluginType.put(v.getID().toUpperCase(), v.getValue());
+		}
+		
+		return true;
+	}
+	
+	public boolean removePreferredPlugin(String pluginName) {
+		if(pluginName == null) { return false; }
+		
+		boolean pluginRemoved = false;
+		
+		HashMap<String, String> preferredPluginsForPluginType = null;
+		for(String pluginTypeName : m_preferredPlugins.keySet()) {
+			preferredPluginsForPluginType = m_preferredPlugins.get(pluginTypeName);
+			
+			for(String extension : preferredPluginsForPluginType.keySet()) {
+				if(preferredPluginsForPluginType.get(extension).equalsIgnoreCase(pluginName)) {
+					preferredPluginsForPluginType.remove(extension);
+					pluginRemoved = true;
+				}
+			}
+		}
+		return pluginRemoved;
+	}
+	
+	public <T extends Plugin> boolean removePreferredPlugin(int index, Class<T> pluginClass) {
+		if(index < 0 || pluginClass == null) { return false; }
+		
+		return removePreferredPlugin(index, pluginClass.getName());
+	}
+	
+	public boolean removePreferredPlugin(int index, String pluginClassName) {
+		if(index < 0 || pluginClassName == null) { return false; }
+		
+		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
+		if(pluginType == null) { return false; }
+		
+		HashMap<String, String> preferredPluginsForPluginType = m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
+		if(preferredPluginsForPluginType == null || index >= preferredPluginsForPluginType.keySet().size()) { return false; }
+		
+		int i = 0;
+		for(String extension : preferredPluginsForPluginType.keySet()) {
+			if(i == index) {
+				preferredPluginsForPluginType.remove(extension);
+				return true;
+			}
+			i++;
+		}
+		
+		return false;
+	}
+	
+	public <T extends Plugin> boolean removePreferredPluginForFileFormat(String fileFormat, Class<T> pluginClass) {
+		if(fileFormat == null || pluginClass == null) { return false; }
+		
+		return removePreferredPluginForFileFormat(fileFormat, pluginClass.getName());
+	}
+
+	public boolean removePreferredPluginForFileFormat(String fileFormat, String pluginClassName) {
+		if(fileFormat == null || pluginClassName == null) { return false; }
+		
+		String formattedFileFormat = fileFormat.trim().toUpperCase();
+		if(formattedFileFormat.length() == 0) { return false; }
+		
+		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
+		if(pluginType == null) { return false; }
+		
+		HashMap<String, String> preferredPluginsForPluginType = m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
+		if(preferredPluginsForPluginType == null) { return false; }
+		
+		preferredPluginsForPluginType.remove(formattedFileFormat);
+		
+		return true;
+	}
+	
+	public <T extends Plugin> boolean clearPreferredPluginsForPluginType(Class<T> pluginClass) {
+		if(pluginClass == null) { return false; }
+		
+		return clearPreferredPluginsForPluginType(pluginClass.getName());
+	}
+	
+	public boolean clearPreferredPluginsForPluginType(String pluginClassName) {
+		if(pluginClassName == null) { return false; }
+		
+		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
+		if(pluginType == null) { return false; }
+		
+		String formattedPluginTypeName = pluginType.getPluginType().toUpperCase();
+		
+		if(!m_preferredPlugins.containsKey(formattedPluginTypeName)) { return false; }
+		
+		m_preferredPlugins.remove(formattedPluginTypeName);
+		
+		return true;
+	}
+	
+	public boolean clearPreferredPluginsForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return false; }
+		
+		boolean pluginsCleared = false;
+		
+		String formattedFileFormat = fileFormat.trim().toUpperCase();
+		if(formattedFileFormat.length() == 0) { return false; }
+		
+		HashMap<String, String> preferredPluginsForPluginType = null;
+		for(String pluginType : m_preferredPlugins.keySet()) {
+			preferredPluginsForPluginType = m_preferredPlugins.get(pluginType);
+			
+			if(preferredPluginsForPluginType.containsKey(formattedFileFormat)) {
+				preferredPluginsForPluginType.remove(formattedFileFormat);
+				
+				pluginsCleared = true;
+			}
+		}
+		
+		return pluginsCleared;
+	}
+	
+	public void clearPreferredPlugins() {
+		m_preferredPlugins.clear();
 	}
 	
 	public int numberOfPlugins() {

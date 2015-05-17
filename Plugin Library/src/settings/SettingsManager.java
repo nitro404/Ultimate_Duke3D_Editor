@@ -295,6 +295,8 @@ public class SettingsManager {
 		tempColour = Utilities.parseColour(variables.getValue("Background Colour", "Interface"));
 		if(tempColour != null) { backgroundColour = tempColour; }
 		
+		GroupPluginManager.instance.setPreferredPlugins(m_settings, true);
+		
 		return true;
 	}
 	
@@ -322,6 +324,7 @@ public class SettingsManager {
 		m_settings.setValue("Auto-Scroll Console", autoScrollConsole, "Console");
 		m_settings.setValue("Max Console History", maxConsoleHistory, "Console");
 		m_settings.setValue("Background Colour", backgroundColour.getRed() + ", " + backgroundColour.getGreen() + ", " + backgroundColour.getBlue(), "Interface");
+		m_settings.addVariables(GroupPluginManager.instance.getPreferredPluginsAsVariableCollection(), true);
 		
 		m_settings.sort();
 		
