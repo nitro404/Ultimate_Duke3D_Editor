@@ -646,18 +646,40 @@ public class VariableCollection {
 	 * 
 	 * @param id the id of the Variable to be created.
 	 * @param value the value of the Variable to be created.
-	 * @return true if the Variable is valid and not already contained within the collection of Variables.
+	 * @return true if the Variable is valid and was added or updated.
 	 */
 	public boolean addVariable(String id, String value) {
+		if(id == null || id.length() == 0) { return false; }
+		
+		return addVariable(id, value, true);
+	}
+	
+	/**
+	 * Creates and adds a Variable object to the collection of Variables.
+	 * 
+	 * @param id the id of the Variable to be created.
+	 * @param value the value of the Variable to be created.
+	 * @param update determines if the variable should be updated, if it already exists.
+	 * @return true if the Variable is valid and was added or updated.
+	 */
+	public boolean addVariable(String id, String value, boolean update) {
 		if(id == null || id.length() == 0) { return false; }
 		
 		String formattedID = id.trim();
 		
 		if(formattedID.length() == 0) { return false; }
 		
-		if(!hasVariable(formattedID)) {
+		Variable v = getVariable(formattedID);
+		
+		if(v == null) {
 			m_variables.add(new Variable(formattedID, value, Variable.NO_CATEGORY));
 			return true;
+		}
+		else {
+			if(update) {
+				v.setValue(value);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -668,19 +690,42 @@ public class VariableCollection {
 	 * @param id the id of the Variable to be created.
 	 * @param value the value of the Variable to be created.
 	 * @param category the name of the category associated with the Variable.
-	 * @return true if the Variable is valid and not already contained within the collection of Variables.
+	 * @return true if the Variable is valid and was added or updated.
 	 */
 	public boolean addVariable(String id, String value, String category) {
+		if(id == null || id.length() == 0) { return false; }
+		
+		return addVariable(id, value, category, true);
+	}
+	
+	/**
+	 * Creates and adds a Variable object to the collection of Variables.
+	 * 
+	 * @param id the id of the Variable to be created.
+	 * @param value the value of the Variable to be created.
+	 * @param category the name of the category associated with the Variable.
+	 * @param update determines if the variable should be updated, if it already exists.
+	 * @return true if the Variable is valid and was added or updated.
+	 */
+	public boolean addVariable(String id, String value, String category, boolean update) {
 		if(id == null || id.length() == 0) { return false; }
 		
 		String formattedID = id.trim();
 		
 		if(formattedID.length() == 0) { return false; }
 		
-		if(!hasVariable(formattedID, category)) {
+		Variable v = getVariable(formattedID, category);
+		
+		if(v == null) {
 			int categoryIndex = addCategory(category);
 			m_variables.add(new Variable(formattedID, value, categoryIndex));
 			return true;
+		}
+		else {
+			if(update) {
+				v.setValue(value);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -692,12 +737,32 @@ public class VariableCollection {
 	 * @return true if the Variable is valid and not already contained within the collection of Variables.
 	 */
 	public boolean addVariable(Variable v) {
-		// verify that the Variable is valid and not already contained in the Variables collection, then add it
 		if(v == null || v.getID().length() == 0) { return false; }
 		
-		if(!hasVariable(v) && v.getCategory() < m_categories.size()) {
+		return addVariable(v, true);
+	}
+	
+	/**
+	 * Adds a Variable object to the collection of Variables.
+	 * 
+	 * @param v the Variable to be added to the collection of Variables.
+	 * @param update determines if the variable should be updated, if it already exists.
+	 * @return true if the Variable is valid and was added or updated.
+	 */
+	public boolean addVariable(Variable v, boolean update) {
+		if(v == null || v.getID().length() == 0 || v.getCategory() >= m_categories.size()) { return false; }
+		
+		int variableIndex = indexOfVariable(v);
+		
+		if(variableIndex < 0) {
 			m_variables.add(v);
 			return true;
+		}
+		else {
+			if(update) {
+				m_variables.elementAt(variableIndex).setValue(v.getValue());
+				return true;
+			}
 		}
 		return false;
 	}
@@ -712,7 +777,22 @@ public class VariableCollection {
 		
 		// loop through all of the variables in the specified Vector of Variable objects and add them to the current collection
 		for(int i=0;i<v.length;i++) {
-			addVariable(v[i]);
+			addVariable(v[i], true);
+		}
+	}
+	
+	/**
+	 * Adds (merges) a Vector of Variable objects into the current collection.
+	 * 
+	 * @param v a Vector of Variable objects to add (merge) into the current Variables collection.
+	 * @param update determines if variables should be updated, if they already exist.
+	 */
+	public void addVariables(Variable[] v, boolean update) {
+		if(v == null) { return; }
+		
+		// loop through all of the variables in the specified Vector of Variable objects and add them to the current collection
+		for(int i=0;i<v.length;i++) {
+			addVariable(v[i], update);
 		}
 	}
 	
@@ -726,7 +806,22 @@ public class VariableCollection {
 		
 		// loop through all of the variables in the specified Vector of Variable objects and add them to the current collection
 		for(int i=0;i<v.size();i++) {
-			addVariable(v.elementAt(i));
+			addVariable(v.elementAt(i), true);
+		}
+	}
+	
+	/**
+	 * Adds (merges) a Vector of Variable objects into the current collection.
+	 * 
+	 * @param v a Vector of Variable objects to add (merge) into the current Variables collection.
+	 * @param update determines if variables should be updated, if they already exist.
+	 */
+	public void addVariables(Vector<Variable> v, boolean update) {
+		if(v == null) { return; }
+		
+		// loop through all of the variables in the specified Vector of Variable objects and add them to the current collection
+		for(int i=0;i<v.size();i++) {
+			addVariable(v.elementAt(i), update);
 		}
 	}
 
@@ -740,7 +835,22 @@ public class VariableCollection {
 		
 		// loop through all of the variables in the specified Variables collection and add them to the current collection
 		for(int i=0;i<v.m_variables.size();i++) {
-			addVariable(v.m_variables.elementAt(i));
+			addVariable(v.m_variables.elementAt(i), true);
+		}
+	}
+	
+	/**
+	 * Adds (merges) another VariableSystem into the current collection.
+	 * 
+	 * @param v the collection of Variables to add (merge) into the current VariableSystem.
+	 * @param update determines if variables should be updated, if they already exist.
+	 */
+	public void addVariables(VariableCollection v, boolean update) {
+		if(v == null) { return; }
+		
+		// loop through all of the variables in the specified Variables collection and add them to the current collection
+		for(int i=0;i<v.m_variables.size();i++) {
+			addVariable(v.m_variables.elementAt(i), update);
 		}
 	}
 	
@@ -950,13 +1060,13 @@ public class VariableCollection {
 			while((input = in.readLine()) != null) {
 				data = input.trim();
 				
-				if(Utilities.isComment(data)) { continue; }
-				
 				if(data.length() == 0) {
 					category = null;
 					categoryIndex = Variable.NO_CATEGORY;
 					continue;
 				}
+
+				if(Utilities.isComment(data)) { continue; }
 				
 				// parse a category
 				if(data.length() >= 2 && data.charAt(0) == '[' && data.charAt(data.length() - 1) == ']') {
