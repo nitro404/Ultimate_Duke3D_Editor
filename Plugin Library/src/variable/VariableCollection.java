@@ -770,15 +770,34 @@ public class VariableCollection {
 	/**
 	 * Adds (merges) a Vector of Variable objects into the current collection.
 	 * 
-	 * @param v a Vector of Variable objects to add (merge) into the current Variables collection.
+	 * @param variables a Vector of Variable objects to add (merge) into the current Variables collection.
 	 */
-	public void addVariables(Variable[] v) {
-		if(v == null) { return; }
+	public void addVariables(Variable[] variables) {
+		addVariables(variables, true);
+	}
+	
+	/**
+	 * Adds (merges) a Vector of Variable objects into the current collection.
+	 * 
+	 * @param variables a Vector of Variable objects to add (merge) into the current Variables collection.
+	 * @param update determines if variables should be updated, if they already exist.
+	 */
+	public void addVariables(Variable[] variables, boolean update) {
+		if(variables == null) { return; }
 		
 		// loop through all of the variables in the specified Vector of Variable objects and add them to the current collection
-		for(int i=0;i<v.length;i++) {
-			addVariable(v[i], true);
+		for(int i=0;i<variables.length;i++) {
+			addVariable(variables[i], update);
 		}
+	}
+	
+	/**
+	 * Adds (merges) a Vector of Variable objects into the current collection.
+	 * 
+	 * @param variables a Vector of Variable objects to add (merge) into the current Variables collection.
+	 */
+	public void addVariables(Vector<Variable> variables) {
+		addVariables(variables, true);
 	}
 	
 	/**
@@ -787,70 +806,38 @@ public class VariableCollection {
 	 * @param v a Vector of Variable objects to add (merge) into the current Variables collection.
 	 * @param update determines if variables should be updated, if they already exist.
 	 */
-	public void addVariables(Variable[] v, boolean update) {
-		if(v == null) { return; }
+	public void addVariables(Vector<Variable> variables, boolean update) {
+		if(variables == null) { return; }
 		
 		// loop through all of the variables in the specified Vector of Variable objects and add them to the current collection
-		for(int i=0;i<v.length;i++) {
-			addVariable(v[i], update);
-		}
-	}
-	
-	/**
-	 * Adds (merges) a Vector of Variable objects into the current collection.
-	 * 
-	 * @param v a Vector of Variable objects to add (merge) into the current Variables collection.
-	 */
-	public void addVariables(Vector<Variable> v) {
-		if(v == null) { return; }
-		
-		// loop through all of the variables in the specified Vector of Variable objects and add them to the current collection
-		for(int i=0;i<v.size();i++) {
-			addVariable(v.elementAt(i), true);
-		}
-	}
-	
-	/**
-	 * Adds (merges) a Vector of Variable objects into the current collection.
-	 * 
-	 * @param v a Vector of Variable objects to add (merge) into the current Variables collection.
-	 * @param update determines if variables should be updated, if they already exist.
-	 */
-	public void addVariables(Vector<Variable> v, boolean update) {
-		if(v == null) { return; }
-		
-		// loop through all of the variables in the specified Vector of Variable objects and add them to the current collection
-		for(int i=0;i<v.size();i++) {
-			addVariable(v.elementAt(i), update);
+		for(int i=0;i<variables.size();i++) {
+			addVariable(variables.elementAt(i), update);
 		}
 	}
 
 	/**
 	 * Adds (merges) another VariableSystem into the current collection.
 	 * 
-	 * @param v the collection of Variables to add (merge) into the current VariableSystem. 
+	 * @param variables the collection of Variables to add (merge) into the current VariableSystem. 
 	 */
-	public void addVariables(VariableCollection v) {
-		if(v == null) { return; }
-		
-		// loop through all of the variables in the specified Variables collection and add them to the current collection
-		for(int i=0;i<v.m_variables.size();i++) {
-			addVariable(v.m_variables.elementAt(i), true);
-		}
+	public void addVariables(VariableCollection variables) {
+		addVariables(variables, true);
 	}
 	
 	/**
 	 * Adds (merges) another VariableSystem into the current collection.
 	 * 
-	 * @param v the collection of Variables to add (merge) into the current VariableSystem.
+	 * @param variables the collection of Variables to add (merge) into the current VariableSystem.
 	 * @param update determines if variables should be updated, if they already exist.
 	 */
-	public void addVariables(VariableCollection v, boolean update) {
-		if(v == null) { return; }
+	public void addVariables(VariableCollection variables, boolean update) {
+		if(variables == null) { return; }
 		
 		// loop through all of the variables in the specified Variables collection and add them to the current collection
-		for(int i=0;i<v.m_variables.size();i++) {
-			addVariable(v.m_variables.elementAt(i), update);
+		Variable v = null;
+		for(int i=0;i<variables.m_variables.size();i++) {
+			v = variables.m_variables.elementAt(i);
+			addVariable(v.getID(), v.getValue(), variables.getCategory(v.getCategory()), update);
 		}
 	}
 	
