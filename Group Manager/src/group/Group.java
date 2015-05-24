@@ -849,7 +849,7 @@ public abstract class Group {
 				}
 				else {
 					if(replace) {
-						m_files.set(i, files[i]);
+						m_files.set(fileIndex, files[i]);
 						
 						numberOfFilesAdded++;
 					}
@@ -885,7 +885,7 @@ public abstract class Group {
 				}
 				else {
 					if(replace) {
-						m_files.set(i, files.elementAt(i));
+						m_files.set(fileIndex, files.elementAt(i));
 						
 						numberOfFilesAdded++;
 					}
@@ -945,7 +945,7 @@ public abstract class Group {
 			}
 			else {
 				if(replace) {
-					m_files.set(i, g);
+					m_files.set(fileIndex, g);
 					
 					numberOfFilesAdded++;
 				}
