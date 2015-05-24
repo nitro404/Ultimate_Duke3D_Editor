@@ -108,56 +108,56 @@ public class GroupPluginManager extends PluginManager {
 		return -1;
 	}
 	
-	public String getLoadedGroupPluginsAsStringExcludingFileFormat(String fileFormat) {
+	public String getGroupPluginsAsStringExcludingFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
 		if(formattedFileFormat.length() == 0) { return null; }
 		
 		Plugin plugin = null;
 		GroupPlugin groupPlugin = null;
-		String loadedGroupPluginsList = new String();
+		String groupPluginsList = new String();
 		
 		for(int i=0;i<m_plugins.size();i++) {
 			plugin = m_plugins.elementAt(i);
 			
-			if(plugin.isLoaded() && plugin instanceof GroupPlugin) {
+			if(plugin instanceof GroupPlugin) {
 				groupPlugin = (GroupPlugin) plugin;
 				
 				if(groupPlugin.hasSupportedGroupFileFormat(formattedFileFormat)) {
-					if(loadedGroupPluginsList.length() > 0) {
-						loadedGroupPluginsList += ", ";
+					if(groupPluginsList.length() > 0) {
+						groupPluginsList += ", ";
 					}
 					
-					loadedGroupPluginsList += groupPlugin.getName();
+					groupPluginsList += groupPlugin.getName();
 				}
 			}
 		}
 		
-		return loadedGroupPluginsList;
+		return groupPluginsList;
 	}
 	
-	public Vector<GroupPlugin> getLoadedGroupPluginsExcludingFileFormat(String fileFormat) {
+	public Vector<GroupPlugin> getGroupPluginsExcludingFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
 		if(formattedFileFormat.length() == 0) { return null; }
 		
 		Plugin plugin = null;
 		GroupPlugin groupPlugin = null;
-		Vector<GroupPlugin> loadedGroupPlugins = new Vector<GroupPlugin>();
+		Vector<GroupPlugin> groupPlugins = new Vector<GroupPlugin>();
 		
 		for(int i=0;i<m_plugins.size();i++) {
 			plugin = m_plugins.elementAt(i);
 			
-			if(plugin.isLoaded() && plugin instanceof GroupPlugin) {
+			if(plugin instanceof GroupPlugin) {
 				groupPlugin = (GroupPlugin) plugin;
 				
 				if(groupPlugin.hasSupportedGroupFileFormat(formattedFileFormat)) {
-					loadedGroupPlugins.add(groupPlugin);
+					groupPlugins.add(groupPlugin);
 				}
 			}
 		}
 		
-		return loadedGroupPlugins;
+		return groupPlugins;
 	}
 	
 

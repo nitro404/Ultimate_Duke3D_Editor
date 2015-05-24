@@ -591,7 +591,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	}
 	
 	public boolean promptNewGroup() {
-		Vector<GroupPlugin> loadedGroupPlugins = GroupPluginManager.instance.getLoadedPlugins(GroupPlugin.class);
+		Vector<GroupPlugin> loadedGroupPlugins = GroupPluginManager.instance.getPlugins(GroupPlugin.class);
 		if(loadedGroupPlugins.size() == 0) {
 			String message = "No group plugins found that support instantiation. Perhaps you forgot to load all plugins?";
 			
@@ -684,7 +684,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	}
 	
 	public void promptLoadGroups() {
-		if(GroupPluginManager.instance.numberOfLoadedPlugins(GroupPlugin.class) == 0) {
+		if(GroupPluginManager.instance.numberOfPlugins(GroupPlugin.class) == 0) {
 			String message = "No group plugins loaded. You must have at least one group plugin loaded to open a group file.";
 			
 			SystemConsole.instance.writeLine(message);
@@ -1303,7 +1303,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		Group group = groupPanel.getGroup();
 		
-		Vector<GroupPlugin> loadedGroupPlugins = GroupPluginManager.instance.getLoadedGroupPluginsExcludingFileFormat(group.getFileExtension());
+		Vector<GroupPlugin> loadedGroupPlugins = GroupPluginManager.instance.getGroupPluginsExcludingFileFormat(group.getFileExtension());
 		if(loadedGroupPlugins.size() == 0) {
 			String message = "No group plugins found that support instantiation / exporting. Perhaps you forgot to load all plugins?";
 			
@@ -1459,7 +1459,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	}
 	
 	public GroupProcessor promptSelectGroupProcessor() {
-		if(GroupPluginManager.instance.numberOfLoadedPlugins(GroupProcessorPlugin.class) == 0) {
+		if(GroupPluginManager.instance.numberOfPlugins(GroupProcessorPlugin.class) == 0) {
 			String message = "No group processor plugins loaded. You must have at least one group processor plugin loaded.";
 			
 			SystemConsole.instance.writeLine(message);
@@ -1469,7 +1469,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			return null;
 		}
 		
-		Vector<GroupProcessorPlugin> loadedGroupProcessorPlugins = GroupPluginManager.instance.getLoadedPlugins(GroupProcessorPlugin.class);
+		Vector<GroupProcessorPlugin> loadedGroupProcessorPlugins = GroupPluginManager.instance.getPlugins(GroupProcessorPlugin.class);
 		Object choices[] = loadedGroupProcessorPlugins.toArray();
 		Object selectedChoice = JOptionPane.showInputDialog(m_frame, "Choose a group processor to use:", "Choose Group Processor", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 		if(selectedChoice == null) { return null; }
@@ -1714,7 +1714,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		m_sortManualSortMenuItem.setEnabled(selectedGroup == null ? false : selectedGroup.shouldSortFiles());
 		
-		int numberOfLoadedGroupProcessorPlugins = GroupPluginManager.instance.numberOfLoadedPlugins(GroupProcessorPlugin.class);
+		int numberOfLoadedGroupProcessorPlugins = GroupPluginManager.instance.numberOfPlugins(GroupProcessorPlugin.class);
 		
 		m_processGroupFilesMenuItem.setEnabled(numberOfLoadedGroupProcessorPlugins > 0);
 		m_processOpenGroupsMenuItem.setEnabled(numberOfLoadedGroupProcessorPlugins > 0 && m_groupPanels.size() > 0);
@@ -2071,7 +2071,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		// display a list of loaded plugins
 		else if(e.getSource() == m_pluginsListLoadedMenuItem) {
-			GroupPluginManager.instance.displayLoadedPlugins();
+			GroupPluginManager.instance.displayPlugins();
 		}
 		// prompt for a plugin to load
 		else if(e.getSource() == m_pluginsLoadMenuItem) {

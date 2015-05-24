@@ -744,84 +744,46 @@ public class PluginManager {
 		return -1;
 	}
 	
-	public int numberOfLoadedPlugins() {
-		int numberOfLoadedPlugins = 0;
+	public String getPluginsAsString() {
+		String pluginList = new String();
 		
 		for(int i=0;i<m_plugins.size();i++) {
-			if(m_plugins.elementAt(i).isLoaded()) {
-				numberOfLoadedPlugins++;
+			if(pluginList.length() > 0) {
+				pluginList += ", ";
 			}
+			
+			pluginList += m_plugins.elementAt(i).getName();
 		}
 		
-		return numberOfLoadedPlugins;
+		return pluginList;
 	}
 
-	public <T extends Plugin> int numberOfLoadedPlugins(Class<T> type) {
-		int numberOfLoadedPlugins = 0;
+	public <T extends Plugin> String getPluginsAsString(Class<T> type) {
+		String pluginList = new String();
 		
 		for(int i=0;i<m_plugins.size();i++) {
-			if(m_plugins.elementAt(i).isLoaded() && type.isAssignableFrom(m_plugins.elementAt(i).getClass())) {
-				numberOfLoadedPlugins++;
-			}
-		}
-		
-		return numberOfLoadedPlugins;
-	}
-	
-	public String getLoadedPluginsAsString() {
-		String loadedPluginList = new String();
-		
-		for(int i=0;i<m_plugins.size();i++) {
-			if(m_plugins.elementAt(i).isLoaded()) {
-				if(loadedPluginList.length() > 0) {
-					loadedPluginList += ", ";
+			if(type.isAssignableFrom(m_plugins.elementAt(i).getClass())) {
+				if(pluginList.length() > 0) {
+					pluginList += ", ";
 				}
 				
-				loadedPluginList += m_plugins.elementAt(i).getName();
+				pluginList += m_plugins.elementAt(i).getName();
 			}
 		}
 		
-		return loadedPluginList;
-	}
-
-	public <T extends Plugin> String getLoadedPluginsAsString(Class<T> type) {
-		String loadedPluginList = new String();
-		
-		for(int i=0;i<m_plugins.size();i++) {
-			if(m_plugins.elementAt(i).isLoaded() && type.isAssignableFrom(m_plugins.elementAt(i).getClass())) {
-				if(loadedPluginList.length() > 0) {
-					loadedPluginList += ", ";
-				}
-				
-				loadedPluginList += m_plugins.elementAt(i).getName();
-			}
-		}
-		
-		return loadedPluginList;
+		return pluginList;
 	}
 	
-	public Vector<Plugin> getLoadedPlugins() {
-		Vector<Plugin> loadedPlugins = new Vector<Plugin>();
+	public <T extends Plugin> Vector<T> getPlugins(Class<T> type) {
+		Vector<T> plugins = new Vector<T>();
 		
 		for(int i=0;i<m_plugins.size();i++) {
-			if(m_plugins.elementAt(i).isLoaded()) {
-				loadedPlugins.add(m_plugins.elementAt(i));
+			if(type.isAssignableFrom(m_plugins.elementAt(i).getClass())) {
+				plugins.add(type.cast(m_plugins.elementAt(i)));
 			}
 		}
 		
-		return loadedPlugins;
-	}
-
-	public <T extends Plugin> Vector<T> getLoadedPlugins(Class<T> type) {
-		Vector<T> loadedPlugins = new Vector<T>();
-		
-		for(int i=0;i<m_plugins.size();i++) {
-			if(m_plugins.elementAt(i).isLoaded() && type.isAssignableFrom(m_plugins.elementAt(i).getClass())) {
-				loadedPlugins.add(type.cast(m_plugins.elementAt(i)));
-			}
-		}
-		
-		return loadedPlugins;
+		return plugins;
 	}
 	
 	public int numberOfUnloadedPlugins(File file) {
@@ -1263,17 +1225,16 @@ public class PluginManager {
 		return plugin;
 	}
 	
-	public void displayLoadedPlugins() {
+	public void displayPlugins() {
 		if(!m_initialized) { return; }
 		
-		Vector<Plugin> loadedPlugins = getLoadedPlugins();
-		if(loadedPlugins.size() > 0) {
-			String listOfLoadedPlugins = new String();
-			for(int i=0;i<loadedPlugins.size();i++) {
-				listOfLoadedPlugins += (i + 1) + ": " + loadedPlugins.elementAt(i).getName() + (i < loadedPlugins.size() - 1 ? "\n" : "");
+		if(m_plugins.size() > 0) {
+			String listOfPlugins = new String();
+			for(int i=0;i<m_plugins.size();i++) {
+				listOfPlugins += (i + 1) + ": " + m_plugins.elementAt(i).getName() + (i < m_plugins.size() - 1 ? "\n" : "");
 			}
 			
-			JOptionPane.showMessageDialog(m_targetFrame, "Detected " + loadedPlugins.size() + " loaded plugin" + (loadedPlugins.size() == 1 ? "" : "s") + ":\n" + listOfLoadedPlugins, loadedPlugins.size() + " Plugin" + (loadedPlugins.size() == 1 ? "" : "s") +" Loaded", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(m_targetFrame, "Detected " + m_plugins.size() + " loaded plugin" + (m_plugins.size() == 1 ? "" : "s") + ":\n" + listOfPlugins, m_plugins.size() + " Plugin" + (m_plugins.size() == 1 ? "" : "s") +" Loaded", JOptionPane.INFORMATION_MESSAGE);
 		}
 		else {
 			JOptionPane.showMessageDialog(m_targetFrame, "No plugins currently loaded.", "No Plugins Loaded", JOptionPane.INFORMATION_MESSAGE);
