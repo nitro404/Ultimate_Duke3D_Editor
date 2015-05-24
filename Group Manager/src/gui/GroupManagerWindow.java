@@ -763,22 +763,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			return false;
 		}
 		
-		GroupPlugin plugin = plugins.elementAt(0);
-		if(plugins.size() > 1) {
-			int pluginIndex = -1;
-			Object choices[] = plugins.toArray();
-			Object value = JOptionPane.showInputDialog(m_frame, "Found multiple plugins supporting this file format.\nChoose a plugin to open this file with:", "Choose Plugin", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
-			if(value == null) { return false; }
-			for(int i=0;i<choices.length;i++) {
-				if(choices[i] == value) {
-					pluginIndex = i;
-					break;
-				}
-			}
-			if(pluginIndex < 0 || pluginIndex >= plugins.size()) { return false; }
-			
-			plugin = plugins.elementAt(pluginIndex);
-		}
+		GroupPlugin plugin = GroupPluginManager.instance.getPreferredGroupPluginPrompt(extension);
+		if(plugin == null) { return false; }
 		
 		Group group = null;
 		try { group = plugin.getNewGroupInstance(file); }
@@ -1239,22 +1225,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			return false;
 		}
 		
-		GroupPlugin plugin = plugins.elementAt(0);
-		if(plugins.size() > 1) {
-			int pluginIndex = -1;
-			Object choices[] = plugins.toArray();
-			Object value = JOptionPane.showInputDialog(m_frame, "Found multiple plugins supporting this file format.\nChoose a plugin to import this file with:", "Choose Plugin", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
-			if(value == null) { return false; }
-			for(int i=0;i<choices.length;i++) {
-				if(choices[i] == value) {
-					pluginIndex = i;
-					break;
-				}
-			}
-			if(pluginIndex < 0 || pluginIndex >= plugins.size()) { return false; }
-			
-			plugin = plugins.elementAt(pluginIndex);
-		}
+		GroupPlugin plugin = GroupPluginManager.instance.getPreferredGroupPluginPrompt(extension);
+		if(plugin == null) { return false; }
 		
 		Group importedGroup = null;
 		try { importedGroup = plugin.getNewGroupInstance(selectedFile); }
