@@ -382,6 +382,24 @@ public class PluginManager {
 		return -1;
 	}
 	
+	public <T extends Plugin> Collection<String> getPreferredFileFormats(Class<T> pluginClass) {
+		if(pluginClass == null) { return null; }
+		
+		return getPreferredFileFormats(pluginClass.getName());
+	}
+	
+	public Collection<String> getPreferredFileFormats(String pluginClassName) {
+		if(pluginClassName == null) { return null; }
+		
+		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
+		if(pluginType == null) { return null; }
+		
+		HashMap<String, String> preferredPluginsForPluginType = m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
+		if(preferredPluginsForPluginType == null) { return null; }
+		
+		return preferredPluginsForPluginType.keySet();
+	}
+	
 	public <T extends Plugin> String getPreferredPluginForFileFormat(String fileFormat, Class<T> pluginClass) {
 		if(fileFormat == null || pluginClass == null) { return null; }
 		

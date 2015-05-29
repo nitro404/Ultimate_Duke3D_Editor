@@ -160,7 +160,73 @@ public class GroupPluginManager extends PluginManager {
 		return groupPlugins;
 	}
 	
-
+	public Vector<String> getSupportedGroupFileFormats() {
+		Plugin plugin = null;
+		GroupPlugin groupPlugin = null;
+		String fileFormat = null;
+		boolean duplicateFileFormat = false;
+		Vector<String> fileFormats = new Vector<String>();
+		
+		for(int i=0;i<m_plugins.size();i++) {
+			plugin = m_plugins.elementAt(i);
+			
+			if(plugin instanceof GroupPlugin) {
+				groupPlugin = (GroupPlugin) plugin;
+				
+				for(int j=0;j<groupPlugin.numberOfSupportedGroupFileFormats();j++) {
+					fileFormat = groupPlugin.getSupportedGroupFileFormat(j).toUpperCase();
+					duplicateFileFormat = false;
+					
+					for(int k=0;k<fileFormats.size();k++) {
+						if(fileFormats.elementAt(k).equalsIgnoreCase(fileFormat)) {
+							duplicateFileFormat = true;
+							break;
+						}
+					}
+					
+					if(duplicateFileFormat) { continue; }
+					
+					fileFormats.add(fileFormat);
+				}
+			}
+		}
+		
+		return fileFormats;
+	}
+	
+	public Vector<String> getSupportedAndPreferredGroupFileFormats() {
+		Vector<String> fileFormats = new Vector<String>();
+		
+		Vector<String> supportedFileFormats = getSupportedGroupFileFormats();
+		
+		if(supportedFileFormats != null) {
+			for(int i=0;i<supportedFileFormats.size();i++) {
+				fileFormats.add(supportedFileFormats.elementAt(i));
+			}
+		}
+		
+		Collection<String> preferredFileFormats = getPreferredFileFormats(GroupPlugin.class);
+		
+		boolean duplicateFileFormat = false;
+		if(preferredFileFormats != null) {
+			for(String preferredFileFormat : preferredFileFormats) {
+				duplicateFileFormat = false;
+				
+				for(int j=0;j<fileFormats.size();j++) {
+					if(fileFormats.elementAt(j).equalsIgnoreCase(preferredFileFormat)) {
+						duplicateFileFormat = true;
+					}
+				}
+				
+				if(duplicateFileFormat) { continue; }
+				
+				fileFormats.add(preferredFileFormat);
+			}
+		}
+		
+		return fileFormats;
+	}
+	
 	public GroupPlugin getPreferredGroupPluginPrompt(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		
