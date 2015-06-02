@@ -65,7 +65,7 @@ public class GroupFile {
 	}
 	
 	public void setFileName(String fileName) {
-		m_fileName = Utilities.truncateFileName(fileName, MAX_FILE_NAME_LENGTH);
+		m_fileName = fileName == null ? null : Utilities.truncateFileName(fileName.toUpperCase(), MAX_FILE_NAME_LENGTH);
 	}
 	
 	public void reverseFileExtension() {
