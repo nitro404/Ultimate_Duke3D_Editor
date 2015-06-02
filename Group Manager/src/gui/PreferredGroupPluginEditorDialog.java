@@ -12,6 +12,7 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 	private boolean m_cancelled;
 	private JPanel m_mainPanel;
 	private JButton m_submitButton;
+	private JButton m_clearButton;
 	private JButton m_cancelButton;
 	private Vector<JLabel> m_fileFormatLabels;
 	private Vector<JComboBox<String>> m_pluginListComboBoxes;
@@ -50,12 +51,18 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 		m_submitButton.addKeyListener(this);
 		m_submitButton.addActionListener(this);
 		
+		m_clearButton = new JButton("Clear");
+		m_clearButton.setSize(m_clearButton.getPreferredSize());
+		m_clearButton.addKeyListener(this);
+		m_clearButton.addActionListener(this);
+		
 		m_cancelButton = new JButton("Cancel");
 		m_cancelButton.setSize(m_cancelButton.getPreferredSize());
 		m_cancelButton.addKeyListener(this);
 		m_cancelButton.addActionListener(this);
 		
 		m_mainPanel.add(m_submitButton);
+		m_mainPanel.add(m_clearButton);
 		m_mainPanel.add(m_cancelButton);
 		
 		setContentPane(m_mainPanel);
@@ -78,7 +85,7 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 	}
 	
 	public void close() {
-		clear();
+		reset();
 		
 		m_cancelled = false;
 		
@@ -86,7 +93,7 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 	}
 	
 	private void cancel() {
-		clear();
+		reset();
 		
 		m_cancelled = true;
 		
@@ -94,6 +101,16 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 	}
 	
 	public void clear() {
+		for(int i=0;i<m_pluginListComboBoxes.size();i++) {
+			m_pluginListComboBoxes.elementAt(i).setSelectedIndex(0);
+		}
+		
+		for(int i=0;i<m_customPluginTextFields.size();i++) {
+			m_customPluginTextFields.elementAt(i).setText("");
+		}
+	}
+	
+	public void reset() {
 		for(int i=0;i<m_fileFormatLabels.size();i++) {
 			m_mainPanel.remove(m_fileFormatLabels.elementAt(i));
 		}
@@ -132,6 +149,11 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 				submit();
 			}
 		}
+		if(e.getSource() == m_clearButton) {
+			if(e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_SPACE) {
+				clear();
+			}
+		}
 		else if(e.getSource() == m_cancelButton) {
 			if(e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_SPACE) {
 				cancel();
@@ -147,12 +169,24 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 		if(e.getSource() == m_submitButton) {
 			submit();
 		}
+		else if(e.getSource() == m_clearButton) {
+			clear();
+		}
 		else if(e.getSource() == m_cancelButton) {
 			cancel();
 		}
 		else {
 			for(int i=0;i<m_pluginListComboBoxes.size();i++) {
 				m_customPluginTextFields.elementAt(i).setEnabled(m_pluginListComboBoxes.elementAt(i).getSelectedIndex() == m_pluginListComboBoxes.elementAt(i).getItemCount() - 1);
+				
+				if(m_pluginListComboBoxes.elementAt(i).getSelectedIndex() >= 0 && m_pluginListComboBoxes.elementAt(i).getSelectedIndex() < m_pluginListComboBoxes.elementAt(i).getItemCount() - 1) {
+					if(m_pluginListComboBoxes.elementAt(i).getSelectedIndex() == 0) {
+						m_customPluginTextFields.elementAt(i).setText("");
+					}
+					else {
+						m_customPluginTextFields.elementAt(i).setText(m_pluginListComboBoxes.elementAt(i).getSelectedItem().toString());
+					}
+				}
 			}
 		}
 	}
@@ -207,14 +241,22 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 			elementYPosition += elementHeight + padding;
 		}
 		
-		int buttonHeight = m_submitButton.getHeight() > m_cancelButton.getHeight() ? m_submitButton.getHeight() : m_cancelButton.getHeight();
-		int buttonOffset = (int) ((m_submitButton.getWidth() > m_cancelButton.getWidth() ? -1.0f : 1.0f) * (((m_submitButton.getWidth() + m_cancelButton.getWidth()) * 0.25f) + padding));
+		int buttonHeight = 0;
+		if(m_submitButton.getHeight() > buttonHeight) { buttonHeight = m_submitButton.getHeight(); }
+		if(m_clearButton.getHeight()  > buttonHeight) { buttonHeight = m_clearButton.getHeight();  }
+		if(m_cancelButton.getHeight() > buttonHeight) { buttonHeight = m_cancelButton.getHeight(); }
+		
+		int buttonAreaWidth = m_submitButton.getWidth() + m_clearButton.getWidth() + m_cancelButton.getWidth() + (padding * 2);
 
 		int panelWidth = maxLabelWidth + maxComboBoxWidth + maxTextFieldWidth + (padding * 4);
 		int panelHeight = (m_fileFormatLabels.size() * (elementHeight + padding)) + buttonHeight + (padding * 2);
 		
-		m_submitButton.setLocation((panelWidth / 2) - buttonOffset - (m_submitButton.getWidth() / 2), elementYPosition);
-		m_cancelButton.setLocation((panelWidth / 2) + buttonOffset - (m_cancelButton.getWidth() / 2), elementYPosition);
+		int buttonXPosition = (panelWidth / 2) - (buttonAreaWidth / 2);
+		m_submitButton.setLocation(buttonXPosition, elementYPosition);
+		buttonXPosition += m_submitButton.getWidth() + padding;
+		m_clearButton.setLocation(buttonXPosition, elementYPosition);
+		buttonXPosition += m_clearButton.getWidth() + padding;
+		m_cancelButton.setLocation(buttonXPosition, elementYPosition);
 		
 		m_mainPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
 		m_mainPanel.setSize(getPreferredSize());
@@ -261,7 +303,7 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 	}
 	
 	private void loadPreferredPlugins() {
-		clear();
+		reset();
 		
 		Vector<String> groupFileFormats = GroupPluginManager.instance.getSupportedAndPreferredGroupFileFormats();
 		
