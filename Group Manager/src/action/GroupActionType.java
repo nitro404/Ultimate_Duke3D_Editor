@@ -7,6 +7,7 @@ public enum GroupActionType {
 	AddFiles,
 	RemoveFiles,
 	ReplaceFile,
+	RenameFile,
 	ExtractFiles,
 	Import,
 	Export,

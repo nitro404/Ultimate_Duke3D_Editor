@@ -37,6 +37,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	private JMenuItem m_fileAddFilesMenuItem;
 	private JMenuItem m_fileRemoveFilesMenuItem;
 	private JMenuItem m_fileReplaceFileMenuItem;
+	private JMenuItem m_fileRenameFileMenuItem;
 	private JMenuItem m_fileExtractFilesMenuItem;
 	private JMenuItem m_fileImportMenuItem;
 	private JMenuItem m_fileExportMenuItem;
@@ -183,6 +184,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileAddFilesMenuItem = new JMenuItem("Add Files");
 		m_fileRemoveFilesMenuItem = new JMenuItem("Remove Files");
 		m_fileReplaceFileMenuItem = new JMenuItem("Replace File");
+		m_fileRenameFileMenuItem = new JMenuItem("Rename File");
 		m_fileExtractFilesMenuItem = new JMenuItem("Extract Files");
 		m_fileImportMenuItem = new JMenuItem("Import");
 		m_fileExportMenuItem = new JMenuItem("Export");
@@ -283,6 +285,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileAddFilesMenuItem.addActionListener(this);
 		m_fileRemoveFilesMenuItem.addActionListener(this);
 		m_fileReplaceFileMenuItem.addActionListener(this);
+		m_fileRenameFileMenuItem.addActionListener(this);
 		m_fileExtractFilesMenuItem.addActionListener(this);
 		m_fileImportMenuItem.addActionListener(this);
 		m_fileExportMenuItem.addActionListener(this);
@@ -335,6 +338,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileMenu.add(m_fileAddFilesMenuItem);
 		m_fileMenu.add(m_fileRemoveFilesMenuItem);
 		m_fileMenu.add(m_fileReplaceFileMenuItem);
+		m_fileMenu.add(m_fileRenameFileMenuItem);
 		m_fileMenu.add(m_fileExtractFilesMenuItem);
 		m_fileMenu.add(m_fileImportMenuItem);
 		m_fileMenu.add(m_fileExportMenuItem);
@@ -1104,6 +1108,51 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		return fileReplaced;
 	}
 
+	public boolean renameSelectedFileInSelectedGroup() {
+		return renameSelectedFileInGroup(getSelectedGroupPanel());
+	}
+
+	public boolean renameSelectedFileInGroup(GroupPanel groupPanel) {
+		if(groupPanel == null) { return false; }
+		
+		Vector<GroupFile> selectedGroupFiles = groupPanel.getSelectedFiles();
+		if(selectedGroupFiles.size() != 1) { return false; }
+		
+		GroupFile selectedGroupFile = selectedGroupFiles.elementAt(0);
+		
+		String input = null;
+		String formattedInput = null;
+		String newFileName = null;
+		while(true) {
+			input = JOptionPane.showInputDialog(m_frame, "Enter a new file name:", selectedGroupFile.getFileName());
+			if(input == null) { return false; }
+			
+			formattedInput = input.trim();
+			newFileName = formattedInput;
+			
+			if(formattedInput.length() > GroupFile.MAX_FILE_NAME_LENGTH) {
+				newFileName = Utilities.truncateFileName(newFileName, GroupFile.MAX_FILE_NAME_LENGTH);
+				
+				int choice = JOptionPane.showConfirmDialog(m_frame, "New file name is longer than the maximum group file name length of " + GroupFile.MAX_FILE_NAME_LENGTH + ", would you like to use this file name or try another?", "Filename Too Long", JOptionPane.YES_NO_CANCEL_OPTION);
+				
+					 if(choice == JOptionPane.CANCEL_OPTION) { return false; }
+				else if(choice == JOptionPane.YES_OPTION)    { break; }
+				else if(choice == JOptionPane.NO_OPTION)     { continue; }
+			}
+			else {
+				break;
+			}
+		}
+		
+		if(newFileName.equals(selectedGroupFile.getFileName())) {
+			return true;
+		}
+		
+		groupPanel.getGroup().renameFile(selectedGroupFile, newFileName);
+		
+		return true;
+	}
+	
 	public int extractSelectedFilesFromSelectedGroup() {
 		return extractSelectedFilesFromGroup(getSelectedGroupPanel());
 	}
@@ -1679,10 +1728,12 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		m_fileRemoveFilesMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() > 0);
 		m_fileReplaceFileMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1);
+		m_fileRenameFileMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1);
 		m_fileExtractFilesMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() > 0);
 		
 		m_fileRemoveFilesMenuItem.setEnabled(groupTabSelected);
 		m_fileReplaceFileMenuItem.setEnabled(groupTabSelected);
+		m_fileRenameFileMenuItem.setEnabled(groupTabSelected);
 		m_fileExtractFilesMenuItem.setEnabled(groupTabSelected);
 		
 		m_fileImportMenuItem.setEnabled(groupTabSelected);
@@ -1840,6 +1891,9 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		// replace file in selected group
 		else if(e.getSource() == m_fileReplaceFileMenuItem) {
 			replaceSelectedFileInSelectedGroup();
+		}
+		else if(e.getSource() == m_fileRenameFileMenuItem) {
+			renameSelectedFileInSelectedGroup();
 		}
 		// extract files from selected group
 		else if(e.getSource() == m_fileExtractFilesMenuItem) {
@@ -2190,6 +2244,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				
 			case ReplaceFile:
 				replaceSelectedFileInGroup(action.getSource());
+				break;
+				
+			case RenameFile:
+				renameSelectedFileInGroup(action.getSource());
 				break;
 			
 			case ExtractFiles:

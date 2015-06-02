@@ -413,10 +413,7 @@ public abstract class Group {
 		if(fileName == null) { return false; }
 		
 		String formattedFileName = fileName.trim();
-		if(formattedFileName.length() == 0) { return false; }
-		if(formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) {
-			formattedFileName = formattedFileName.substring(0, GroupFile.MAX_FILE_NAME_LENGTH - 1);
-		}
+		if(formattedFileName.length() == 0 || formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) { return false; }
 		
 		String currentFileName;
 		for(int i=0;i<m_files.size();i++) {
@@ -446,10 +443,7 @@ public abstract class Group {
 		if(fileName == null) { return -1; }
 		
 		String formattedFileName = fileName.trim();
-		if(formattedFileName.length() == 0) { return -1; }
-		if(formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) {
-			formattedFileName = formattedFileName.substring(0, GroupFile.MAX_FILE_NAME_LENGTH - 1);
-		}
+		if(formattedFileName.length() == 0 || formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) { return -1; }
 		
 		String currentFileName;
 		for(int i=0;i<m_files.size();i++) {
@@ -525,10 +519,7 @@ public abstract class Group {
 		if(fileName == null) { return null; }
 		
 		String formattedFileName = fileName.trim();
-		if(formattedFileName.length() == 0) { return null; }
-		if(formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) {
-			formattedFileName = formattedFileName.substring(0, GroupFile.MAX_FILE_NAME_LENGTH - 1);
-		}
+		if(formattedFileName.length() == 0 || formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) { return null; }
 		
 		String currentFileName;
 		for(int i=0;i<m_files.size();i++) {
@@ -963,6 +954,35 @@ public abstract class Group {
 		return numberOfFilesAdded;
 	}
 	
+	public boolean renameFile(int index, String newFileName) {
+		if(index < 0 || index >= m_files.size() || newFileName == null || newFileName.length() == 0) { return false; }
+		
+		String formattedFileName = newFileName.trim();
+		if(formattedFileName.length() == 0 || formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) { return false; }
+		
+		m_files.elementAt(index).setFileName(formattedFileName);
+		
+		setChanged(true);
+		
+		if(shouldAutoSortFiles()) {
+			sortFiles();
+		}
+		
+		return true;
+	}
+	
+	public boolean renameFile(String oldFileName, String newFileName) {
+		return renameFile(indexOfFile(oldFileName), newFileName);
+	}
+	
+	public boolean renameFile(GroupFile file, String newFileName) {
+		return renameFile(indexOfFile(file), newFileName);
+	}
+	
+	public boolean renameFile(File file, String newFileName) {
+		return renameFile(indexOfFile(file), newFileName);
+	}
+	
 	public boolean replaceFile(int index, GroupFile newFile) {
 		if(index < 0 || index >= m_files.size() || newFile == null || !newFile.isValid()) { return false; }
 		
@@ -1068,9 +1088,9 @@ public abstract class Group {
 		if(fileName == null || fileName.length() == 0 || newFile == null || !newFile.isValid()) { return false; }
 		
 		String formattedFileName = fileName.trim();
-		if(formattedFileName.length() == 0) { return false; }
+		if(formattedFileName.length() == 0 || formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) { return false; }
 
-		int fileIndex = indexOfFile(fileName);
+		int fileIndex = indexOfFile(formattedFileName);
 		
 		if(fileIndex != -1) {
 			m_files.set(fileIndex, newFile);
@@ -1091,9 +1111,9 @@ public abstract class Group {
 		if(fileName == null || fileName.length() == 0 || newFile == null || !newFile.exists() || !newFile.isFile()) { return false; }
 		
 		String formattedFileName = fileName.trim();
-		if(formattedFileName.length() == 0) { return false; }
+		if(formattedFileName.length() == 0 || formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) { return false; }
 		
-		int fileIndex = indexOfFile(fileName);
+		int fileIndex = indexOfFile(formattedFileName);
 		GroupFile newGroupFile = null;
 		
 		if(fileIndex != -1) {
@@ -1170,10 +1190,7 @@ public abstract class Group {
 		if(fileName == null) { return false; }
 		
 		String formattedFileName = fileName.trim();
-		if(formattedFileName.length() == 0) { return false; }
-		if(formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) {
-			formattedFileName = formattedFileName.substring(0, GroupFile.MAX_FILE_NAME_LENGTH - 1);
-		}
+		if(formattedFileName.length() == 0 || formattedFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) { return false; }
 		
 		String currentFileName;
 		for(int i=0;i<m_files.size();i++) {
