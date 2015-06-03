@@ -1731,11 +1731,6 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		m_fileRenameFileMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1);
 		m_fileExtractFilesMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() > 0);
 		
-		m_fileRemoveFilesMenuItem.setEnabled(groupTabSelected);
-		m_fileReplaceFileMenuItem.setEnabled(groupTabSelected);
-		m_fileRenameFileMenuItem.setEnabled(groupTabSelected);
-		m_fileExtractFilesMenuItem.setEnabled(groupTabSelected);
-		
 		m_fileImportMenuItem.setEnabled(groupTabSelected);
 		m_fileExportMenuItem.setEnabled(groupTabSelected);
 		m_fileCloseMenuItem.setEnabled(groupTabSelected);

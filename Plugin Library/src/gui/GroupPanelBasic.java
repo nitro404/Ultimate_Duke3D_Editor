@@ -4,10 +4,11 @@ import java.util.*;
 import java.util.List;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import group.*;
 import console.*;
 
-public class GroupPanelBasic extends GroupPanel {
+public class GroupPanelBasic extends GroupPanel implements ListSelectionListener {
 	
 	protected JList<GroupFile> m_fileList;
 	protected JScrollPane m_fileListScrollPane;
@@ -38,6 +39,7 @@ public class GroupPanelBasic extends GroupPanel {
 		setLayout(new GridLayout(1, 1));
 		
 		m_fileList = new JList<GroupFile>();
+		m_fileList.addListSelectionListener(this);
 		m_fileList.addMouseListener(this);
 		m_fileListScrollPane = new JScrollPane(m_fileList);
 		add(m_fileListScrollPane);
@@ -230,6 +232,14 @@ public class GroupPanelBasic extends GroupPanel {
 	
 	public void updateLayout() {
 		
+	}
+	
+	public void valueChanged(ListSelectionEvent e) {
+		if(e == null) { return; }
+		
+		if(e.getSource() == m_fileList) {
+			notifyUpdateWindow();
+		}
 	}
 	
 }
