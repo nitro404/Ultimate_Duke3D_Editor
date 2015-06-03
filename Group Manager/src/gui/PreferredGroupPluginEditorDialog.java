@@ -149,7 +149,7 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 				submit();
 			}
 		}
-		if(e.getSource() == m_clearButton) {
+		else if(e.getSource() == m_clearButton) {
 			if(e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_SPACE) {
 				clear();
 			}
