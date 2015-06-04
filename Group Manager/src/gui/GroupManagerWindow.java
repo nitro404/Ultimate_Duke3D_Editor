@@ -1115,6 +1115,9 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	public boolean renameSelectedFileInGroup(GroupPanel groupPanel) {
 		if(groupPanel == null) { return false; }
 		
+		Group group = groupPanel.getGroup();
+		if(group == null) { return false; }
+		
 		Vector<GroupFile> selectedGroupFiles = groupPanel.getSelectedFiles();
 		if(selectedGroupFiles.size() != 1) { return false; }
 		
@@ -1133,22 +1136,33 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			if(formattedInput.length() > GroupFile.MAX_FILE_NAME_LENGTH) {
 				newFileName = Utilities.truncateFileName(newFileName, GroupFile.MAX_FILE_NAME_LENGTH);
 				
-				int choice = JOptionPane.showConfirmDialog(m_frame, "New file name is longer than the maximum group file name length of " + GroupFile.MAX_FILE_NAME_LENGTH + ", would you like to use this file name or try another?", "Filename Too Long", JOptionPane.YES_NO_CANCEL_OPTION);
+				int choice = JOptionPane.showConfirmDialog(m_frame, "New file name is longer than the maximum group file name length of " + GroupFile.MAX_FILE_NAME_LENGTH + ", and will be truncated to: \"" + newFileName + "\". Would you like to use this file name or try another?", "Filename Too Long", JOptionPane.YES_NO_CANCEL_OPTION);
 				
 					 if(choice == JOptionPane.CANCEL_OPTION) { return false; }
-				else if(choice == JOptionPane.YES_OPTION)    { break; }
 				else if(choice == JOptionPane.NO_OPTION)     { continue; }
+			}
+			
+			if(newFileName.equals(selectedGroupFile.getFileName())) {
+				return true;
+			}
+			
+			if(group.hasFile(newFileName)) {
+				int choice = JOptionPane.showConfirmDialog(m_frame, "A file with the name \"" + newFileName + "\" already exists, would you like to replace it or try another file name?", "Duplicate File Name", JOptionPane.YES_NO_CANCEL_OPTION);
+				
+				     if(choice == JOptionPane.CANCEL_OPTION) { return false; }
+				else if(choice == JOptionPane.NO_OPTION)     { continue; }
+				else if(choice == JOptionPane.YES_OPTION) {
+					group.removeFile(newFileName);
+					
+					break;
+				}
 			}
 			else {
 				break;
 			}
 		}
 		
-		if(newFileName.equals(selectedGroupFile.getFileName())) {
-			return true;
-		}
-		
-		groupPanel.getGroup().renameFile(selectedGroupFile, newFileName);
+		group.renameFile(selectedGroupFile, newFileName);
 		
 		return true;
 	}
