@@ -987,7 +987,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		for(int i=0;i<selectedFiles.length;i++) {
 			formattedFileName = Utilities.truncateFileName(selectedFiles[i].getName(), GroupFile.MAX_FILE_NAME_LENGTH);
 			
-			if(duplicateFileAction != DuplicateFileAction.SkipAll && duplicateFileAction != DuplicateFileAction.ReplaceAll) {
+			if(duplicateFileAction.isValid() && duplicateFileAction != DuplicateFileAction.SkipAll && duplicateFileAction != DuplicateFileAction.ReplaceAll) {
 				Object selection = JOptionPane.showInputDialog(m_frame, "File \"" + formattedFileName + "\" already exists, please choose an action:", "Duplicate File", JOptionPane.QUESTION_MESSAGE, null, DuplicateFileAction.getValidDisplayNames(), DuplicateFileAction.displayNames[DuplicateFileAction.defaultAction.ordinal()]);
 				if(selection == null) { break; }
 				
@@ -1182,8 +1182,8 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
 		if(fileChooser.showSaveDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return 0; }
-		if(fileChooser.getSelectedFile() == null || !fileChooser.getSelectedFile().isDirectory()) {
-			String message = "Selected directory \"" + fileChooser.getSelectedFile().getName() + "\" is not a directory.";
+		if(fileChooser.getSelectedFile() == null) {
+			String message = "No directory selected!";
 			
 			SystemConsole.instance.writeLine(message);
 			
