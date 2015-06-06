@@ -1181,7 +1181,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		fileChooser.setDialogTitle("Extract Files");
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
-		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return 0; }
+		if(fileChooser.showSaveDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return 0; }
 		if(fileChooser.getSelectedFile() == null || !fileChooser.getSelectedFile().isDirectory()) {
 			String message = "Selected directory \"" + fileChooser.getSelectedFile().getName() + "\" is not a directory.";
 			
