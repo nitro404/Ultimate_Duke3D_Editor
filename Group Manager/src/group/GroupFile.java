@@ -130,7 +130,7 @@ public class GroupFile {
 			}
 		}
 		
-		File file = new File((directory == null ? "" : Utilities.appendSlash(directory.getPath())) + alternateFileName == null ? m_fileName : alternateFileName.getName());
+		File file = new File((directory == null ? "" : Utilities.appendSlash(directory.getPath())) + (alternateFileName == null ? m_fileName : alternateFileName.getName()));
 
 		OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
 		out.write(m_data);
