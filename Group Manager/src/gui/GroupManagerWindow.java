@@ -1500,7 +1500,6 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			}
 		}
 		
-		
 		m_mainTabbedPane.remove(tabComponent);
 		int indexOfGroup = m_groupPanels.indexOf(groupPanel);
 		m_groupPanels.remove(groupPanel);
@@ -1901,6 +1900,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		else if(e.getSource() == m_fileReplaceFileMenuItem) {
 			replaceSelectedFileInSelectedGroup();
 		}
+		// rename file in selected group
 		else if(e.getSource() == m_fileRenameFileMenuItem) {
 			renameSelectedFileInSelectedGroup();
 		}
@@ -2258,7 +2258,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 			case RenameFile:
 				renameSelectedFileInGroup(action.getSource());
 				break;
-			
+				
 			case ExtractFiles:
 				extractSelectedFilesFromGroup(action.getSource());
 				break;
@@ -2273,6 +2273,10 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 				
 			case Close:
 				closeGroup(action.getSource());
+				break;
+				
+			case CloseAll:
+				closeAllGroups();
 				break;
 				
 			default:

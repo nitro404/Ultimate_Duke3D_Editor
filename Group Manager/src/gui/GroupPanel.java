@@ -48,6 +48,7 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 	protected JMenuItem m_importPopupMenuItem;
 	protected JMenuItem m_exportPopupMenuItem;
 	protected JMenuItem m_closePopupMenuItem;
+	protected JMenuItem m_closeAllPopupMenuItem;
 	protected JMenuItem m_canelPopupMenuItem;
 	
 	private static final long serialVersionUID = 6360144485605480625L;
@@ -111,6 +112,7 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_importPopupMenuItem = new JMenuItem("Import");
 		m_exportPopupMenuItem = new JMenuItem("Export");
 		m_closePopupMenuItem = new JMenuItem("Close");
+		m_closeAllPopupMenuItem = new JMenuItem("Close All");
 		m_canelPopupMenuItem = new JMenuItem("Cancel");
 		
 		m_selectInversePopupMenuItem.addActionListener(this);
@@ -137,6 +139,7 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_importPopupMenuItem.addActionListener(this);
 		m_exportPopupMenuItem.addActionListener(this);
 		m_closePopupMenuItem.addActionListener(this);
+		m_closeAllPopupMenuItem.addActionListener(this);
 		m_canelPopupMenuItem.addActionListener(this);
 		
 		m_selectPopupMenu.add(m_selectInversePopupMenuItem);
@@ -170,6 +173,7 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		m_groupPanelPopupMenu.add(m_importPopupMenuItem);
 		m_groupPanelPopupMenu.add(m_exportPopupMenuItem);
 		m_groupPanelPopupMenu.add(m_closePopupMenuItem);
+		m_groupPanelPopupMenu.add(m_closeAllPopupMenuItem);
 		m_groupPanelPopupMenu.addSeparator();
 		m_groupPanelPopupMenu.add(m_canelPopupMenuItem);
 	}
@@ -545,6 +549,9 @@ public abstract class GroupPanel extends JPanel implements Scrollable, ActionLis
 		}
 		else if(e.getSource() == m_closePopupMenuItem) {
 			dispatchGroupAction(new GroupAction(this, GroupActionType.Close));
+		}
+		else if(e.getSource() == m_closeAllPopupMenuItem) {
+			dispatchGroupAction(new GroupAction(this, GroupActionType.CloseAll));
 		}
 		else {
 			// change group file sort direction

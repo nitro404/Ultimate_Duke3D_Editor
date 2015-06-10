@@ -12,6 +12,7 @@ public enum GroupActionType {
 	Import,
 	Export,
 	Close,
+	CloseAll,
 	Invalid;
 	
 	public final static GroupActionType defaultAction = DoNothing;
@@ -23,10 +24,12 @@ public enum GroupActionType {
 		"Add Files",
 		"Remove Files",
 		"Replace File",
+		"Rename File",
 		"Extract Files",
 		"Import",
 		"Export",
 		"Close",
+		"CloseAll",
 		"Invalid"
 	};
 
