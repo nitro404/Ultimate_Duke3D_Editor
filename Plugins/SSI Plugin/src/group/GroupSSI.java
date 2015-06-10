@@ -489,7 +489,7 @@ public class GroupSSI extends Group {
 		m_description = description;
 		addFiles(groupFiles);
 		
-		if(!shouldSortFiles()) {
+		if(!(shouldSortFiles() && shouldAutoSortFiles())) {
 			setChanged(false);
 		}
 		

@@ -127,7 +127,7 @@ public class GroupZIP extends Group {
 		
 	    addFiles(groupFiles);
 	    
-	    if(!shouldSortFiles()) {
+	    if(!(shouldSortFiles() && shouldAutoSortFiles())) {
 			setChanged(false);
 		}
 		

@@ -186,7 +186,7 @@ public class GroupGRP extends Group {
 		
 		addFiles(groupFiles);
 		
-		if(!shouldSortFiles()) {
+		if(!(shouldSortFiles() && shouldAutoSortFiles())) {
 			setChanged(false);
 		}
 		
