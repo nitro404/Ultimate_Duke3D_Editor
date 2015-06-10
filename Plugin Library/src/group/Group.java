@@ -603,7 +603,34 @@ public abstract class Group {
 		
 		return matchingFiles;
 	}
-
+	
+	public Vector<String> getFileExtensions() {
+		Vector<String> extensions = new Vector<String>();
+		
+		if(m_files.size() == 0) { return extensions; }
+		
+		HashMap<String, Integer> extensionMap = new HashMap<String, Integer>();
+		
+		String extension = null;
+		for(int i=0;i<m_files.size();i++) {
+			extension = Utilities.getFileExtension(m_files.elementAt(i).getFileName());
+			if(extension == null) { continue; }
+			
+			if(extensionMap.containsKey(extension)) {
+				extensionMap.put(extension, extensionMap.get(extension) + 1);
+			}
+			else {
+				extensionMap.put(extension, 1);
+			}
+		}
+		
+		for(String key : extensionMap.keySet()) {
+			extensions.add(key);
+		}
+		
+		return extensions;
+	}
+	
 	public boolean extractFile(int index, String directory) throws IOException {
 		return extractFile(index, directory == null || directory.length() == 0 ? null : new File(directory));
 	}
