@@ -30,10 +30,6 @@ public class GroupPanelBasic extends GroupPanel implements ListSelectionListener
 	}
 	
 	public boolean init() {
-		return init(true);
-	}
-	
-	public boolean init(boolean setInitialized) {
 		if(m_initialized) { return true; }
 		
 		setLayout(new GridLayout(1, 1));
@@ -44,9 +40,7 @@ public class GroupPanelBasic extends GroupPanel implements ListSelectionListener
 		m_fileListScrollPane = new JScrollPane(m_fileList);
 		add(m_fileListScrollPane);
 		
-		if(setInitialized) {
-			m_initialized = true;
-		}
+		m_initialized = true;
 		
 		updateWindow();
 		

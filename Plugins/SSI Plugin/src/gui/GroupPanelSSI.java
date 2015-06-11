@@ -10,6 +10,7 @@ import group.*;
 
 public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, DocumentListener {
 	
+	protected boolean m_ssiInitialized;
 	protected boolean m_updatingDataUsingDocument;
 	
 	protected JPanel m_informationPanel;
@@ -32,6 +33,7 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	public GroupPanelSSI() {
 		super(null);
 		
+		m_ssiInitialized = false;
 		m_updatingWindow = false;
 		m_updatingDataUsingDocument = false;
 	}
@@ -39,6 +41,7 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	public GroupPanelSSI(Group group) {
 		super(group);
 		
+		m_ssiInitialized = false;
 		m_updatingWindow = false;
 		m_updatingDataUsingDocument = false;
 	}
@@ -46,12 +49,12 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	public boolean init() {
 		if(m_initialized) { return true; }
 		
-		if(!super.init(false)) { return false; }
+		if(!super.init()) { return false; }
 		
 		initComponents();
 		initLayout();
 		
-		m_initialized = true;
+		m_ssiInitialized = true;
 		
 		updateWindow();
 		
@@ -132,7 +135,7 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	}
 	
 	public void updateGroup() {
-		if(!m_initialized || m_group == null) { return; }
+		if(!m_ssiInitialized || m_group == null) { return; }
 		
 		super.updateGroup();
 		
@@ -152,7 +155,7 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	}
 	
 	public void updateWindow() {
-		if(!m_initialized || m_updatingWindow || m_updatingDataUsingDocument) { return; }
+		if(!m_ssiInitialized || m_updatingWindow || m_updatingDataUsingDocument) { return; }
 		
 		super.updateWindow();
 		
@@ -182,7 +185,7 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	}
 	
 	public void updateLayout() {
-		if(!m_initialized || m_group == null) { return; }
+		if(!m_ssiInitialized || m_group == null) { return; }
 		
 		super.updateLayout();
 		
@@ -284,7 +287,9 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getSource() == null) { return; }
+		if(!m_ssiInitialized || m_group == null || m_updatingWindow || e == null || e.getSource() == null) { return; }
+		
+		super.actionPerformed(e);
 		
 		if(m_group != null && m_group instanceof GroupSSI) {
 			GroupSSI ssiGroup = (GroupSSI) m_group;
@@ -304,7 +309,7 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	}
 
 	public void insertUpdate(final DocumentEvent e) {
-		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
+		if(!m_ssiInitialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -314,7 +319,7 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	}
 	
 	public void removeUpdate(final DocumentEvent e) {
-		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
+		if(!m_ssiInitialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -324,7 +329,7 @@ public class GroupPanelSSI extends GroupPanelBasic implements ActionListener, Do
 	}
 	
 	public void changedUpdate(final DocumentEvent e) {
-		if(!m_initialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
+		if(!m_ssiInitialized || m_group == null || m_updatingWindow || e == null || e.getDocument() == null) { return; }
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
