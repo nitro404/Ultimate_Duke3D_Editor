@@ -971,6 +971,9 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 	public int addFilesToGroup(GroupPanel groupPanel) {
 		if(groupPanel == null) { return 0; }
 		
+		Group group = groupPanel.getGroup();
+		if(group == null) { return 0; }
+		
 		JFileChooser fileChooser = new JFileChooser(SettingsManager.instance.previousGroupFileDirectory);
 		fileChooser.setDialogTitle("Select Files to Add");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -981,43 +984,50 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		
 		int numberOfFilesAdded = 0;
 		String formattedFileName = null;
+		boolean duplicateFile = false;
 		DuplicateFileAction duplicateFileAction = DuplicateFileAction.Invalid;
 		File[] selectedFiles = fileChooser.getSelectedFiles();
 		
 		for(int i=0;i<selectedFiles.length;i++) {
 			formattedFileName = Utilities.truncateFileName(selectedFiles[i].getName(), GroupFile.MAX_FILE_NAME_LENGTH);
 			
-			if(duplicateFileAction.isValid() && duplicateFileAction != DuplicateFileAction.SkipAll && duplicateFileAction != DuplicateFileAction.ReplaceAll) {
-				Object selection = JOptionPane.showInputDialog(m_frame, "File \"" + formattedFileName + "\" already exists, please choose an action:", "Duplicate File", JOptionPane.QUESTION_MESSAGE, null, DuplicateFileAction.getValidDisplayNames(), DuplicateFileAction.displayNames[DuplicateFileAction.defaultAction.ordinal()]);
-				if(selection == null) { break; }
-				
-				duplicateFileAction = DuplicateFileAction.parseFrom(selection.toString());
+			duplicateFile = group.hasFile(formattedFileName);
+			
+			if(duplicateFile) {
+				if(duplicateFileAction != DuplicateFileAction.SkipAll && duplicateFileAction != DuplicateFileAction.ReplaceAll) {
+					Object selection = JOptionPane.showInputDialog(m_frame, "File \"" + formattedFileName + "\" already exists, please choose an action:", "Duplicate File", JOptionPane.QUESTION_MESSAGE, null, DuplicateFileAction.getValidDisplayNames(), DuplicateFileAction.displayNames[DuplicateFileAction.defaultAction.ordinal()]);
+					if(selection == null) { break; }
+					
+					duplicateFileAction = DuplicateFileAction.parseFrom(selection.toString());
+				}
 			}
 			
-			if(groupPanel.getGroup().addFile(selectedFiles[i], duplicateFileAction == DuplicateFileAction.Replace || duplicateFileAction == DuplicateFileAction.ReplaceAll)) {
-				numberOfFilesAdded++;
-			}
-			else {
-				SystemConsole.instance.writeLine("Failed to add file " + formattedFileName + " to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\"."));
+			if(!duplicateFile || (duplicateFile && duplicateFileAction != DuplicateFileAction.Skip && duplicateFileAction != DuplicateFileAction.SkipAll)) {
+				if(group.addFile(selectedFiles[i], duplicateFileAction == DuplicateFileAction.Replace || duplicateFileAction == DuplicateFileAction.ReplaceAll)) {
+					numberOfFilesAdded++;
+				}
+				else {
+					SystemConsole.instance.writeLine("Failed to add file " + formattedFileName + " to group" + (group.getFile() == null ? "." : " \"" + group.getFile().getName() + "\"."));
+				}
 			}
 		}
 		
 		if(numberOfFilesAdded == 0) {
-			String message = "Failed to any files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
+			String message = "Failed to add any files to group" + (group.getFile() == null ? "." : " \"" + group.getFile().getName() + "\".");
 			
 			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "Failed to Add Files", JOptionPane.ERROR_MESSAGE);
 		}
 		else if(numberOfFilesAdded != selectedFiles.length) {
-			String message = "Only successfully added " + numberOfFilesAdded + " of " + selectedFiles.length + " selected files to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
+			String message = "Only successfully added " + numberOfFilesAdded + " of " + selectedFiles.length + " selected files to group" + (group.getFile() == null ? "." : " \"" + group.getFile().getName() + "\".");
 			
 			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "Some Files Added", JOptionPane.WARNING_MESSAGE);
 		}
 		else {
-			String message = "Successfully added all " + selectedFiles.length + " selected files to group" + (groupPanel.getGroup().getFile() == null ? "." : " \"" + groupPanel.getGroup().getFile().getName() + "\".");
+			String message = "Successfully added all " + selectedFiles.length + " selected files to group" + (group.getFile() == null ? "." : " \"" + group.getFile().getName() + "\".");
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -1229,7 +1239,7 @@ public class GroupManagerWindow implements WindowListener, ComponentListener, Ch
 		}
 		
 		if(numberOfFilesExtracted == 0) {
-			String message = "Failed to any files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
+			String message = "Failed to extract any files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
 			
 			SystemConsole.instance.writeLine(message);
 			
