@@ -12,6 +12,7 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 	private boolean m_cancelled;
 	private JPanel m_mainPanel;
 	private JButton m_submitButton;
+	private JButton m_addButton;
 	private JButton m_clearButton;
 	private JButton m_cancelButton;
 	private Vector<JLabel> m_fileFormatLabels;
@@ -51,6 +52,11 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 		m_submitButton.addKeyListener(this);
 		m_submitButton.addActionListener(this);
 		
+		m_addButton = new JButton("Add");
+		m_addButton.setSize(m_addButton.getPreferredSize());
+		m_addButton.addKeyListener(this);
+		m_addButton.addActionListener(this);
+		
 		m_clearButton = new JButton("Clear");
 		m_clearButton.setSize(m_clearButton.getPreferredSize());
 		m_clearButton.addKeyListener(this);
@@ -62,6 +68,7 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 		m_cancelButton.addActionListener(this);
 		
 		m_mainPanel.add(m_submitButton);
+		m_mainPanel.add(m_addButton);
 		m_mainPanel.add(m_clearButton);
 		m_mainPanel.add(m_cancelButton);
 		
@@ -82,6 +89,62 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 		savePreferredPlugins();
 		
 		setVisible(false);
+	}
+	
+	public boolean addEntryPrompt() {
+		String fileFormat = null;
+		String input = null;
+		boolean duplicateFileExtension = false;
+		
+		while(true) {
+			input = JOptionPane.showInputDialog(this, "Enter a file extension:");
+			if(input == null) { return false; }
+			
+			fileFormat = input.trim().toUpperCase();
+			if(fileFormat.length() < 1) {
+				JOptionPane.showMessageDialog(this, "File extension cannot be empty.");
+				continue;
+			}
+			
+			duplicateFileExtension = false;
+			
+			for(int i=0;i<m_fileFormatLabels.size();i++) {
+				if(fileFormat.equalsIgnoreCase(m_fileFormatLabels.elementAt(i).getText())) {
+					duplicateFileExtension = true;
+					
+					JOptionPane.showMessageDialog(this, "File extension is already preset, please try another!", "Duplicate File Extension", JOptionPane.WARNING_MESSAGE);
+					
+					break;
+				}
+			}
+			
+			if(duplicateFileExtension) { continue; }
+			
+			break;
+		}
+		
+		String pluginNames[] = new String[2];
+		pluginNames[0] = "None";
+		pluginNames[1] = "Other";
+		
+		JLabel fileFormatLabel = new JLabel(fileFormat);
+		m_mainPanel.add(fileFormatLabel);
+		m_fileFormatLabels.addElement(fileFormatLabel);
+		
+		JComboBox<String> pluginListComboBox = new JComboBox<String>(pluginNames);
+		pluginListComboBox.setSelectedIndex(1);
+		pluginListComboBox.addActionListener(this);
+		m_mainPanel.add(pluginListComboBox);
+		m_pluginListComboBoxes.addElement(pluginListComboBox);
+		
+		JTextField customPluginTextField = new JTextField();
+		customPluginTextField.setEnabled(pluginListComboBox.getSelectedIndex() == pluginListComboBox.getItemCount() - 1);
+		m_mainPanel.add(customPluginTextField);
+		m_customPluginTextFields.addElement(customPluginTextField);
+		
+		updateLayout();
+		
+		return true;
 	}
 	
 	public void close() {
@@ -133,10 +196,6 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 		
 		loadPreferredPlugins();
 		
-		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-		
-		setLocation((d.width / 2) - (getWidth() / 2), (d.height / 2) - (getHeight() / 2));
-		
 		setVisible(true);
 	}
 	
@@ -147,6 +206,11 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 		if(e.getSource() == m_submitButton) {
 			if(e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_SPACE) {
 				submit();
+			}
+		}
+		else if(e.getSource() == m_addButton) {
+			if(e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_SPACE) {
+				addEntryPrompt();
 			}
 		}
 		else if(e.getSource() == m_clearButton) {
@@ -168,6 +232,9 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == m_submitButton) {
 			submit();
+		}
+		else if(e.getSource() == m_addButton) {
+			addEntryPrompt();
 		}
 		else if(e.getSource() == m_clearButton) {
 			clear();
@@ -243,10 +310,11 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 		
 		int buttonHeight = 0;
 		if(m_submitButton.getHeight() > buttonHeight) { buttonHeight = m_submitButton.getHeight(); }
+		if(m_addButton.getHeight()    > buttonHeight) { buttonHeight = m_addButton.getHeight();    }
 		if(m_clearButton.getHeight()  > buttonHeight) { buttonHeight = m_clearButton.getHeight();  }
 		if(m_cancelButton.getHeight() > buttonHeight) { buttonHeight = m_cancelButton.getHeight(); }
 		
-		int buttonAreaWidth = m_submitButton.getWidth() + m_clearButton.getWidth() + m_cancelButton.getWidth() + (padding * 2);
+		int buttonAreaWidth = m_submitButton.getWidth() + m_addButton.getWidth() + m_clearButton.getWidth() + m_cancelButton.getWidth() + (padding * 2);
 
 		int panelWidth = maxLabelWidth + maxComboBoxWidth + maxTextFieldWidth + (padding * 4);
 		int panelHeight = (m_fileFormatLabels.size() * (elementHeight + padding)) + buttonHeight + (padding * 2);
@@ -254,6 +322,8 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 		int buttonXPosition = (panelWidth / 2) - (buttonAreaWidth / 2);
 		m_submitButton.setLocation(buttonXPosition, elementYPosition);
 		buttonXPosition += m_submitButton.getWidth() + padding;
+		m_addButton.setLocation(buttonXPosition, elementYPosition);
+		buttonXPosition += m_addButton.getWidth() + padding;
 		m_clearButton.setLocation(buttonXPosition, elementYPosition);
 		buttonXPosition += m_clearButton.getWidth() + padding;
 		m_cancelButton.setLocation(buttonXPosition, elementYPosition);
@@ -262,6 +332,10 @@ public class PreferredGroupPluginEditorDialog extends JDialog implements ActionL
 		m_mainPanel.setSize(getPreferredSize());
 		
 		pack();
+		
+		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		setLocation((d.width / 2) - (getWidth() / 2), (d.height / 2) - (getHeight() / 2));
 	}
 	
 	private void savePreferredPlugins() {
