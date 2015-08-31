@@ -35,7 +35,6 @@ public class SettingsManager {
 	public int windowHeight;
 	public boolean autoScrollConsole;
 	public int maxConsoleHistory;
-	public Color backgroundColour;
 	
 	public static final String defaultSettingsFileName = "Group Manager.ini";
 	public static final String defaultVersionFileURL = "http://www.nitro404.com/version/duke3d_group_manager.xml";
@@ -61,7 +60,6 @@ public class SettingsManager {
 	public static final int defaultWindowHeight = 600;
 	public static final boolean defaultAutoScrollConsole = true;
 	public static final int defaultMaxConsoleHistory = 512;
-	public static final Color defaultBackgroundColour = new Color(238, 238, 238);
 	
 	public SettingsManager() {
 		if(instance == null) {
@@ -101,7 +99,6 @@ public class SettingsManager {
 		windowHeight = defaultWindowHeight;
 		autoScrollConsole = defaultAutoScrollConsole;
 		maxConsoleHistory = defaultMaxConsoleHistory;
-		backgroundColour = defaultBackgroundColour;
 	}
 	
 	public boolean load() { return loadFrom(settingsFileName); }
@@ -118,7 +115,6 @@ public class SettingsManager {
 		String tempString = null;
 		Point tempPoint = null;
 		Dimension tempDimension = null;
-		Color tempColour = null;
 		
 		// parse version file URL
 		tempString = m_settings.getValue("Version File URL", "Paths");
@@ -291,10 +287,6 @@ public class SettingsManager {
 		try { tempInt = Integer.parseInt(m_settings.getValue("Max Console History", "Console")); } catch(NumberFormatException e) { } 
 		if(tempInt >= 1) { maxConsoleHistory = tempInt; }
 		
-		// parse background colour
-		tempColour = Utilities.parseColour(variables.getValue("Background Colour", "Interface"));
-		if(tempColour != null) { backgroundColour = tempColour; }
-		
 		GroupPluginManager.instance.setPreferredPlugins(m_settings, true);
 		
 		return true;
@@ -323,7 +315,6 @@ public class SettingsManager {
 		m_settings.setValue("Window Size", windowWidth + ", " + windowHeight, "Interface");
 		m_settings.setValue("Auto-Scroll Console", autoScrollConsole, "Console");
 		m_settings.setValue("Max Console History", maxConsoleHistory, "Console");
-		m_settings.setValue("Background Colour", backgroundColour.getRed() + ", " + backgroundColour.getGreen() + ", " + backgroundColour.getBlue(), "Interface");
 		m_settings.addVariables(GroupPluginManager.instance.getPreferredPluginsAsVariableCollection(), true);
 		
 		m_settings.sort();
