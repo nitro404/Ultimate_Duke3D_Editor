@@ -9,11 +9,12 @@ import exception.*;
 
 public abstract class ItemPanel extends JPanel implements ItemChangeListener, Updatable {
 	
-	private static final long serialVersionUID = -2881744445153282080L;
-
 	protected int m_itemNumber;
 	protected Item m_item;
+	protected boolean m_updating;
 	protected Vector<UpdateListener> m_updateListeners;
+
+	private static final long serialVersionUID = -2881744445153282080L;
 
 	public ItemPanel() {
 		this(null);
@@ -21,6 +22,7 @@ public abstract class ItemPanel extends JPanel implements ItemChangeListener, Up
 	
 	public ItemPanel(Item item) {
 		m_itemNumber = 0;
+		m_updating = false;
 		m_updateListeners = new Vector<UpdateListener>();
 		
 		setItem(item);
@@ -85,20 +87,25 @@ public abstract class ItemPanel extends JPanel implements ItemChangeListener, Up
 			return m_item.getFile().equals(file);
 		}
 	}
-	
+
+	public abstract void cleanup();
+
 	public abstract boolean save() throws ItemWriteException;
 
 	public void handleItemChange(Item item) {
 		if(item == null || m_item != item) { return; }
 		
 		update();
-		updateWindow();
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				updateLayout();
+			}
+		});
 		
 		notifyUpdateWindow();
 	}
 
-	public abstract void updateWindow();
-	
 	public abstract void updateLayout();
 
 	public int numberOfUpdateListeners() {

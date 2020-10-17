@@ -1,0 +1,280 @@
+{
+    "playerSpawn": {
+        "angle": 1536,
+        "position": {
+            "x": 32768,
+            "y": 32768,
+            "z": 0
+        },
+        "sector": 0
+    },
+    "sectors": [{
+        "ceiling": {
+            "yPanning": 0,
+            "paletteLookupTableNumber": 0,
+            "shade": 0,
+            "attributes": {
+                "swapTextureXY": 0,
+                "textureAlign": 0,
+                "reserved": 0,
+                "xFlip": 0,
+                "sloped": 0,
+                "parallaxed": 1,
+                "yFlip": 0,
+                "doubleSmooshiness": 0
+            },
+            "slope": 0,
+            "tileNumber": 94,
+            "xPanning": 0,
+            "height": -8192
+        },
+        "visibility": 0,
+        "extra": [],
+        "filler": 0,
+        "firstWallIndex": 0,
+        "numberOfWalls": 4,
+        "floor": {
+            "yPanning": 0,
+            "paletteLookupTableNumber": 0,
+            "shade": 0,
+            "attributes": {
+                "swapTextureXY": 0,
+                "textureAlign": 0,
+                "reserved": 0,
+                "xFlip": 0,
+                "sloped": 0,
+                "parallaxed": 0,
+                "yFlip": 0,
+                "doubleSmooshiness": 0
+            },
+            "slope": 0,
+            "tileNumber": 1218,
+            "xPanning": 0,
+            "height": 8192
+        },
+        "tagInformation": {
+            "extra": 1279,
+            "lowTag": 0,
+            "highTag": -256
+        }
+    }],
+    "walls": [
+        {
+            "nextWallIndex": 1,
+            "shade": 0,
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 0
+            },
+            "maskedTileNumber": 781,
+            "xRepeat": 0,
+            "yPanning": 8,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 0,
+            "x": 33536,
+            "y": 32000,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 1,
+                "yFlipped": 1,
+                "reverseTranslucent": 1,
+                "reserved": 11,
+                "invisibleWallBottomSwapped": 1,
+                "masked": 1,
+                "textureAlignBottom": 1,
+                "blockHitscan": 1,
+                "oneWay": 1,
+                "blockClipping": 1
+            },
+            "nextSectorIndex": -1,
+            "tileNumber": 0,
+            "xPanning": 10
+        },
+        {
+            "nextWallIndex": 2,
+            "shade": 0,
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 0
+            },
+            "maskedTileNumber": 781,
+            "xRepeat": 0,
+            "yPanning": 8,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 0,
+            "x": 33536,
+            "y": 33280,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 1,
+                "yFlipped": 1,
+                "reverseTranslucent": 1,
+                "reserved": 11,
+                "invisibleWallBottomSwapped": 1,
+                "masked": 1,
+                "textureAlignBottom": 1,
+                "blockHitscan": 1,
+                "oneWay": 1,
+                "blockClipping": 1
+            },
+            "nextSectorIndex": -1,
+            "tileNumber": 0,
+            "xPanning": 10
+        },
+        {
+            "nextWallIndex": 3,
+            "shade": 0,
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 0
+            },
+            "maskedTileNumber": 781,
+            "xRepeat": 0,
+            "yPanning": 8,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 0,
+            "x": 32256,
+            "y": 33280,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 1,
+                "yFlipped": 1,
+                "reverseTranslucent": 1,
+                "reserved": 11,
+                "invisibleWallBottomSwapped": 1,
+                "masked": 1,
+                "textureAlignBottom": 1,
+                "blockHitscan": 1,
+                "oneWay": 1,
+                "blockClipping": 1
+            },
+            "nextSectorIndex": -1,
+            "tileNumber": 0,
+            "xPanning": 10
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 0,
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 0
+            },
+            "maskedTileNumber": 781,
+            "xRepeat": 0,
+            "yPanning": 8,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 0,
+            "x": 32256,
+            "y": 32000,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 1,
+                "yFlipped": 1,
+                "reverseTranslucent": 1,
+                "reserved": 11,
+                "invisibleWallBottomSwapped": 1,
+                "masked": 1,
+                "textureAlignBottom": 1,
+                "blockHitscan": 1,
+                "oneWay": 1,
+                "blockClipping": 1
+            },
+            "nextSectorIndex": -1,
+            "tileNumber": 0,
+            "xPanning": 10
+        }
+    ],
+    "version": 5,
+    "sprites": [
+        {
+            "owner": -1,
+            "yOffset": 0,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 0,
+                "highTag": 0
+            },
+            "xRepeat": 64,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 64,
+            "filler": 0,
+            "sectorNumber": 0,
+            "angle": 1536,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 1
+            },
+            "clippingDistance": 32,
+            "position": {
+                "x": 33280,
+                "y": 32256,
+                "z": 8192
+            },
+            "tileNumber": 49
+        },
+        {
+            "owner": -1,
+            "yOffset": 0,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 0,
+                "highTag": 0
+            },
+            "xRepeat": 64,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 64,
+            "filler": 0,
+            "sectorNumber": 0,
+            "angle": 1536,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 1
+            },
+            "clippingDistance": 32,
+            "position": {
+                "x": 33280,
+                "y": 33024,
+                "z": 8192
+            },
+            "tileNumber": 28
+        }
+    ]
+}

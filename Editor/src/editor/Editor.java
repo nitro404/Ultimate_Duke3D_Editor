@@ -7,9 +7,8 @@ import utilities.*;
 import settings.*;
 import console.*;
 import version.*;
-import palette.*;
 
-public class Editor implements PaletteChangeListener {
+public class Editor {
 	
 	public static Editor instance = null;
 	public static EditorWindow editorWindow = null;
@@ -19,7 +18,7 @@ public class Editor implements PaletteChangeListener {
 	public static EditorPluginManager pluginManager = null;
 	private boolean m_initialized;
 	private static int currentItemNumber = 1;
-	public static final String VERSION = "1.0";
+	public static final String VERSION = "1.0.0";
 	
 	public Editor() {
 		editorWindow = new EditorWindow();
@@ -117,7 +116,7 @@ public class Editor implements PaletteChangeListener {
 	}
 	
 	public boolean createLogDirectory() {
-		if(settings.logDirectoryName.length() == 0) { return true; }
+		if(settings.logDirectoryName.isEmpty()) { return true; }
 		
 		File logDirectory = new File(settings.logDirectoryName);
 		
@@ -132,10 +131,6 @@ public class Editor implements PaletteChangeListener {
 		}
 		
 		return true;
-	}
-
-	public void notifyPaletteChanged(PalettePanel palettePanel) {
-		editorWindow.update();
 	}
 	
 	public void close() {

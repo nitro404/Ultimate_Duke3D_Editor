@@ -58,7 +58,7 @@ public enum GroupFileSortType {
 	public static GroupFileSortType parseFrom(String data) {
 		if(data == null) { return Invalid; }
 		String temp = data.trim();
-		if(temp.length() == 0) { return Invalid; }
+		if(temp.isEmpty()) { return Invalid; }
 		
 		for(int i=0;i<numberOfSortTypes();i++) {
 			if(temp.equalsIgnoreCase(values()[i].name()) || temp.equalsIgnoreCase(displayNames[i])) {

@@ -38,16 +38,18 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 	private JMenuItem m_fileSaveMenuItem;
 	private JMenuItem m_fileSaveAsMenuItem;
 	private JMenuItem m_fileSaveAllMenuItem;
-	private JMenuItem m_fileAddFilesMenuItem;
-	private JMenuItem m_fileRemoveFilesMenuItem;
-	private JMenuItem m_fileReplaceFileMenuItem;
-	private JMenuItem m_fileRenameFileMenuItem;
-	private JMenuItem m_fileExtractFilesMenuItem;
 	private JMenuItem m_fileImportMenuItem;
 	private JMenuItem m_fileExportMenuItem;
 	private JMenuItem m_fileCloseMenuItem;
 	private JMenuItem m_fileCloseAllMenuItem;
 	private JMenuItem m_fileExitMenuItem;
+	private JMenu m_groupMenu;
+	private JMenuItem m_groupAddFilesMenuItem;
+	private JMenuItem m_groupRemoveFilesMenuItem;
+	private JMenuItem m_groupReplaceFileMenuItem;
+	private JMenuItem m_groupRenameFileMenuItem;
+	private JMenuItem m_groupExtractFilesMenuItem;
+	private JMenuItem m_groupExtractAllFilesMenuItem;
 	private JMenu m_selectMenu;
 	private JMenuItem m_selectInverseMenuItem;
 	private JMenuItem m_selectRandomMenuItem;
@@ -106,6 +108,11 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		private static final long serialVersionUID = 533089044121501451L;
 
+		public void exportToClipboard(JComponent component, Clipboard clipboard, int action) throws IllegalStateException {
+			StringSelection selectedText = new StringSelection(((JTextArea) component).getSelectedText());
+			clipboard.setContents(selectedText, selectedText);
+		}
+
 		public boolean canImport(TransferHandler.TransferSupport support) {
 			if(!support.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 				return false;
@@ -145,15 +152,27 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_frame.addWindowListener(this);
 		m_frame.addComponentListener(this);
 		m_frame.setTransferHandler(m_transferHandler);
-		
+
+		m_frame.getRootPane().registerKeyboardAction(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					updateAll();
+
+					SystemConsole.instance.writeLine("Refreshed window.");
+				}
+			},
+			KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0),
+			JComponent.WHEN_IN_FOCUSED_WINDOW
+		);
+
 		m_itemPanels = new Vector<ItemPanel>();
 		m_initialized = false;
 		m_updating = false;
 		
 		initMenu();
- 		initComponents();
- 		
- 		update();
+		initComponents();
+		
+		update();
 	}
 	
 	public boolean initialize() {
@@ -188,11 +207,6 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_fileSaveMenuItem = new JMenuItem("Save");
 		m_fileSaveAsMenuItem = new JMenuItem("Save As");
 		m_fileSaveAllMenuItem = new JMenuItem("Save All");
-		m_fileAddFilesMenuItem = new JMenuItem("Add Files");
-		m_fileRemoveFilesMenuItem = new JMenuItem("Remove Files");
-		m_fileReplaceFileMenuItem = new JMenuItem("Replace File");
-		m_fileRenameFileMenuItem = new JMenuItem("Rename File");
-		m_fileExtractFilesMenuItem = new JMenuItem("Extract Files");
 		m_fileImportMenuItem = new JMenuItem("Import");
 		m_fileExportMenuItem = new JMenuItem("Export");
 		m_fileCloseMenuItem = new JMenuItem("Close");
@@ -202,9 +216,6 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_fileNewMenuItem.setMnemonic('N');
 		m_fileOpenMenuItem.setMnemonic('O');
 		m_fileSaveMenuItem.setMnemonic('S');
-		m_fileAddFilesMenuItem.setMnemonic('D');
-		m_fileRemoveFilesMenuItem.setMnemonic('R');
-		m_fileExtractFilesMenuItem.setMnemonic('E');
 		m_fileImportMenuItem.setMnemonic('I');
 		m_fileExportMenuItem.setMnemonic('P');
 		m_fileExitMenuItem.setMnemonic('Q');
@@ -212,14 +223,27 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_fileNewMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.Event.CTRL_MASK));
 		m_fileOpenMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.Event.CTRL_MASK));
 		m_fileSaveMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.Event.CTRL_MASK));
-		m_fileAddFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.Event.CTRL_MASK));
-		m_fileRemoveFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.Event.CTRL_MASK));
-		m_fileExtractFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.Event.CTRL_MASK));
 		m_fileImportMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.Event.CTRL_MASK));
 		m_fileExportMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.Event.CTRL_MASK));
 		m_fileCloseMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.Event.CTRL_MASK));
 		m_fileExitMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.Event.CTRL_MASK));
 		
+		m_groupMenu = new JMenu("Group");
+		m_groupAddFilesMenuItem = new JMenuItem("Add Files");
+		m_groupRemoveFilesMenuItem = new JMenuItem("Remove Files");
+		m_groupReplaceFileMenuItem = new JMenuItem("Replace File");
+		m_groupRenameFileMenuItem = new JMenuItem("Rename File");
+		m_groupExtractFilesMenuItem = new JMenuItem("Extract Files");
+		m_groupExtractAllFilesMenuItem = new JMenuItem("Extract All Files");
+
+		m_groupAddFilesMenuItem.setMnemonic('D');
+		m_groupRemoveFilesMenuItem.setMnemonic('R');
+		m_groupExtractFilesMenuItem.setMnemonic('E');
+
+		m_groupAddFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.Event.CTRL_MASK));
+		m_groupRemoveFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.Event.CTRL_MASK));
+		m_groupExtractFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.Event.CTRL_MASK));
+
 		m_selectMenu = new JMenu("Select");
 		m_selectInverseMenuItem = new JMenuItem("Inverse");
 		m_selectRandomMenuItem = new JMenuItem("Random");
@@ -293,16 +317,17 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_fileSaveMenuItem.addActionListener(this);
 		m_fileSaveAsMenuItem.addActionListener(this);
 		m_fileSaveAllMenuItem.addActionListener(this);
-		m_fileAddFilesMenuItem.addActionListener(this);
-		m_fileRemoveFilesMenuItem.addActionListener(this);
-		m_fileReplaceFileMenuItem.addActionListener(this);
-		m_fileRenameFileMenuItem.addActionListener(this);
-		m_fileExtractFilesMenuItem.addActionListener(this);
 		m_fileImportMenuItem.addActionListener(this);
 		m_fileExportMenuItem.addActionListener(this);
 		m_fileCloseMenuItem.addActionListener(this);
 		m_fileCloseAllMenuItem.addActionListener(this);
 		m_fileExitMenuItem.addActionListener(this);
+		m_groupAddFilesMenuItem.addActionListener(this);
+		m_groupRemoveFilesMenuItem.addActionListener(this);
+		m_groupReplaceFileMenuItem.addActionListener(this);
+		m_groupRenameFileMenuItem.addActionListener(this);
+		m_groupExtractFilesMenuItem.addActionListener(this);
+		m_groupExtractAllFilesMenuItem.addActionListener(this);
 		m_selectInverseMenuItem.addActionListener(this);
 		m_selectRandomMenuItem.addActionListener(this);
 		m_selectAllMenuItem.addActionListener(this);
@@ -349,16 +374,18 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_fileMenu.add(m_fileSaveMenuItem);
 		m_fileMenu.add(m_fileSaveAsMenuItem);
 		m_fileMenu.add(m_fileSaveAllMenuItem);
-		m_fileMenu.add(m_fileAddFilesMenuItem);
-		m_fileMenu.add(m_fileRemoveFilesMenuItem);
-		m_fileMenu.add(m_fileReplaceFileMenuItem);
-		m_fileMenu.add(m_fileRenameFileMenuItem);
-		m_fileMenu.add(m_fileExtractFilesMenuItem);
 		m_fileMenu.add(m_fileImportMenuItem);
 		m_fileMenu.add(m_fileExportMenuItem);
 		m_fileMenu.add(m_fileCloseMenuItem);
 		m_fileMenu.add(m_fileCloseAllMenuItem);
 		m_fileMenu.add(m_fileExitMenuItem);
+
+		m_groupMenu.add(m_groupAddFilesMenuItem);
+		m_groupMenu.add(m_groupRemoveFilesMenuItem);
+		m_groupMenu.add(m_groupReplaceFileMenuItem);
+		m_groupMenu.add(m_groupRenameFileMenuItem);
+		m_groupMenu.add(m_groupExtractFilesMenuItem);
+		m_groupMenu.add(m_groupExtractAllFilesMenuItem);
 		
 		m_selectMenu.add(m_selectInverseMenuItem);
 		m_selectMenu.add(m_selectRandomMenuItem);
@@ -412,6 +439,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_helpMenu.add(m_helpAboutMenuItem);
 		
 		m_menuBar.add(m_fileMenu);
+		m_menuBar.add(m_groupMenu);
 		m_menuBar.add(m_selectMenu);
 		m_menuBar.add(m_sortMenu);
 		m_menuBar.add(m_processMenu);
@@ -433,7 +461,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_consoleFont = new Font("Verdana", Font.PLAIN, 14);
 		m_consoleText.setFont(m_consoleFont);
 		m_consoleText.setEditable(false);
-//		m_consoleText.setTransferHandler(m_transferHandler);
+		m_consoleText.setTransferHandler(m_transferHandler);
 		m_consoleScrollPane = new JScrollPane(m_consoleText);
 		m_mainTabbedPane.add(m_consoleScrollPane);
 		
@@ -478,22 +506,11 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		m_mainTabbedPane.setSelectedIndex(index);
 		
-		if(itemPanel instanceof PalettePanel) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					m_mainTabbedPane.revalidate();
-					
-					update();
-				}
-			});
-		}
-		else {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					Editor.editorWindow.getSelectedItemPanel().updateLayout();
-				}
-			});
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				Editor.editorWindow.getSelectedItemPanel().updateLayout();
+			}
+		});
 	}
 
 	public boolean unsavedChanges() {
@@ -692,7 +709,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 
 	public boolean promptNewItem() {
 		Vector<FilePlugin> loadedPlugins = EditorPluginManager.instance.getPlugins(FilePlugin.class);
-		if(loadedPlugins.size() == 0) {
+		if(loadedPlugins.isEmpty()) {
 			String message = "No plugins found that support instantiation. Perhaps you forgot to load all plugins?";
 			
 			SystemConsole.instance.writeLine(message);
@@ -702,9 +719,22 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			return false;
 		}
 		
+		FilePlugin currentPlugin = null;
+		int previousNewFilePluginIndex = -1;
+
+		for(int i = 0; i < loadedPlugins.size(); i++) {
+			currentPlugin = loadedPlugins.elementAt(i);
+
+			if(currentPlugin.getName().equalsIgnoreCase(SettingsManager.instance.previousNewFileType)) {
+				previousNewFilePluginIndex = i;
+				break;
+			}
+		}
+		
 		int pluginIndex = -1;
 		Object choices[] = loadedPlugins.toArray();
-		Object value = JOptionPane.showInputDialog(m_frame, "Choose an item type to create:", "Choose New Item Type", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+		Object defaultChoice = previousNewFilePluginIndex == -1 ? choices[0] : choices[previousNewFilePluginIndex];
+		Object value = JOptionPane.showInputDialog(m_frame, "Choose an item type to create:", "Choose New Item Type", JOptionPane.QUESTION_MESSAGE, null, choices, defaultChoice);
 		if(value == null) { return false; }
 		for(int i=0;i<choices.length;i++) {
 			if(choices[i] == value) {
@@ -713,13 +743,14 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			}
 		}
 		if(pluginIndex < 0 || pluginIndex >= loadedPlugins.size()) { return false; }
+		FilePlugin plugin = loadedPlugins.elementAt(pluginIndex);
 		
 		Item newItem = null;
 		try {
-			newItem = loadedPlugins.elementAt(pluginIndex).getNewItemInstance(null);
+			newItem = plugin.getNewItemInstance(null);
 		}
 		catch(ItemInstantiationException e) {
-			String message = "Failed to create instance of \"" + loadedPlugins.elementAt(pluginIndex).getName() + "\"!";
+			String message = "Failed to create instance of \"" + plugin.getName() + "\"!";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -728,7 +759,17 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			return false;
 		}
 		
-		SystemConsole.instance.writeLine(loadedPlugins.elementAt(pluginIndex).getName() + " item created successfully!");
+		if(!newItem.isInstantiable()) {
+			String message = "\"" + plugin.getName() + "\" is not instantiable!";
+			
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Not Instantiable", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
+		
+		SystemConsole.instance.writeLine(plugin.getName() + " item created successfully!");
 		
 		int fileTypeIndex = 0;
 		if(newItem.numberOfFileTypes() > 1) {
@@ -745,7 +786,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		}
 
 		ItemPanel newItemPanel = null;
-		try { newItemPanel = loadedPlugins.elementAt(pluginIndex).getNewItemPanelInstance(newItem); }
+		try { newItemPanel = plugin.getNewItemPanelInstance(newItem); }
 		catch(ItemPanelInstantiationException e) {
 			SystemConsole.instance.writeLine(e.getMessage());
 			
@@ -754,7 +795,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			return false;
 		}
 		if(newItemPanel == null) {
-			String message = "Failed to instantiate group panel for \"" + loadedPlugins.elementAt(pluginIndex).getName() + " plugin.";
+			String message = "Failed to instantiate group panel for \"" + plugin.getName() + " plugin.";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -764,7 +805,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		}
 		
 		if(!newItemPanel.init()) {
-			String message = "Failed to initialize group panel for \"" + loadedPlugins.elementAt(pluginIndex).getName() + "\" plugin.";
+			String message = "Failed to initialize group panel for \"" + plugin.getName() + "\" plugin.";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -772,6 +813,8 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			
 			return false;
 		}
+		
+		SettingsManager.instance.previousNewFileType = plugin.getName();
 		
 		if(newItem instanceof Palette) {
 			Color fillColour = JColorChooser.showDialog(null, "Choose Fill Colour", Color.BLACK);
@@ -790,7 +833,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		else if(newItem instanceof Group) {
 			((GroupPanel) newItemPanel).addGroupActionListener(this);
 		}
-		else {
+		else if(newItem instanceof Palette) {
 			((PalettePanel) newItemPanel).addPaletteActionListener(this);
 		}
 		
@@ -872,7 +915,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		String extension = Utilities.getFileExtension(file.getName());
 		
 		Vector<FilePlugin> plugins = EditorPluginManager.instance.getPluginsForFileFormat(extension);
-		if(plugins == null || plugins.size() == 0) {
+		if(plugins == null || plugins.isEmpty()) {
 			String message = "No plugin found to load " + extension + " file type. Perhaps you forgot to load all plugins?";
 			
 			SystemConsole.instance.writeLine(message);
@@ -928,6 +971,13 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			SystemConsole.instance.writeLine(e.getMessage());
 			
 			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "File Loading Failed", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
+		catch(DeserializationException e) {
+			SystemConsole.instance.writeLine(e.getMessage());
+			
+			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "File Deserialization Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -1070,7 +1120,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 	}
 	
 	public void saveAllItems() {
-		if(m_itemPanels.size() == 0) { return; }
+		if(m_itemPanels.isEmpty()) { return; }
 		
 		for(int i=0;i<m_itemPanels.size();i++) {
 			saveItem(m_itemPanels.elementAt(i));
@@ -1108,9 +1158,14 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		boolean duplicateFile = false;
 		DuplicateFileAction duplicateFileAction = DuplicateFileAction.Invalid;
 		File[] selectedFiles = fileChooser.getSelectedFiles();
+		Vector<String> truncatedFileNames = new Vector<String>();
 		
 		for(int i=0;i<selectedFiles.length;i++) {
 			formattedFileName = Utilities.truncateFileName(selectedFiles[i].getName(), GroupFile.MAX_FILE_NAME_LENGTH);
+			
+			if(selectedFiles[i].getName().length() > GroupFile.MAX_FILE_NAME_LENGTH) {
+				truncatedFileNames.add(selectedFiles[i].getName());
+			}
 			
 			duplicateFile = group.hasFile(formattedFileName);
 			
@@ -1131,6 +1186,18 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 					SystemConsole.instance.writeLine("Failed to add file " + formattedFileName + " to group" + (group.getFile() == null ? "." : " \"" + group.getFile().getName() + "\"."));
 				}
 			}
+		}
+		
+		if(!truncatedFileNames.isEmpty()) {
+			String message = "Truncated " + truncatedFileNames.size() + " file name" + (truncatedFileNames.size() == 1 ? "" : "s") + " to " + GroupFile.MAX_FILE_NAME_LENGTH + " characters:";
+			
+			for(int i = 0; i < truncatedFileNames.size(); i++) {
+				message += "\n" + (i + 1) + ". '" + truncatedFileNames.elementAt(i) + "' => '" + Utilities.truncateFileName(truncatedFileNames.elementAt(i).toUpperCase().toUpperCase(), GroupFile.MAX_FILE_NAME_LENGTH) + "'";
+			}
+			
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "File Names Truncated", JOptionPane.WARNING_MESSAGE);
 		}
 		
 		if(numberOfFilesAdded == 0) {
@@ -1172,7 +1239,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		if(groupPanel == null) { return 0; }
 		
 		Vector<GroupFile> selectedGroupFiles = groupPanel.getSelectedFiles();
-		if(selectedGroupFiles.size() == 0) { return 0; }
+		if(selectedGroupFiles.isEmpty()) { return 0; }
 		
 		int choice = JOptionPane.showConfirmDialog(m_frame, "Are you sure you wish to remove the " + selectedGroupFiles.size() + " selected files" + (groupPanel.getGroup().getFile() == null ? "?" : " from group \"" + groupPanel.getGroup().getFile().getName() + "\"?"), "Remove Files?", JOptionPane.YES_NO_CANCEL_OPTION);
 		if(choice == JOptionPane.NO_OPTION || choice == JOptionPane.CANCEL_OPTION) { return 0; }
@@ -1315,8 +1382,16 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		return true;
 	}
-	
+
 	public int extractSelectedFilesFromSelectedGroup() {
+		return extractFilesFromSelectedGroup(true);
+	}
+
+	public int extractAllFilesFromSelectedGroup() {
+		return extractFilesFromSelectedGroup(false);
+	}
+
+	public int extractFilesFromSelectedGroup(boolean selectedOnly) {
 		ItemPanel itemPanel = getSelectedItemPanel();
 		
 		if(itemPanel == null || !(itemPanel instanceof GroupPanel)) {
@@ -1325,14 +1400,30 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 
 		return extractSelectedFilesFromGroup((GroupPanel) itemPanel);
 	}
-	
+
 	public int extractSelectedFilesFromGroup(GroupPanel groupPanel) {
+		return extractFilesFromGroup(groupPanel, true);
+	}
+
+	public int extractAllFilesFromGroup(GroupPanel groupPanel) {
+		return extractFilesFromGroup(groupPanel, false);
+	}
+
+	public int extractFilesFromGroup(GroupPanel groupPanel, boolean selectedOnly) {
 		if(groupPanel == null) { return 0; }
 
-		Vector<GroupFile> selectedGroupFiles = groupPanel.getSelectedFiles();
-		if(selectedGroupFiles.size() == 0) { return 0; }
+		Vector<GroupFile> groupFilesToExtract = null;
+
+		if(selectedOnly) {
+			groupFilesToExtract = groupPanel.getSelectedFiles();
+		}
+		else {
+			groupFilesToExtract = groupPanel.getGroup().getFiles();
+		}
+
+		if(groupFilesToExtract.isEmpty()) { return 0; }
 		
-		JFileChooser fileChooser = new JFileChooser(SettingsManager.instance.previousExtractDirectory);
+		JFileChooser fileChooser = new JFileChooser(SettingsManager.instance.previousExtractGroupFileDirectory);
 		fileChooser.setDialogTitle("Extract Files");
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
@@ -1347,10 +1438,10 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			return 0;
 		}
 		
-		SettingsManager.instance.previousExtractDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
+		SettingsManager.instance.previousExtractGroupFileDirectory = fileChooser.getCurrentDirectory().getPath();
 		
 		if(!fileChooser.getSelectedFile().exists()) {
-			int choice = JOptionPane.showConfirmDialog(m_frame, "The specified directory does not exist, create it?", "Non-Existant Directory", JOptionPane.YES_NO_CANCEL_OPTION);
+			int choice = JOptionPane.showConfirmDialog(m_frame, "The specified directory does not exist, create it?", "Non-Existent Directory", JOptionPane.YES_NO_CANCEL_OPTION);
 			if(choice == JOptionPane.NO_OPTION || choice == JOptionPane.CANCEL_OPTION) { return 0; }
 			
 			try {
@@ -1369,17 +1460,17 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		int numberOfFilesExtracted = 0;
 		
-		for(int i=0;i<selectedGroupFiles.size();i++) {
+		for(int i=0;i<groupFilesToExtract.size();i++) {
 			try {
-				if(selectedGroupFiles.elementAt(i).writeTo(fileChooser.getSelectedFile())) {
+				if(groupFilesToExtract.elementAt(i).writeTo(fileChooser.getSelectedFile())) {
 					numberOfFilesExtracted++;
 				}
 				else {
-					SystemConsole.instance.writeLine("Failed to extract file \"" + selectedGroupFiles.elementAt(i).getFileName() + "\" to directory: \"" + fileChooser.getSelectedFile().getName() + "\".");
+					SystemConsole.instance.writeLine("Failed to extract file \"" + groupFilesToExtract.elementAt(i).getFileName() + "\" to directory: \"" + fileChooser.getSelectedFile().getName() + "\".");
 				}
 			}
 			catch(IOException e) {
-				SystemConsole.instance.writeLine("Exception thrown while extracting file \"" + selectedGroupFiles.elementAt(i).getFileName() + "\" to directory \"" + fileChooser.getSelectedFile().getName() + "\": " + e.getMessage());
+				SystemConsole.instance.writeLine("Exception thrown while extracting file \"" + groupFilesToExtract.elementAt(i).getFileName() + "\" to directory \"" + fileChooser.getSelectedFile().getName() + "\": " + e.getMessage());
 			}
 		}
 		
@@ -1390,15 +1481,15 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			
 			JOptionPane.showMessageDialog(m_frame, message, "Failed to Extract Files", JOptionPane.ERROR_MESSAGE);
 		}
-		else if(numberOfFilesExtracted != selectedGroupFiles.size()) {
-			String message = "Only successfully extracted " + numberOfFilesExtracted + " of " + selectedGroupFiles.size() + " selected files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
+		else if(numberOfFilesExtracted != groupFilesToExtract.size()) {
+			String message = "Only successfully extracted " + numberOfFilesExtracted + " of " + groupFilesToExtract.size() + " selected files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
 			
 			SystemConsole.instance.writeLine(message);
 			
 			JOptionPane.showMessageDialog(m_frame, message, "Some Files Extracted", JOptionPane.WARNING_MESSAGE);
 		}
 		else {
-			String message = "Successfully extracted all " + selectedGroupFiles.size() + " selected files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
+			String message = "Successfully extracted all " + groupFilesToExtract.size() + " selected files to directory: \"" + fileChooser.getSelectedFile().getName() + "\".";
 			
 			SystemConsole.instance.writeLine(message);
 			
@@ -1452,7 +1543,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		String extension = Utilities.getFileExtension(selectedFile.getName());
 		
 		Vector<FilePlugin> plugins = EditorPluginManager.instance.getPluginsForFileFormat(extension);
-		if(plugins == null || plugins.size() == 0) {
+		if(plugins == null || plugins.isEmpty()) {
 			String message = "No plugin found to import " + extension + " file type. Perhaps you forgot to load all plugins?";
 			
 			SystemConsole.instance.writeLine(message);
@@ -1510,6 +1601,13 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			SystemConsole.instance.writeLine(e.getMessage());
 			
 			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Group Importing Failed", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
+		catch(DeserializationException e) {
+			SystemConsole.instance.writeLine(e.getMessage());
+			
+			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Group Deserialization Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -1604,6 +1702,13 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			SystemConsole.instance.writeLine(e.getMessage());
 			
 			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Palette Importing Failed", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
+		catch(DeserializationException e) {
+			SystemConsole.instance.writeLine(e.getMessage());
+			
+			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "Palette Deserialization Failed", JOptionPane.ERROR_MESSAGE);
 			
 			return false;
 		}
@@ -1705,7 +1810,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		Vector<GroupPlugin> loadedGroupPlugins = EditorPluginManager.instance.getGroupPluginsExcludingFileFormat(group.getFileExtension());
 		
-		if(loadedGroupPlugins.size() == 0) {
+		if(loadedGroupPlugins.isEmpty()) {
 			String message = "No group plugins found that support instantiation / exporting. Perhaps you forgot to load all plugins?";
 			
 			SystemConsole.instance.writeLine(message);
@@ -1741,25 +1846,26 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			return false;
 		}
 		
-		int fileTypeIndex = 0;
 		if(newGroup.numberOfFileTypes() > 1) {
-			Object selectedFileType = JOptionPane.showInputDialog(m_frame, "Choose a group file type to export to:", "Choose Group File Type", JOptionPane.QUESTION_MESSAGE, null, newGroup.getFileTypes(), newGroup.getFileTypes()[0]);
+			int fileTypeIndex = 0;
+			ItemFileType fileTypes[] = newGroup.getFileTypes();
+			Object selectedFileType = JOptionPane.showInputDialog(m_frame, "Choose a group file type to export to:", "Choose File Type", JOptionPane.QUESTION_MESSAGE, null, fileTypes, fileTypes[0]);
 			if(selectedFileType == null) { return false; }
-			for(int i=0;i<newGroup.getFileTypes().length;i++) {
-				if(newGroup.getFileTypes()[i] == selectedFileType) {
+			for(int i=0;i<fileTypes.length;i++) {
+				if(fileTypes[i] == selectedFileType) {
 					fileTypeIndex = i;
 					break;
 				}
 			}
 			if(fileTypeIndex < 0 || fileTypeIndex >= newGroup.numberOfFileTypes()) { return false; }
-			newGroup.setFileType(newGroup.getFileTypes()[fileTypeIndex]);
+			newGroup.setFileType(fileTypes[fileTypeIndex]);
 		}
 		
 		JFileChooser fileChooser = new JFileChooser(group.getFile() == null ? SettingsManager.instance.previousSaveDirectory : Utilities.getFilePath(group.getFile()));
 		fileChooser.setDialogTitle("Export Group File");
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		fileChooser.setMultiSelectionEnabled(false);
-		String extension = loadedGroupPlugins.elementAt(pluginIndex).getSupportedFileFormat(fileTypeIndex);
+		String extension = newGroup.getFileType().getExtension();
 		if(group.getFile() != null) {
 			String fileName = group.getFile().getName();
 			fileChooser.setSelectedFile(new File(Utilities.getFileNameNoExtension(fileName) + (Utilities.compareCasePercentage(fileName) < 0 ? "_copy" : "_COPY") + "." + (Utilities.compareCasePercentage(fileName) < 0 ? extension.toLowerCase() : extension.toUpperCase())));
@@ -1843,8 +1949,8 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			}
 		}
 		
-		Vector<PalettePlugin> loadedInstantiablePlugins = Editor.pluginManager.getPalettePluginsExcludingFileFormat(palette.getFileExtension());
-		if(loadedInstantiablePlugins.size() == 0) {
+		Vector<PalettePlugin> loadedPalettePlugins = Editor.pluginManager.getPalettePluginsExcludingFileFormat(palette.getFileExtension());
+		if(loadedPalettePlugins.isEmpty()) {
 			String message = "No palette plugins found that support instantiation / exporting. Perhaps you forgot to load all plugins?";
 			
 			SystemConsole.instance.writeLine(message);
@@ -1853,7 +1959,8 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			
 			return false;
 		}
-		
+
+		Palette newPalette = null;
 		int useSameExportSettings = -1;
 		int pluginIndex = -1;
 		int fileTypeIndex = 0;
@@ -1862,7 +1969,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		while(true) {
 			if(useSameExportSettings <= 0) {
 				pluginIndex = -1;
-				Object choices[] = loadedInstantiablePlugins.toArray();
+				Object choices[] = loadedPalettePlugins.toArray();
 				Object value = JOptionPane.showInputDialog(m_frame, "Choose a palette type to export to:", "Choose Palette Type", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 				if(value == null) { return false; }
 				for(int i=0;i<choices.length;i++) {
@@ -1871,34 +1978,48 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 						break;
 					}
 				}
-				if(pluginIndex < 0 || pluginIndex >= loadedInstantiablePlugins.size()) { return false; }
+				if(pluginIndex < 0 || pluginIndex >= loadedPalettePlugins.size()) { return false; }
 				
-				fileTypeIndex = 0;
-				if(loadedInstantiablePlugins.elementAt(pluginIndex).numberOfSupportedFileFormats() > 1) {
-					choices = loadedInstantiablePlugins.elementAt(pluginIndex).getSupportedFileFormats().toArray();
-					value = JOptionPane.showInputDialog(m_frame, "Choose a palette file type to export to:", "Choose File Type", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
-					if(value == null) { return false; }
-					for(int i=0;i<choices.length;i++) {
-						if(choices[i] == value) {
+				try {
+					newPalette = (Palette) loadedPalettePlugins.elementAt(pluginIndex).getNewItemInstance(null);
+				}
+				catch(ItemInstantiationException e) {
+					String message = "Failed to create instance of export file: \"" + loadedPalettePlugins.elementAt(pluginIndex).getName() + " (" + loadedPalettePlugins.elementAt(pluginIndex).getSupportedFileFormatsAsString() + ")!";
+					
+					SystemConsole.instance.writeLine(message);
+					
+					JOptionPane.showMessageDialog(m_frame, message, "Instantiation Failed", JOptionPane.ERROR_MESSAGE);
+					
+					return false;
+				}
+
+				if(newPalette.numberOfFileTypes() > 1) {
+					fileTypeIndex = 0;
+					ItemFileType fileTypes[] = newPalette.getFileTypes();
+					Object selectedFileType = JOptionPane.showInputDialog(m_frame, "Choose a palette file type to export to:", "Choose File Type", JOptionPane.QUESTION_MESSAGE, null, fileTypes, fileTypes[0]);
+					if(selectedFileType == null) { return false; }
+					for(int i=0;i<fileTypes.length;i++) {
+						if(fileTypes[i] == selectedFileType) {
 							fileTypeIndex = i;
 							break;
 						}
 					}
-					if(fileTypeIndex < 0 || fileTypeIndex >= loadedInstantiablePlugins.size()) { return false; }
+					if(fileTypeIndex < 0 || fileTypeIndex >= newPalette.numberOfFileTypes()) { return false; }
+					newPalette.setFileType(fileTypes[fileTypeIndex]);
 				}
 			}
 			
-			if(palette.numberOfPalettes() > 1 && useSameExportSettings < 0) {
+			if(palette.numberOfPalettes() > 1 && useSameExportSettings < 0 && paletteIndex == -1) {
 				int choice = JOptionPane.showConfirmDialog(m_frame, "Would you like to use the same export settings for all sub-palettes?", "Use Same Export Settings?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if(choice == JOptionPane.YES_OPTION) { useSameExportSettings = 1; }
 				else if(choice == JOptionPane.NO_OPTION) { useSameExportSettings = 0; }
 			}
 			
-			JFileChooser fileChooser = new JFileChooser(palette.getFile() == null ? System.getProperty("user.dir") : Utilities.getFilePath(palette.getFile()));
+			JFileChooser fileChooser = new JFileChooser(palette.getFile() == null ? SettingsManager.instance.previousSaveDirectory : Utilities.getFilePath(palette.getFile()));
 			fileChooser.setDialogTitle("Export Palette File");
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			fileChooser.setMultiSelectionEnabled(false);
-			String extension = loadedInstantiablePlugins.elementAt(pluginIndex).getSupportedFileFormat(fileTypeIndex);
+			String extension = newPalette.getFileType().getExtension();
 			if(palette.getFile() != null) {
 				String fileName = palette.getFile().getName();
 				fileChooser.setSelectedFile(new File(Utilities.getFileNameNoExtension(fileName) + (palette.numberOfPalettes() > 1 ? "_" + (currentPaletteIndex + 1) : (Utilities.compareCasePercentage(fileName) < 0 ? "_copy" : "_COPY"))  + "." + (Utilities.compareCasePercentage(fileName) < 0 ? extension.toLowerCase() : extension.toUpperCase())));
@@ -1922,19 +2043,9 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 				}
 			}
 			
-			Palette newPalette = null;
-			try {
-				newPalette = (Palette) loadedInstantiablePlugins.elementAt(pluginIndex).getNewItemInstance(fileChooser.getSelectedFile());
-			}
-			catch(ItemInstantiationException e) {
-				String message = "Failed to create instance of export file: \"" + loadedInstantiablePlugins.elementAt(pluginIndex).getName() + " (" + loadedInstantiablePlugins.elementAt(pluginIndex).getSupportedFileFormatsAsString() + ")!";
-				
-				SystemConsole.instance.writeLine(message);
-				
-				JOptionPane.showMessageDialog(m_frame, message, "Instantiation Failed", JOptionPane.ERROR_MESSAGE);
-				
-				return false;
-			}
+			SettingsManager.instance.previousSaveDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
+			
+			newPalette.setFile(fileChooser.getSelectedFile());
 			
 			if(!palettePanel.updatePaletteData()) {
 				String message = "Failed to update palette data for source palette while attempting to export file: \"" + palette.getFile().getName() + "!";
@@ -2005,6 +2116,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		m_mainTabbedPane.remove(tabComponent);
 		int indexOfGroup = m_itemPanels.indexOf(itemPanel);
+		itemPanel.cleanup();
 		m_itemPanels.remove(itemPanel);
 		if(m_itemPanels.size() > 0) {
 			m_mainTabbedPane.setSelectedComponent(getTabComponentWith(m_itemPanels.elementAt(indexOfGroup < m_itemPanels.size() ? indexOfGroup : indexOfGroup - 1)));
@@ -2218,11 +2330,10 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			itemPanel = m_itemPanels.elementAt(i);
 			
 			if(itemPanel instanceof GroupPanel) {
-
 				((GroupPanel) itemPanel).autoSort();
 			}
 			
-			itemPanel.updateWindow();
+			itemPanel.update();
 		}
 		
 		m_updating = false;
@@ -2243,24 +2354,25 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		GroupPanel selectedGroupPanel = (selectedItemPanel instanceof GroupPanel) ? (GroupPanel) selectedItemPanel : null;
 		Group selectedGroup = selectedGroupPanel == null ? null : selectedGroupPanel.getGroup();
 		boolean itemTabSelected = m_mainTabbedPane.getSelectedIndex() != m_mainTabbedPane.getTabCount() - 1;
-		boolean groupHasFiles = selectedGroup != null && selectedGroup.numberOfFiles() > 0;
+		boolean groupHasFiles = selectedGroup != null && selectedGroup.numberOfFiles() != 0;
 		m_fileSaveMenuItem.setEnabled(itemTabSelected);
 		m_fileSaveAsMenuItem.setEnabled(itemTabSelected);
-		m_fileSaveAllMenuItem.setEnabled(m_itemPanels.size() > 0);
-		m_fileAddFilesMenuItem.setEnabled(selectedGroupPanel != null);
-		
-		m_fileRemoveFilesMenuItem.setText("Remove File" + (selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1 ? "" : "s"));
-		m_fileExtractFilesMenuItem.setText("Extract File" + (selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1 ? "" : "s"));
-		
-		m_fileRemoveFilesMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() > 0);
-		m_fileReplaceFileMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1);
-		m_fileRenameFileMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1);
-		m_fileExtractFilesMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() > 0);
+		m_fileSaveAllMenuItem.setEnabled(m_itemPanels.size() != 0);
 		
 		m_fileImportMenuItem.setEnabled(itemTabSelected);
 		m_fileExportMenuItem.setEnabled(itemTabSelected);
 		m_fileCloseMenuItem.setEnabled(itemTabSelected);
-		m_fileCloseAllMenuItem.setEnabled(m_itemPanels.size() > 0);
+		m_fileCloseAllMenuItem.setEnabled(m_itemPanels.size() != 0);
+
+		m_groupAddFilesMenuItem.setEnabled(selectedGroupPanel != null);
+		m_groupRemoveFilesMenuItem.setText("Remove File" + (selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1 ? "" : "s"));
+		m_groupExtractFilesMenuItem.setText("Extract File" + (selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1 ? "" : "s"));
+		
+		m_groupRemoveFilesMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() != 0);
+		m_groupReplaceFileMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1);
+		m_groupRenameFileMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1);
+		m_groupExtractFilesMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() != 0);
+		m_groupExtractAllFilesMenuItem.setEnabled(selectedGroup != null && selectedGroup.numberOfFiles() != 0);
 		
 		m_selectInverseMenuItem.setEnabled(groupHasFiles);
 		m_selectRandomMenuItem.setEnabled(groupHasFiles);
@@ -2291,8 +2403,8 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		int numberOfLoadedGroupProcessorPlugins = EditorPluginManager.instance.numberOfPlugins(GroupProcessorPlugin.class);
 		
-		m_processGroupFilesMenuItem.setEnabled(numberOfLoadedGroupProcessorPlugins > 0);
-		m_processOpenGroupsMenuItem.setEnabled(numberOfLoadedGroupProcessorPlugins > 0 && m_itemPanels.size() > 0);
+		m_processGroupFilesMenuItem.setEnabled(numberOfLoadedGroupProcessorPlugins != 0);
+		m_processOpenGroupsMenuItem.setEnabled(numberOfLoadedGroupProcessorPlugins != 0 && m_itemPanels.size() != 0);
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -2461,27 +2573,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		else if(e.getSource() == m_fileSaveAllMenuItem) {
 			saveAllItems();
 		}
-		// add files to selected group
-		else if(e.getSource() == m_fileAddFilesMenuItem) {
-			addFilesToSelectedGroup();
-		}
-		// remove files from selected group
-		else if(e.getSource() == m_fileRemoveFilesMenuItem) {
-			removeSelectedFilesFromSelectedGroup();
-		}
-		// replace file in selected group
-		else if(e.getSource() == m_fileReplaceFileMenuItem) {
-			replaceSelectedFileInSelectedGroup();
-		}
-		// rename file in selected group
-		else if(e.getSource() == m_fileRenameFileMenuItem) {
-			renameSelectedFileInSelectedGroup();
-		}
-		// extract files from selected group
-		else if(e.getSource() == m_fileExtractFilesMenuItem) {
-			extractSelectedFilesFromSelectedGroup();
-		}
-		// import group
+		// import item
 		else if(e.getSource() == m_fileImportMenuItem) {
 			importItemIntoSelectedItem();
 		}
@@ -2500,6 +2592,30 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		// close the program
 		else if(e.getSource() == m_fileExitMenuItem) {
 			close();
+		}
+		// add files to selected group
+		else if(e.getSource() == m_groupAddFilesMenuItem) {
+			addFilesToSelectedGroup();
+		}
+		// remove files from selected group
+		else if(e.getSource() == m_groupRemoveFilesMenuItem) {
+			removeSelectedFilesFromSelectedGroup();
+		}
+		// replace file in selected group
+		else if(e.getSource() == m_groupReplaceFileMenuItem) {
+			replaceSelectedFileInSelectedGroup();
+		}
+		// rename file in selected group
+		else if(e.getSource() == m_groupRenameFileMenuItem) {
+			renameSelectedFileInSelectedGroup();
+		}
+		// extract files from selected group
+		else if(e.getSource() == m_groupExtractFilesMenuItem) {
+			extractSelectedFilesFromSelectedGroup();
+		}
+		// extract all files from selected group
+		else if(e.getSource() == m_groupExtractAllFilesMenuItem) {
+			extractAllFilesFromSelectedGroup();
 		}
 		// inverse file selection
 		else if(e.getSource() == m_selectInverseMenuItem) {
@@ -2590,7 +2706,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			if(input == null) { return; }
 			
 			String newPluginDirectoryName = input.trim();
-			if(newPluginDirectoryName.length() == 0) { return; }
+			if(newPluginDirectoryName.isEmpty()) { return; }
 			
 			if(!newPluginDirectoryName.equalsIgnoreCase(SettingsManager.instance.pluginDirectoryName)) {
 				SettingsManager.instance.pluginDirectoryName = newPluginDirectoryName;
@@ -2603,7 +2719,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			if(input == null) { return; }
 			
 			String newConsoleLogFileName = input.trim();
-			if(newConsoleLogFileName.length() == 0) { return; }
+			if(newConsoleLogFileName.isEmpty()) { return; }
 			
 			if(!newConsoleLogFileName.equalsIgnoreCase(SettingsManager.instance.consoleLogFileName)) {
 				Editor.console.resetConsoleLogFileHeader();
@@ -2618,19 +2734,20 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			if(input == null) { return; }
 			
 			String newLogDirectoryName = input.trim();
-			if(newLogDirectoryName.length() == 0) { return; }
+			if(newLogDirectoryName.isEmpty()) { return; }
 			
 			if(!newLogDirectoryName.equalsIgnoreCase(SettingsManager.instance.logDirectoryName)) {
 				SettingsManager.instance.logDirectoryName = newLogDirectoryName;
 			}
 		}
+		// change the version file url setting
 		else if(e.getSource() == m_settingsVersionFileURLMenuItem) {
 			// prompt for the version file url
 			String input = JOptionPane.showInputDialog(m_frame, "Please enter the version file URL:", SettingsManager.instance.versionFileURL);
 			if(input == null) { return; }
 			
 			String newVersionFileURL = input.trim();
-			if(newVersionFileURL.length() == 0) { return; }
+			if(newVersionFileURL.isEmpty()) { return; }
 			
 			if(!newVersionFileURL.equalsIgnoreCase(SettingsManager.instance.versionFileURL)) {
 				SettingsManager.instance.versionFileURL = newVersionFileURL;
@@ -2778,7 +2895,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		}
 		// display help message
 		else if(e.getSource() == m_helpAboutMenuItem) {
-			JOptionPane.showMessageDialog(m_frame, "Ultimate Duke 3D Editor Version " + Editor.VERSION + "\nCreated by Kevin Scroggins (a.k.a. nitro_glycerine)\nE-Mail: nitro404@gmail.com\nWebsite: http://www.nitro404.com", "About Ultimate Duke 3D Editor", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(m_frame, "Ultimate Duke Nukem 3D Editor Version " + Editor.VERSION + "\nCreated by Kevin Scroggins (a.k.a. nitro_glycerine)\nE-Mail: nitro404@gmail.com\nWebsite: http://www.nitro404.com", "About Ultimate Duke 3D Editor", JOptionPane.INFORMATION_MESSAGE);
 		}
 		else {
 			// change group file sort direction
@@ -2858,6 +2975,10 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			case ExtractFiles:
 				extractSelectedFilesFromGroup(action.getSource());
 				break;
+
+			case ExtractAllFiles:
+				extractAllFilesFromGroup(action.getSource());
+				break;
 				
 			case Import:
 				importGroupInto(action.getSource());
@@ -2875,7 +2996,8 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 				closeAllItems();
 				break;
 				
-			default:
+			case DoNothing:
+			case Invalid:
 				return false;
 		}
 		
@@ -2906,7 +3028,8 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 				closeItem(action.getSource());
 				break;
 				
-			default:
+			case DoNothing:
+			case Invalid:
 				return false;
 		}
 		
@@ -2955,5 +3078,5 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		System.exit(0);
 	}
-	
+
 }

@@ -9,15 +9,16 @@ import editor.*;
 public class SettingsManager {
 	
 	public static SettingsManager instance = null;
-	
+
 	private VariableCollection m_settings;
 	
 	public String settingsFileName = defaultSettingsFileName;
 	public String versionFileURL = defaultVersionFileURL;
+	public String previousNewFileType;
 	public String previousOpenDirectory;
 	public String previousSaveDirectory;
 	public String previousGroupFileDirectory;
-	public String previousExtractDirectory;
+	public String previousExtractGroupFileDirectory;
 	public String previousProcessingDirectory;
 	public boolean sortAllGroups;
 	public boolean autoSortFiles;
@@ -45,7 +46,7 @@ public class SettingsManager {
 	public static final String defaultOpenDirectory = System.getProperty("user.dir");
 	public static final String defaultSaveDirectory = System.getProperty("user.dir");
 	public static final String defaultGroupFileDirectory = System.getProperty("user.dir");
-	public static final String defaultExtractDirectory = System.getProperty("user.dir");
+	public static final String defaultExtractGroupFileDirectory = System.getProperty("user.dir");
 	public static final String defaultProcessingDirectory = System.getProperty("user.dir");
 	public static final boolean defaultSortAllGroups = false;
 	public static final boolean defaultAutoSortFiles = true;
@@ -62,8 +63,8 @@ public class SettingsManager {
 	public static final int defaultPaletteSpacing = defaultPixelButtonSize * 2;
 	public static final int defaultWindowPositionX = 0;
 	public static final int defaultWindowPositionY = 0;
-	public static final int defaultWindowWidth = 800;
-	public static final int defaultWindowHeight = 600;
+	public static final int defaultWindowWidth = 1024;
+	public static final int defaultWindowHeight = 768;
 	public static final boolean defaultAutoScrollConsole = true;
 	public static final int defaultMaxConsoleHistory = 512;
 	public static final Color defaultBackgroundColour = new Color(238, 238, 238);
@@ -84,10 +85,11 @@ public class SettingsManager {
 	
 	public void reset() {
 		versionFileURL = defaultVersionFileURL;
+		previousNewFileType = "";
 		previousOpenDirectory = defaultOpenDirectory;
 		previousSaveDirectory = defaultSaveDirectory;
 		previousGroupFileDirectory = defaultGroupFileDirectory;
-		previousExtractDirectory = defaultExtractDirectory;
+		previousExtractGroupFileDirectory = defaultExtractGroupFileDirectory;
 		previousProcessingDirectory = defaultProcessingDirectory;
 		sortAllGroups = defaultSortAllGroups;
 		autoSortFiles = defaultAutoSortFiles;
@@ -138,6 +140,12 @@ public class SettingsManager {
 			versionFileURL = tempString;
 		}
 		
+		// parse previous new file type value
+		tempString = m_settings.getValue("Previous New File Type", "Paths");
+		if(tempString != null) {
+			previousNewFileType = tempString;
+		}
+		
 		// parse open directory path
 		tempString = m_settings.getValue("Open Directory", "Paths");
 		if(tempString != null) {
@@ -156,10 +164,10 @@ public class SettingsManager {
 			previousGroupFileDirectory = tempString;
 		}
 
-		// parse extract directory path
-		tempString = m_settings.getValue("Extract Directory", "Paths");
+		// parse extract group file directory path
+		tempString = m_settings.getValue("Extract Group File Directory", "Paths");
 		if(tempString != null) {
-			previousExtractDirectory = tempString;
+			previousExtractGroupFileDirectory = tempString;
 		}
 		
 		// parse processing directory path
@@ -288,7 +296,6 @@ public class SettingsManager {
 		try { tempInt = Integer.parseInt(m_settings.getValue("Palette Spacing", "Interface")); } catch(NumberFormatException e) { } 
 		if(tempInt >= 1) { paletteSpacing = tempInt; }
 		
-		
 		// parse window position
 		tempPoint = Utilities.parsePoint(m_settings.getValue("Window Position", "Interface"));
 		if(tempPoint != null && tempPoint.x > 0 && tempPoint.y > 0) {
@@ -332,10 +339,11 @@ public class SettingsManager {
 	public boolean saveTo(String fileName) {
 		// update variables collection
 		m_settings.setValue("Version File URL", versionFileURL, "Paths");
+		m_settings.setValue("Previous New File Type", previousNewFileType, "Paths");
 		m_settings.setValue("Open Directory", previousOpenDirectory, "Paths");
 		m_settings.setValue("Save Directory", previousSaveDirectory, "Paths");
 		m_settings.setValue("Group File Directory", previousGroupFileDirectory, "Paths");
-		m_settings.setValue("Extract Directory", previousExtractDirectory, "Paths");
+		m_settings.setValue("Extract Group File Directory", previousExtractGroupFileDirectory, "Paths");
 		m_settings.setValue("Processing Directory", previousProcessingDirectory, "Paths");
 		m_settings.setValue("Sort All Groups", sortAllGroups, "Sorting");
 		m_settings.setValue("Auto-Sort Files", autoSortFiles, "Sorting");

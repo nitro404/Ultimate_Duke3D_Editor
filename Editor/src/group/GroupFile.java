@@ -8,7 +8,6 @@ public class GroupFile {
 
 	protected String m_fileName;
 	protected int m_fileSize;
-	protected byte m_leadingData[];
 	protected byte m_data[];
 	protected byte m_trailingData[];
 	
@@ -22,21 +21,18 @@ public class GroupFile {
 		setFileName(fileName);
 		m_fileSize = fileSize < 0 ? 0 : fileSize;
 		m_data = null;
-		m_leadingData = null;
 		m_trailingData = null;
 	}
 	
 	public GroupFile(String fileName, byte data[]) {
 		setFileName(fileName);
 		setData(data);
-		m_leadingData = null;
 		m_trailingData = null;
 	}
 	
 	public GroupFile(File file, byte data[]) {
 		setFileName(file == null ? null : file.getName());
 		setData(data);
-		m_leadingData = null;
 		m_trailingData = null;
 	}
 	
@@ -55,11 +51,7 @@ public class GroupFile {
 	public byte[] getData() {
 		return m_data;
 	}
-	
-	public byte[] getLeadingData() {
-		return m_leadingData;
-	}
-	
+
 	public byte[] getTrailingData() {
 		return m_trailingData;
 	}
@@ -76,17 +68,12 @@ public class GroupFile {
 		m_data = data;
 		m_fileSize = data == null ? 0 : data.length;
 	}
-	
-	public void setLeadingData(byte data[]) {
-		m_leadingData = data;
-	}
-	
+
 	public void setTrailingData(byte data[]) {
 		m_trailingData = data;
 	}
 	
 	public void clearAllData() {
-		m_leadingData = null;
 		m_data = null;
 		m_trailingData = null;
 	}

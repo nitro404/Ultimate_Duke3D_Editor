@@ -44,7 +44,7 @@ public enum DATType {
 	public static DATType parseFrom(String data) {
 		if(data == null) { return Unknown; }
 		String temp = data.trim();
-		if(temp.length() == 0) { return Unknown; }
+		if(temp.isEmpty()) { return Unknown; }
 		
 		for(int i=0;i<values().length;i++) {
 			if(temp.equalsIgnoreCase(values()[i].name()) || temp.equalsIgnoreCase(displayNames[i])) {

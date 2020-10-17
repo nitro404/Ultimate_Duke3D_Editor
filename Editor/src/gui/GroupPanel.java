@@ -6,16 +6,14 @@ import java.awt.event.*;
 import javax.swing.*;
 import exception.*;
 import settings.*;
-import utilities.*;
 import action.*;
 import item.*;
 import group.*;
 
-public abstract class GroupPanel extends ItemPanel implements Scrollable, ActionListener, MouseListener, GroupSortListener, Updatable {
+public abstract class GroupPanel extends ScrollableItemPanel implements ActionListener, MouseListener, GroupSortListener {
 	
 	protected Group m_group;
 	protected boolean m_initialized;
-	protected boolean m_updating;
 	protected Vector<GroupActionListener> m_groupActionListeners;
 	
 	protected JPopupMenu m_groupPanelPopupMenu;
@@ -43,6 +41,7 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 	protected JMenuItem m_replaceFilePopupMenuItem;
 	protected JMenuItem m_renameFilePopupMenuItem;
 	protected JMenuItem m_extractFilesPopupMenuItem;
+	protected JMenuItem m_extractAllFilesPopupMenuItem;
 	protected JMenuItem m_importPopupMenuItem;
 	protected JMenuItem m_exportPopupMenuItem;
 	protected JMenuItem m_closePopupMenuItem;
@@ -63,7 +62,6 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 		}
 
 		m_initialized = false;
-		m_updating = false;
 		m_groupActionListeners = new Vector<GroupActionListener>();
 		
 		initPopupMenu();
@@ -110,6 +108,7 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 		m_replaceFilePopupMenuItem = new JMenuItem("Replace File");
 		m_renameFilePopupMenuItem = new JMenuItem("Rename File");
 		m_extractFilesPopupMenuItem = new JMenuItem("Extract Files");
+		m_extractAllFilesPopupMenuItem = new JMenuItem("Extract All Files");
 		m_importPopupMenuItem = new JMenuItem("Import");
 		m_exportPopupMenuItem = new JMenuItem("Export");
 		m_closePopupMenuItem = new JMenuItem("Close");
@@ -137,6 +136,7 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 		m_replaceFilePopupMenuItem.addActionListener(this);
 		m_renameFilePopupMenuItem.addActionListener(this);
 		m_extractFilesPopupMenuItem.addActionListener(this);
+		m_extractAllFilesPopupMenuItem.addActionListener(this);
 		m_importPopupMenuItem.addActionListener(this);
 		m_exportPopupMenuItem.addActionListener(this);
 		m_closePopupMenuItem.addActionListener(this);
@@ -171,6 +171,7 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 		m_groupPanelPopupMenu.add(m_replaceFilePopupMenuItem);
 		m_groupPanelPopupMenu.add(m_renameFilePopupMenuItem);
 		m_groupPanelPopupMenu.add(m_extractFilesPopupMenuItem);
+		m_groupPanelPopupMenu.add(m_extractAllFilesPopupMenuItem);
 		m_groupPanelPopupMenu.add(m_importPopupMenuItem);
 		m_groupPanelPopupMenu.add(m_exportPopupMenuItem);
 		m_groupPanelPopupMenu.add(m_closePopupMenuItem);
@@ -215,6 +216,8 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 		if(m_group != null) {
 			m_group.addGroupSortListener(this);
 		}
+		
+		update();
 		
 		return true;
 	}
@@ -283,7 +286,6 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 		if(group == null || m_group != group) { return; }
 		
 		update();
-		updateWindow();
 		
 		notifyUpdateWindow();
 	}
@@ -325,10 +327,10 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 		
 		m_updating = true;
 		
-		m_selectInversePopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() > 0);
-		m_selectRandomPopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() > 0);
-		m_selectAllPopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() > 0);
-		m_selectNonePopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() > 0);
+		m_selectInversePopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() != 0);
+		m_selectRandomPopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() != 0);
+		m_selectAllPopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() != 0);
+		m_selectNonePopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() != 0);
 		
 		m_sortAllGroupsPopupMenuItem.setSelected(SettingsManager.instance.sortAllGroups);
 		m_sortPerGroupSortingPopupMenuItem.setSelected(!SettingsManager.instance.sortAllGroups);
@@ -357,10 +359,11 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 		m_removeFilesPopupMenuItem.setText("Remove File" + (numberOfSelectedFiles() == 1 ? "" : "s"));
 		m_extractFilesPopupMenuItem.setText("Extract File" + (numberOfSelectedFiles() == 1 ? "" : "s"));
 		
-		m_removeFilesPopupMenuItem.setEnabled(numberOfSelectedFiles() > 0);
+		m_removeFilesPopupMenuItem.setEnabled(numberOfSelectedFiles() != 0);
 		m_replaceFilePopupMenuItem.setEnabled(numberOfSelectedFiles() == 1);
 		m_renameFilePopupMenuItem.setEnabled(numberOfSelectedFiles() == 1);
-		m_extractFilesPopupMenuItem.setEnabled(numberOfSelectedFiles() > 0);
+		m_extractFilesPopupMenuItem.setEnabled(numberOfSelectedFiles() != 0);
+		m_extractAllFilesPopupMenuItem.setEnabled(m_group != null && m_group.numberOfFiles() != 0);
 		
 		m_updating = false;
 	}
@@ -418,7 +421,6 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 				SettingsManager.instance.autoSortFiles = m_sortAutoSortPopupMenuItem.isSelected();
 				
 				update();
-				updateWindow();
 				
 				notifyUpdateWindow();
 			}
@@ -446,6 +448,9 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 		}
 		else if(e.getSource() == m_extractFilesPopupMenuItem) {
 			dispatchGroupAction(new GroupAction(this, GroupActionType.ExtractFiles));
+		}
+		else if(e.getSource() == m_extractAllFilesPopupMenuItem) {
+			dispatchGroupAction(new GroupAction(this, GroupActionType.ExtractAllFiles));
 		}
 		else if(e.getSource() == m_importPopupMenuItem) {
 			dispatchGroupAction(new GroupAction(this, GroupActionType.Import));
@@ -523,50 +528,6 @@ public abstract class GroupPanel extends ItemPanel implements Scrollable, Action
 	
 	public Dimension getPreferredSize() {
 		return getParent().getSize();
-	}
-	
-	public Dimension getPreferredScrollableViewportSize() {
-		return getPreferredSize();
-	}
-	
-	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-		int currentPosition = 0;
-		if(orientation == SwingConstants.HORIZONTAL) {
-			currentPosition = visibleRect.x;
-		}
-		else {
-			currentPosition = visibleRect.y;
-		}
-        
-		int maxUnitIncrement = 40;
-		if(direction < 0) {
-			int newPosition = currentPosition -
-							  (currentPosition / maxUnitIncrement)
-                              * maxUnitIncrement;
-            return (newPosition == 0) ? maxUnitIncrement : newPosition;
-        }
-		else {
-            return ((currentPosition / maxUnitIncrement) + 1)
-                   * maxUnitIncrement
-                   - currentPosition;
-        }
-	}
-	
-	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-		if(orientation == SwingConstants.HORIZONTAL) {
-			return visibleRect.width - 5;
-		}
-		else {
-			return visibleRect.height - 5;
-		}
-	}
-	
-	public boolean getScrollableTracksViewportWidth() {
-		return false;
-	}
-	
-	public boolean getScrollableTracksViewportHeight() {
-		return false;
 	}
 	
 }

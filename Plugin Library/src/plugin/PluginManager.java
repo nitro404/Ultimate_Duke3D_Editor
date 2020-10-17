@@ -57,7 +57,7 @@ public class PluginManager {
 		if(pluginType == null) { return false; }
 		
 		String formattedPluginType = pluginType.trim().toUpperCase();
-		if(formattedPluginType.length() == 0) { return false; }
+		if(formattedPluginType.isEmpty()) { return false; }
 		
 		return m_pluginTypes.containsKey(formattedPluginType);
 	}
@@ -83,7 +83,7 @@ public class PluginManager {
 		if(pluginClassName == null) { return false; }
 		
 		String formattedPluginClassName = pluginClassName.trim();
-		if(formattedPluginClassName.length() == 0) { return false; }
+		if(formattedPluginClassName.isEmpty()) { return false; }
 		
 		for(String pluginTypeName : m_pluginTypes.keySet()) {
 			if(m_pluginTypes.get(pluginTypeName).getPluginClass().getName().equals(pluginClassName)) {
@@ -97,7 +97,7 @@ public class PluginManager {
 		if(pluginType == null) { return -1; }
 		
 		String formattedPluginType = pluginType.trim().toUpperCase();
-		if(formattedPluginType.length() == 0) { return -1; }
+		if(formattedPluginType.isEmpty()) { return -1; }
 		
 		int i = 0;
 		for(String currentPluginType : m_pluginTypes.keySet()) {
@@ -139,7 +139,7 @@ public class PluginManager {
 		if(pluginClassName == null) { return -1; }
 
 		String formattedPluginClassName = pluginClassName.trim();
-		if(formattedPluginClassName.length() == 0) { return -1; }
+		if(formattedPluginClassName.isEmpty()) { return -1; }
 		
 		int i = 0;
 		for(String pluginTypeName : m_pluginTypes.keySet()) {
@@ -168,7 +168,7 @@ public class PluginManager {
 		if(pluginType == null) { return null; }
 		
 		String formattedPluginType = pluginType.trim().toUpperCase();
-		if(formattedPluginType.length() == 0) { return null; }
+		if(formattedPluginType.isEmpty()) { return null; }
 		
 		return m_pluginTypes.get(formattedPluginType);
 	}
@@ -191,7 +191,7 @@ public class PluginManager {
 		if(pluginClassName == null) { return null; }
 
 		String formattedPluginClassName = pluginClassName.trim();
-		if(formattedPluginClassName.length() == 0) { return null; }
+		if(formattedPluginClassName.isEmpty()) { return null; }
 		
 		PluginType pluginType = null;
 		for(String pluginTypeName : m_pluginTypes.keySet()) {
@@ -220,7 +220,7 @@ public class PluginManager {
 		if(!PluginType.isValid(pluginType)) { return false; }
 		
 		String formattedPluginType = pluginType.getPluginType().trim().toUpperCase();
-		if(formattedPluginType.length() == 0) { return false; }
+		if(formattedPluginType.isEmpty()) { return false; }
 		
 		if(m_pluginTypes.containsKey(formattedPluginType) && !replace) { return false; }
 		
@@ -247,7 +247,7 @@ public class PluginManager {
 		if(pluginType == null) { return false; }
 		
 		String formattedPluginType = pluginType.trim().toUpperCase();
-		if(formattedPluginType.length() == 0) { return false; }
+		if(formattedPluginType.isEmpty()) { return false; }
 		
 		if(!m_pluginTypes.containsKey(formattedPluginType)) { return false; }
 		
@@ -280,7 +280,7 @@ public class PluginManager {
 		if(pluginClassName == null) { return false; }
 
 		String formattedPluginClassName = pluginClassName.trim();
-		if(formattedPluginClassName.length() == 0) { return false; }
+		if(formattedPluginClassName.isEmpty()) { return false; }
 		
 		for(String pluginTypeName : m_pluginTypes.keySet()) {
 			if(m_pluginTypes.get(pluginTypeName).getPluginClass().getName().equals(formattedPluginClassName)) {
@@ -317,7 +317,7 @@ public class PluginManager {
 		if(pluginName == null) { return false; }
 		
 		String formattedPluginName = pluginName.trim();
-		if(formattedPluginName.length() == 0) { return false; }
+		if(formattedPluginName.isEmpty()) { return false; }
 		
 		HashMap<String, String> preferredPluginsForPluginType = null;
 		for(String pluginTypeName : m_preferredPlugins.keySet()) {
@@ -342,7 +342,7 @@ public class PluginManager {
 		if(fileFormat == null || pluginClassName == null) { return false; }
 		
 		String formattedFileFormat = fileFormat.trim().toUpperCase();
-		if(formattedFileFormat.length() == 0) { return false; }
+		if(formattedFileFormat.isEmpty()) { return false; }
 		
 		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
 		if(pluginType == null) { return false; }
@@ -363,7 +363,7 @@ public class PluginManager {
 		if(fileFormat == null || pluginClassName == null) { return -1; }
 		
 		String formattedFileFormat = fileFormat.trim().toUpperCase();
-		if(formattedFileFormat.length() == 0) { return -1; }
+		if(formattedFileFormat.isEmpty()) { return -1; }
 		
 		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
 		if(pluginType == null) { return -1; }
@@ -410,7 +410,7 @@ public class PluginManager {
 		if(fileFormat == null || pluginClassName == null) { return null; }
 		
 		String formattedFileFormat = fileFormat.trim().toUpperCase();
-		if(formattedFileFormat.length() == 0) { return null; }
+		if(formattedFileFormat.isEmpty()) { return null; }
 		
 		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
 		if(pluginType == null) { return null; }
@@ -433,7 +433,7 @@ public class PluginManager {
 		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
 		if(pluginType == null) { return null; }
 		
- 		return m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
+		return m_preferredPlugins.get(pluginType.getPluginType().toUpperCase());
 	}
 
 	public VariableCollection getPreferredPluginsAsVariableCollection() {
@@ -468,7 +468,7 @@ public class PluginManager {
 		if(fileFormat == null || pluginName == null || pluginClassName == null) { return false; }
 		
 		String formattedFileFormat = fileFormat.trim().toUpperCase();
-		if(formattedFileFormat.length() == 0) { return false; }
+		if(formattedFileFormat.isEmpty()) { return false; }
 		
 		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
 		if(pluginType == null) { return false; }
@@ -584,7 +584,7 @@ public class PluginManager {
 		if(fileFormat == null || pluginClassName == null) { return false; }
 		
 		String formattedFileFormat = fileFormat.trim().toUpperCase();
-		if(formattedFileFormat.length() == 0) { return false; }
+		if(formattedFileFormat.isEmpty()) { return false; }
 		
 		PluginType pluginType = getPluginTypeWithClass(pluginClassName);
 		if(pluginType == null) { return false; }
@@ -624,7 +624,7 @@ public class PluginManager {
 		boolean pluginsCleared = false;
 		
 		String formattedFileFormat = fileFormat.trim().toUpperCase();
-		if(formattedFileFormat.length() == 0) { return false; }
+		if(formattedFileFormat.isEmpty()) { return false; }
 		
 		HashMap<String, String> preferredPluginsForPluginType = null;
 		for(String pluginType : m_preferredPlugins.keySet()) {
@@ -676,7 +676,7 @@ public class PluginManager {
 	public Plugin getPlugin(String name) {
 		if(name == null) { return null; }
 		String temp = name.trim();
-		if(temp.length() == 0) { return null; }
+		if(temp.isEmpty()) { return null; }
 		
 		for(int i=0;i<m_plugins.size();i++) {
 			if(m_plugins.elementAt(i).getName().equalsIgnoreCase(temp)) {
@@ -689,7 +689,7 @@ public class PluginManager {
 	public <T extends Plugin> T getPlugin(String name, Class<T> type) {
 		if(name == null) { return null; }
 		String temp = name.trim();
-		if(temp.length() == 0) { return null; }
+		if(temp.isEmpty()) { return null; }
 		
 		for(int i=0;i<m_plugins.size();i++) {
 			if(m_plugins.elementAt(i).getName().equalsIgnoreCase(temp)) {
@@ -702,7 +702,7 @@ public class PluginManager {
 	public boolean hasPluginWithFileName(String fileName) {
 		if(fileName == null) { return false; }
 		String temp = fileName.trim();
-		if(temp.length() == 0) { return false; }
+		if(temp.isEmpty()) { return false; }
 		
 		String s;
 		for(int i=0;i<m_plugins.size();i++) {
@@ -717,7 +717,7 @@ public class PluginManager {
 	public boolean hasPlugin(String name) {
 		if(name == null) { return false; }
 		String temp = name.trim();
-		if(temp.length() == 0) { return false; }
+		if(temp.isEmpty()) { return false; }
 		
 		for(int i=0;i<m_plugins.size();i++) {
 			if(m_plugins.elementAt(i).getName().equalsIgnoreCase(temp)) {
@@ -741,7 +741,7 @@ public class PluginManager {
 	public int indexOfPlugin(String name) {
 		if(name == null) { return -1; }
 		String temp = name.trim();
-		if(temp.length() == 0) { return -1; }
+		if(temp.isEmpty()) { return -1; }
 		
 		for(int i=0;i<m_plugins.size();i++) {
 			if(m_plugins.elementAt(i).getName().equalsIgnoreCase(temp)) {
@@ -961,7 +961,7 @@ public class PluginManager {
 			throw new PluginLoadException("Plugin must have a non-null directory name.");
 		}
 		String formattedDirectoryName = directoryName.trim();
-		if(formattedDirectoryName.length() == 0) {
+		if(formattedDirectoryName.isEmpty()) {
 			throw new PluginLoadException("Plugin must have a non-empty directory name.");
 		}
 		
@@ -999,7 +999,7 @@ public class PluginManager {
 				}
 				
 				line = input.trim();
-				if(line.length() == 0 || Utilities.isComment(line)) { continue; }
+				if(line.isEmpty() || Utilities.isComment(line)) { continue; }
 				
 				v = Variable.parseFrom(line);
 				if(v == null) { continue; }
@@ -1096,7 +1096,7 @@ public class PluginManager {
 			throw new PluginLoadException("Plugin must have a non-null directory name.");
 		}
 		String formattedDirectoryName = directoryName.trim();
-		if(formattedDirectoryName.length() == 0) {
+		if(formattedDirectoryName.isEmpty()) {
 			throw new PluginLoadException("Plugin must have a non-empty directory name.");
 		}
 		
@@ -1366,7 +1366,7 @@ public class PluginManager {
 				m_progressDialog.clear();
 			}
 			
-			if(m_plugins.size() == 0 || m_plugins.size() - numberOfLoadedPlugins == 0) {
+			if(m_plugins.isEmpty() || m_plugins.size() - numberOfLoadedPlugins == 0) {
 				SystemConsole.instance.writeLine("No plugins were loaded.");
 			}
 			else {

@@ -151,6 +151,11 @@ public abstract class GroupProcessor {
 			
 			return false;
 		}
+		catch(DeserializationException e) {
+			SystemConsole.instance.writeLine("Failed to deserialize group for processing: " + e.getMessage());
+			
+			return false;
+		}
 		
 		SystemConsole.instance.writeLine("Group file \"" + file.getName() +  "\" loaded successfully for processing!");
 		

@@ -1,0 +1,3946 @@
+{
+    "playerSpawn": {
+        "angle": 1351,
+        "position": {
+            "x": 3514,
+            "y": 5236,
+            "z": 0
+        },
+        "sector": 8
+    },
+    "sectors": [
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        },
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        },
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        },
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        },
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        },
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        },
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        },
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        },
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        },
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        },
+        {
+            "ceiling": {
+                "yPanning": 8,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 5236,
+                "tileNumber": 3514,
+                "xPanning": 0,
+                "height": 0
+            },
+            "visibility": 8192,
+            "extra": [
+                94,
+                0,
+                0
+            ],
+            "filler": 0,
+            "firstWallIndex": 7,
+            "numberOfWalls": 0,
+            "floor": {
+                "yPanning": 0,
+                "paletteLookupTableNumber": 255,
+                "shade": 0,
+                "attributes": {
+                    "swapTextureXY": 1,
+                    "textureAlign": 1,
+                    "reserved": 17,
+                    "xFlip": 1,
+                    "sloped": 1,
+                    "parallaxed": 1,
+                    "yFlip": 1,
+                    "doubleSmooshiness": 1
+                },
+                "slope": 0,
+                "tileNumber": 0,
+                "xPanning": 0,
+                "height": 525639
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 0,
+                "highTag": 1
+            }
+        }
+    ],
+    "walls": [
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        },
+        {
+            "nextWallIndex": 0,
+            "shade": 71,
+            "tagInformation": {
+                "extra": -1,
+                "lowTag": 8,
+                "highTag": -24576
+            },
+            "maskedTileNumber": 0,
+            "xRepeat": 11,
+            "yPanning": 0,
+            "paletteLookupTableNumber": 5,
+            "yRepeat": 0,
+            "x": 7,
+            "y": 3514,
+            "attributes": {
+                "xFlipped": 1,
+                "translucent": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "reserved": 0,
+                "invisibleWallBottomSwapped": 0,
+                "masked": 0,
+                "textureAlignBottom": 0,
+                "blockHitscan": 0,
+                "oneWay": 0,
+                "blockClipping": 0
+            },
+            "nextSectorIndex": 5236,
+            "tileNumber": 0,
+            "xPanning": 0
+        }
+    ],
+    "version": 7,
+    "sprites": [
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        },
+        {
+            "owner": 32,
+            "yOffset": 11,
+            "xOffset": 0,
+            "statusNumber": 0,
+            "shade": 0,
+            "velocity": {
+                "x": 0,
+                "y": -96,
+                "z": 255
+            },
+            "tagInformation": {
+                "extra": 0,
+                "lowTag": 24064,
+                "highTag": 0
+            },
+            "xRepeat": 5,
+            "paletteLookupTableNumber": 0,
+            "yRepeat": 8,
+            "filler": 0,
+            "sectorNumber": 256,
+            "angle": 2048,
+            "attributes": {
+                "translucent": 0,
+                "xFlipped": 0,
+                "yFlipped": 0,
+                "reverseTranslucent": 0,
+                "centered": 0,
+                "reserved": 0,
+                "drawType": "Face",
+                "invisible": 0,
+                "oneSided": 0,
+                "blockHitscan": 0,
+                "blockClipping": 0
+            },
+            "clippingDistance": 71,
+            "position": {
+                "x": 7,
+                "y": 3514,
+                "z": 5236
+            },
+            "tileNumber": 0
+        }
+    ]
+}

@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import utilities.*;
 
-public class ProgressDialog extends JDialog implements TaskListener, ActionListener, KeyListener {
+public class ProgressDialog extends JDialog implements TaskListener, ActionListener {
 	
 	private boolean m_cancelled;
 	private JPanel m_mainPanel;
@@ -26,7 +26,17 @@ public class ProgressDialog extends JDialog implements TaskListener, ActionListe
 				cancel();
 			}
 		});
-		
+
+		getRootPane().registerKeyboardAction(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cancel();
+				}
+			},
+			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+			JComponent.WHEN_IN_FOCUSED_WINDOW
+		);
+
 		m_cancelled = false;
 		
 		initComponents();
@@ -41,7 +51,6 @@ public class ProgressDialog extends JDialog implements TaskListener, ActionListe
 		m_progressBar.setStringPainted(true);
 		
 		m_cancelButton = new JButton("Cancel");
-		m_cancelButton.addKeyListener(this);
 		m_cancelButton.addActionListener(this);
 		
 		m_mainPanel.add(m_messageLabel);
@@ -125,7 +134,7 @@ public class ProgressDialog extends JDialog implements TaskListener, ActionListe
 	}
 	
 	public void display(String title, String message, int minimum, int maximum, Task task, Thread thread) {
-		if(title == null || title.trim().length() == 0 || minimum < 0 || maximum <= minimum || task == null || task.isCancelled() || task.isCompleted()) { return; }
+		if(title == null || title.trim().isEmpty() || minimum < 0 || maximum <= minimum || task == null || task.isCancelled() || task.isCompleted()) { return; }
 		
 		setTitle(title.trim());
 		
@@ -155,22 +164,7 @@ public class ProgressDialog extends JDialog implements TaskListener, ActionListe
 		
 		setVisible(true);
 	}
-	
-	public void keyTyped(KeyEvent e) { }
-	public void keyReleased(KeyEvent e) { }
-	
-	public void keyPressed(KeyEvent e) {
-		if(e.getSource() == m_cancelButton) {
-			if(e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_SPACE) {
-				cancel();
-			}
-		}
-		
-		if(e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-			cancel();
-		}
-	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == m_cancelButton) {
 			cancel();

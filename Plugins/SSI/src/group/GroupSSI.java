@@ -78,13 +78,17 @@ public class GroupSSI extends Group {
 	public boolean isInstantiable() {
 		return true;
 	}
-	
+
+	public boolean isInitialized() {
+		return true;
+	}
+
 	public ItemFileType getDefaulFileType() {
 		return FILE_TYPES[1];
 	}
 	
 	public String getDefaultFileExtension() {
-		return FILE_TYPES[1].getExtension(0);
+		return FILE_TYPES[1].getExtension();
 	}
 	
 	public boolean setFileType(ItemFileType fileType) {
@@ -119,9 +123,9 @@ public class GroupSSI extends Group {
 	public String getDescription() {
 		String s = "";
 		for(int i=0;i<NUMBER_OF_DESCRIPTIONS;i++) {
-			if(m_description[i] == null || m_description[i].length() == 0) { break; }
+			if(m_description[i] == null || m_description[i].isEmpty()) { break; }
 			
-			if(i > 0 && s.charAt(s.length() - 1) != ' ' && m_description[i].charAt(0) != ' ') { s += " "; }
+			if(i != 0 && s.charAt(s.length() - 1) != ' ' && m_description[i].charAt(0) != ' ') { s += " "; }
 			
 			s += m_description[i];
 		}
@@ -169,7 +173,7 @@ public class GroupSSI extends Group {
 				formattedTitle = formattedTitle.substring(0, MAX_TITLE_LENGTH - 1);
 			}
 			
-			titleChanged = !m_title.equals(formattedTitle);
+			titleChanged = !formattedTitle.equals(m_title);
 			
 			m_title = formattedTitle;
 		}
@@ -240,20 +244,25 @@ public class GroupSSI extends Group {
 	
 	public boolean load() throws GroupReadException {
 		if(m_file == null || !m_file.exists()) { return false; }
+
+		m_loading = true;
 		
 		// verify that the file has an extension
 		String extension = Utilities.getFileExtension(m_file.getName());
 		if(extension == null) {
+			m_loading = false;
 			throw new GroupReadException("File " + m_file.getName() + "\" has no extension.");
 		}
 		
 		// verify that the file extension is supported
 		if(!hasFileTypeWithExtension(extension)) {
+			m_loading = false;
 			throw new GroupReadException("File " + m_file.getName() +  " has unsupported extension: " + extension);
 		}
 		
 		// check to make sure that the file is not too big to be stored in memory
 		if(m_file.length() > Integer.MAX_VALUE) {
+			m_loading = false;
 			throw new GroupReadException("File \"" + m_file.getName() +  "\" is too large to store in memory.");
 		}
 		
@@ -266,9 +275,11 @@ public class GroupSSI extends Group {
 			in.close();
 		}
 		catch(FileNotFoundException e) {
+			m_loading = false;
 			throw new GroupReadException("File \"" + m_file.getName() +  "\" not found.");
 		}
 		catch(IOException e) {
+			m_loading = false;
 			throw new GroupReadException("Error reading file \"" + m_file.getName() +  "\": " + e.getMessage());
 		}
 
@@ -283,7 +294,6 @@ public class GroupSSI extends Group {
 		String description[] = new String[NUMBER_OF_DESCRIPTIONS];
 		int fileNameSize = 0;
 		String fileName = null;
-		byte leadingData[] = null;
 		int fileSize = 0;
 		GroupFile g = null;
 		Vector<GroupFile> groupFiles = new Vector<GroupFile>();
@@ -292,6 +302,7 @@ public class GroupSSI extends Group {
 		
 		// verify that the data is long enough to contain version information
 		if(data.length < offset + VERSION_LENGTH) {
+			m_loading = false;
 			throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing version.");
 		}
 		
@@ -301,6 +312,7 @@ public class GroupSSI extends Group {
 		SSIVersion version = SSIVersion.parseFrom(versionValue);
 		
 		if(!version.isValid()) {
+			m_loading = false;
 			throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is an invalid or unsupported file version: " + versionValue + ". Supported versions include: " + SSIVersion.getDisplayNameList() + ".");
 		}
 		
@@ -310,6 +322,7 @@ public class GroupSSI extends Group {
 		
 		// verify that the data is long enough to contain the number of files specification
 		if(data.length < offset + NUMBER_OF_FILES_LENGTH) {
+			m_loading = false;
 			throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing number of files value.");
 		}
 		
@@ -317,6 +330,7 @@ public class GroupSSI extends Group {
 		numberOfFiles = Serializer.deserializeInteger(Arrays.copyOfRange(data, offset, offset + NUMBER_OF_FILES_LENGTH), FILE_ENDIANNESS);
 		
 		if(numberOfFiles < 0) {
+			m_loading = false;
 			throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" has a negative number of files value.");
 		}
 		
@@ -326,6 +340,7 @@ public class GroupSSI extends Group {
 
 		// verify that the data is long enough to contain the title size value
 		if(data.length < offset + TITLE_SIZE_LENGTH) {
+			m_loading = false;
 			throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing title size value.");
 		}
 		
@@ -333,6 +348,7 @@ public class GroupSSI extends Group {
 		titleSize = data[offset] & 0xff;
 		
 		if(titleSize < 0 || titleSize > MAX_TITLE_LENGTH) {
+			m_loading = false;
 			throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" has invalid title length: " + titleSize + ". Value must be between 0 and " + MAX_TITLE_LENGTH + ".");
 		}
 		
@@ -340,11 +356,12 @@ public class GroupSSI extends Group {
 		
 		// verify that the data is long enough to contain the title
 		if(data.length < offset + TITLE_LENGTH) {
+			m_loading = false;
 			throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing title.");
 		}
 		
 		// read the title
-		if(titleSize > 0) {
+		if(titleSize != 0) {
 			title = Serializer.deserializeByteString(Arrays.copyOfRange(data, offset, offset + titleSize));
 			
 			SystemConsole.instance.writeLine("Parsed title: " + title);
@@ -356,6 +373,7 @@ public class GroupSSI extends Group {
 		if(version == SSIVersion.V2) {
 			// verify that the data is long enough to contain the title size value
 			if(data.length < offset + RUNFILE_SIZE_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing run file size value.");
 			}
 			
@@ -363,6 +381,7 @@ public class GroupSSI extends Group {
 			runFileSize = data[offset] & 0xff;
 			
 			if(runFileSize < 0 || runFileSize > MAX_RUNFILE_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" has invalid run file length: " + runFileSize + ". Value must be between 0 and " + MAX_RUNFILE_LENGTH + ".");
 			}
 			
@@ -370,11 +389,12 @@ public class GroupSSI extends Group {
 			
 			// verify that the data is long enough to contain the run file
 			if(data.length < offset + RUNFILE_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing run file.");
 			}
 			
 			// read the run file
-			if(runFileSize > 0) {
+			if(runFileSize != 0) {
 				runFile = Serializer.deserializeByteString(Arrays.copyOfRange(data, offset, offset + runFileSize));
 				
 				SystemConsole.instance.writeLine("Parsed run file: " + runFile);
@@ -387,6 +407,7 @@ public class GroupSSI extends Group {
 		for(int i=0;i<NUMBER_OF_DESCRIPTIONS;i++) {
 			// verify that the data is long enough to contain the description size value
 			if(data.length < offset + DESCRIPTION_SIZE_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing description #" + (i + 1) + " size value.");
 			}
 			
@@ -394,6 +415,7 @@ public class GroupSSI extends Group {
 			descriptionSize[i] = data[offset] & 0xff;
 			
 			if(descriptionSize[i] < 0 || descriptionSize[i] > MAX_DESCRIPTION_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" has invalid description #" + (i + 1) + " length: " + descriptionSize[i] + ". Value must be between 0 and " + MAX_DESCRIPTION_LENGTH + ".");
 			}
 			
@@ -401,11 +423,12 @@ public class GroupSSI extends Group {
 			
 			// verify that the data is long enough to contain the description
 			if(data.length < offset + DESCRIPTION_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing description #" + (i + 1) + ".");
 			}
 			
 			// read the description
-			if(descriptionSize[i] > 0) {
+			if(descriptionSize[i] != 0) {
 				description[i] = Serializer.deserializeByteString(Arrays.copyOfRange(data, offset, offset + descriptionSize[i]));
 				
 				SystemConsole.instance.writeLine("Parsed description #" + (i + 1) + ": " + description[i]);
@@ -418,6 +441,7 @@ public class GroupSSI extends Group {
 		for(int i=0;i<numberOfFiles;i++) {
 			// verify that the data is long enough to contain the file name size value
 			if(data.length < offset + FILE_NAME_SIZE_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing file #" + (i + 1) + " name size value.");
 			}
 			
@@ -425,6 +449,7 @@ public class GroupSSI extends Group {
 			fileNameSize = data[offset] & 0xff;
 			
 			if(fileNameSize < 0 || fileNameSize > MAX_FILE_NAME_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" has invalid file #" + (i + 1) + " name length: " + fileNameSize + ". Value must be between 0 and " + MAX_FILE_NAME_LENGTH + ".");
 			}
 			
@@ -432,24 +457,20 @@ public class GroupSSI extends Group {
 			
 			// verify that the data is long enough to contain the file name
 			if(data.length < offset + FILE_NAME_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing file #" + (i + 1) + " name.");
 			}
 			
 			// read the file name
-			if(fileNameSize > 0) {
+			if(fileNameSize != 0) {
 				fileName = Serializer.deserializeByteString(Arrays.copyOfRange(data, offset, offset + fileNameSize));
-			}
-			
-			leadingData = null;
-			
-			if(fileNameSize < FILE_NAME_LENGTH) {
-				leadingData = Arrays.copyOfRange(data, offset + fileNameSize, offset + FILE_NAME_LENGTH);
 			}
 			
 			offset += FILE_NAME_LENGTH;
 			
 			// verify that the data is long enough to contain the file size value
 			if(data.length < offset + FILE_SIZE_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing file #" + (i + 1) + " size value.");
 			}
 			
@@ -457,13 +478,13 @@ public class GroupSSI extends Group {
 			fileSize = Serializer.deserializeInteger(Arrays.copyOfRange(data, offset, offset + FILE_SIZE_LENGTH), FILE_ENDIANNESS);
 			
 			if(fileSize < 0) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" file #" + (i + 1) + " size can not be negative.");
 			}
 			
 			offset += FILE_SIZE_LENGTH;
 			
 			g = new GroupFile(m_version == SSIVersion.V2 ? Utilities.reverseFileExtension(fileName) : fileName, fileSize);
-			g.setLeadingData(leadingData);
 			g.setTrailingData(Arrays.copyOfRange(data, offset, offset + UNKNOWN_DATA_LENGTH));
 
 			offset += UNKNOWN_DATA_LENGTH;
@@ -475,6 +496,7 @@ public class GroupSSI extends Group {
 			g = groupFiles.elementAt(i);
 			
 			if(data.length < offset + g.getFileSize()) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPE + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing file #" + (i + 1) + " data.");
 			}
 			
@@ -489,13 +511,11 @@ public class GroupSSI extends Group {
 		m_runFile = runFile;
 		m_description = description;
 		addFiles(groupFiles);
+
+		m_loading = false;
 		
-		if(!(shouldSortFiles() && shouldAutoSortFiles())) {
-			setChanged(false);
-		}
-		
-		m_loaded = true;
-		
+		setChanged(!checkSameFileOrder(groupFiles));
+
 		SystemConsole.instance.writeLine(FILE_TYPE + " file parsed successfully, " + groupFiles.size() + " files loaded into memory.");
 		
 		return true;
@@ -528,7 +548,7 @@ public class GroupSSI extends Group {
 		
 		offset += TITLE_SIZE_LENGTH;
 		
-		if(m_title != null && m_title.length() > 0) {
+		if(Utilities.isNonEmptyString(m_title)) {
 			System.arraycopy(Serializer.serializeByteString(m_title), 0, data, offset, m_title.length());
 		}
 		
@@ -539,7 +559,7 @@ public class GroupSSI extends Group {
 			
 			offset += RUNFILE_SIZE_LENGTH;
 			
-			if(m_runFile != null && m_runFile.length() > 0) {
+			if(Utilities.isNonEmptyString(m_runFile)) {
 				byte runFileData[] = Serializer.serializeByteString(m_runFile);
 				
 				System.arraycopy(runFileData, 0, data, offset, runFileData.length);
@@ -553,7 +573,7 @@ public class GroupSSI extends Group {
 			
 			offset += DESCRIPTION_SIZE_LENGTH;
 			
-			if(m_description[i] != null && m_description[i].length() > 0) {
+			if(Utilities.isNonEmptyString(m_description[i])) {
 				System.arraycopy(Serializer.serializeByteString(m_description[i]), 0, data, offset, m_description[i].length());
 			}
 			
@@ -567,12 +587,8 @@ public class GroupSSI extends Group {
 			
 			offset += FILE_NAME_SIZE_LENGTH;
 			
-			if(g.getFileName() != null && g.getFileName().length() > 0) { 
+			if(Utilities.isNonEmptyString(g.getFileName())) { 
 				System.arraycopy(Serializer.serializeByteString(m_version == SSIVersion.V2 ? Utilities.reverseFileExtension(g.getFileName()) : g.getFileName()), 0, data, offset, g.getFileName().length());
-			}
-			
-			if(g.getLeadingData() != null && g.getLeadingData().length > 0) {
-				System.arraycopy(g.getLeadingData(), 0, data, offset + g.getFileName() == null ? 0 : g.getFileName().length(), g.getLeadingData().length);
 			}
 			
 			offset += FILE_NAME_LENGTH;

@@ -38,12 +38,25 @@ public class PaletteDAT extends Palette {
 		return false;
 	}
 	
+	public boolean isInitialized() {
+		return m_data != null &&
+			   m_type != DATType.Unknown;
+	}
+
+	public int getPaletteFileSize() {
+		return m_data == null ? 0 : m_data.length;
+	}
+
+	public int numberOfBytesPerPixel() {
+		return BPP;
+	}
+
 	public ItemFileType getDefaultFileType() {
 		return FILE_TYPES[0];
 	}
 	
 	public String getDefaultFileExtension() {
-		return FILE_TYPES[0].getExtension(0);
+		return FILE_TYPES[0].getExtension();
 	}
 	
 	public ItemFileType[] getFileTypes() {
@@ -73,8 +86,8 @@ public class PaletteDAT extends Palette {
 		return m_type;
 	}
 	
-	public Color getPixel(int index, int x, int y) {
-		if(!m_loaded || x < 0 || y < 0 || x > PALETTE_WIDTH - 1 || y > PALETTE_HEIGHT - 1 || index < 0 || index >= numberOfPalettes()) { return null; }
+	public Color getPixel(int x, int y, int index) {
+		if(!isInitialized() || x < 0 || y < 0 || x > PALETTE_WIDTH - 1 || y > PALETTE_HEIGHT - 1 || index < 0 || index >= numberOfPalettes()) { return null; }
 		
 		// calculate the offset in the palette data array
 		// account for the offset in each DAT type,
@@ -97,7 +110,7 @@ public class PaletteDAT extends Palette {
 	}
 
 	public boolean updatePixel(int x, int y, Color c, int index) {
-		if(!m_loaded || m_data == null || c == null || x < 0 || y < 0 || x > PALETTE_WIDTH - 1 || y > PALETTE_HEIGHT - 1 || index < 0 || index >= numberOfPalettes()) { return false; }
+		if(!isInitialized() || c == null || x < 0 || y < 0 || x > PALETTE_WIDTH - 1 || y > PALETTE_HEIGHT - 1 || index < 0 || index >= numberOfPalettes()) { return false; }
 		
 		// calculate the offset in the palette data array
 		// account for the offset in each DAT type,
@@ -115,27 +128,27 @@ public class PaletteDAT extends Palette {
 	}
 	
 	public Color[] getColourData(int index) {
-		if(!m_loaded || m_data == null || m_type == DATType.Unknown || index < 0 || index >= numberOfPalettes()) { return null; }
+		if(!isInitialized() || m_type == DATType.Unknown || index < 0 || index >= numberOfPalettes()) { return null; }
 		
 		// iterate over the data for the corresponding sub-palette and convert each pixel to a Color object
 		Color colourData[] = new Color[NUMBER_OF_COLOURS];
 		for(int j=0;j<PALETTE_HEIGHT;j++) {
 			for(int i=0;i<PALETTE_WIDTH;i++) {
-				colourData[(j * PALETTE_WIDTH) + i] = getPixel(index, i, j);
+				colourData[(j * PALETTE_WIDTH) + i] = getPixel(i, j, index);
 			}
 		}
 		return colourData;
 	}
 	
 	public Color[] getAllColourData() {
-		if(!m_loaded || m_data == null || m_type == DATType.Unknown) { return null; }
+		if(!isInitialized() || m_type == DATType.Unknown) { return null; }
 		
 		// iterate over the data for the all sub-palette and convert each pixel to a Color object
 		Color colourData[] = new Color[NUMBER_OF_COLOURS * numberOfPalettes()];
 		for(int p=0;p<numberOfPalettes();p++) {
 			for(int j=0;j<PALETTE_HEIGHT;j++) {
 				for(int i=0;i<PALETTE_WIDTH;i++) {
-					colourData[(p * NUMBER_OF_COLOURS) + (j * PALETTE_WIDTH) + i] = getPixel(p, i, j);
+					colourData[(p * NUMBER_OF_COLOURS) + (j * PALETTE_WIDTH) + i] = getPixel(i, j, p);
 				}
 			}
 		}
@@ -143,7 +156,7 @@ public class PaletteDAT extends Palette {
 	}
 	
 	public boolean updateColourData(int index, int dataIndex, Color colourData[]) {
-		if(!m_loaded || m_data == null || m_type == DATType.Unknown) { return false; }
+		if(!isInitialized() || m_type == DATType.Unknown) { return false; }
 		
 		// verify that the colour data is not truncated
 		int dataOffset = (dataIndex * NUMBER_OF_COLOURS);
@@ -178,7 +191,7 @@ public class PaletteDAT extends Palette {
 	}
 	
 	public boolean updateAllColourData(Color colourData[]) {
-		if(!m_loaded || m_data == null || m_type == DATType.Unknown) { return false; }
+		if(!isInitialized() || m_type == DATType.Unknown) { return false; }
 		
 		// verify that the colour data is not truncated
 		if(colourData.length < NUMBER_OF_COLOURS * numberOfPalettes()) { return false; }
@@ -213,7 +226,7 @@ public class PaletteDAT extends Palette {
 	}
 
 	public boolean fillWithColour(Color c, int index) {
-		if(!m_loaded || m_data == null || m_type == DATType.Unknown || c == null) { return false; }
+		if(!isInitialized() || m_type == DATType.Unknown || c == null) { return false; }
 		
 		// iterate over all local palette data for all sub-palettes and
 		// replace it with the corresponding colour value
@@ -241,26 +254,31 @@ public class PaletteDAT extends Palette {
 	
 	public boolean load() throws PaletteReadException {
 		if(m_file == null || !m_file.exists()) { return false; }
+
+		m_loading = true;
 		
 		// verify that the file has an extension and a valid name
 		String fileName = Utilities.getFileNameNoExtension(m_file.getName());
 		String extension = Utilities.getFileExtension(m_file.getName());
 		if(fileName == null) {
+			m_loading = false;
 			throw new PaletteReadException("Unable to determine filename for file: \"" + m_file.getName() +  "\".");
 		}
 		if(extension == null) {
+			m_loading = false;
 			throw new PaletteReadException("File \"" + m_file.getName() + "\" has no extension.");
 		}
 
 		// verify that the file extension is supported
 		if(!hasFileTypeWithExtension(extension)) {
+			m_loading = false;
 			throw new PaletteReadException("File \"" + m_file.getName() +  "\" has unsupported extension: " + extension);
 		}
 		
 		// attempt to determine the DAT type
 		// if it is unknown, prompt the user to specify the type
 		m_type = DATType.parseFrom(fileName);
-		
+
 		if(m_type == DATType.Unknown) {
 			String datTypes[] = new String[DATType.Unknown.ordinal()];
 			for(int i=0;i<datTypes.length;i++) {
@@ -279,6 +297,7 @@ public class PaletteDAT extends Palette {
 		
 		// check to make sure that the file is not too big to be stored in memory
 		if(m_file.length() > Integer.MAX_VALUE) {
+			m_loading = false;
 			throw new PaletteReadException("File \"" + m_file.getName() +  "\" is too large to store in memory.");
 		}
 
@@ -291,16 +310,16 @@ public class PaletteDAT extends Palette {
 			in.close();
 		}
 		catch(FileNotFoundException e) {
+			m_loading = false;
 			throw new PaletteReadException("File \"" + m_file.getName() +  "\" not found.");
 		}
 		catch(IOException e) {
+			m_loading = false;
 			throw new PaletteReadException("Error reading file \"" + m_file.getName() +  "\": " + e.getMessage());
 		}
 		
 		// update the local memory to the data read in from file
 		m_data = data;
-		
-		m_loaded = true;
 		
 		return true;
 	}
@@ -311,7 +330,7 @@ public class PaletteDAT extends Palette {
 		}
 		
 		// check that the palette has a file set and that the palette is loaded
-		if(!m_loaded) {
+		if(!isInitialized()) {
 			throw new PaletteWriteException("Palette DAT has no data to save.");
 		}
 		

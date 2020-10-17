@@ -26,9 +26,9 @@ public abstract class Plugin {
 	public static final String CONFIG_FILE_TYPES[] = new String[] { "CFG", "XML" };
 	
 	protected Plugin(String pluginName, String pluginVersion, String jarFileName, String configFileName, String directoryPath) throws IllegalArgumentException {
-		if(pluginName == null || pluginName.trim().length() == 0) { throw new IllegalArgumentException("Plugin name cannot be null or empty."); }
-		if(pluginVersion == null || pluginVersion.trim().length() == 0) { throw new IllegalArgumentException("Plugin version cannot be null or empty."); }
-		if(configFileName == null || configFileName.trim().length() == 0) { throw new IllegalArgumentException("Plugin config file name cannot be null or empty."); }
+		if(pluginName == null || pluginName.trim().isEmpty()) { throw new IllegalArgumentException("Plugin name cannot be null or empty."); }
+		if(pluginVersion == null || pluginVersion.trim().isEmpty()) { throw new IllegalArgumentException("Plugin version cannot be null or empty."); }
+		if(configFileName == null || configFileName.trim().isEmpty()) { throw new IllegalArgumentException("Plugin config file name cannot be null or empty."); }
 		
 		m_name = pluginName.trim();
 		m_version = pluginVersion.trim();
@@ -60,7 +60,7 @@ public abstract class Plugin {
 	public boolean setConfigFileName(String configFileName) {
 		if(configFileName == null) { return false; }
 		String tempName = configFileName.trim();
-		if(tempName.length() == 0) { return false; }
+		if(tempName.isEmpty()) { return false; }
 		
 		m_configFileName = configFileName;
 		
@@ -97,7 +97,7 @@ public abstract class Plugin {
 	public static boolean hasConfigFileType(String fileType) {
 		if(fileType == null) { return false; }
 		String type = fileType.trim();
-		if(type.length() == 0) { return false; }
+		if(type.isEmpty()) { return false; }
 		
 		for(int i=0;i<CONFIG_FILE_TYPES.length;i++) {
 			if(CONFIG_FILE_TYPES[i].equalsIgnoreCase(type)) {
@@ -110,7 +110,7 @@ public abstract class Plugin {
 	public static int indexOfConfigFileType(String fileType) {
 		if(fileType == null) { return -1; }
 		String type = fileType.trim();
-		if(type.length() == 0) { return -1; }
+		if(type.isEmpty()) { return -1; }
 		
 		for(int i=0;i<CONFIG_FILE_TYPES.length;i++) {
 			if(CONFIG_FILE_TYPES[i].equalsIgnoreCase(type)) {
@@ -137,7 +137,7 @@ public abstract class Plugin {
 	protected boolean loadClasses() {
 		if(m_loaded) { return true; }
 		
-		if(m_jarFileName == null || m_jarFileName.length() == 0) {
+		if(m_jarFileName == null || m_jarFileName.isEmpty()) {
 			m_loaded = true;
 			
 			return true;
@@ -210,7 +210,7 @@ public abstract class Plugin {
 			}
 			
 			line = input.trim();
-			if(line.length() == 0 || Utilities.isComment(line)) { continue; }
+			if(line.isEmpty() || Utilities.isComment(line)) { continue; }
 			
 			if(!line.matches("^.* ([0-9]\\.?)+$")) {
 				in.close();
@@ -237,7 +237,7 @@ public abstract class Plugin {
 	protected static boolean verifyCFGPluginDefinitionFileVersion(String version) {
 		if(version == null) { return false; }
 		String formattedVersion = version.trim();
-		if(formattedVersion.length() == 0) { return false; }
+		if(formattedVersion.isEmpty()) { return false; }
 		
 		return Utilities.compareVersions(CFG_PLUGIN_DEFINITION_FILE_VERSION, formattedVersion) == 0;
 	}
@@ -329,7 +329,7 @@ public abstract class Plugin {
 		if(file == null || type == null) { return false; }
 		
 		String formattedType = type.trim();
-		if(formattedType.length() == 0) { return false; }
+		if(formattedType.isEmpty()) { return false; }
 		
 		String pluginType = getPluginType(file);
 		return pluginType != null && pluginType.equalsIgnoreCase(formattedType);
