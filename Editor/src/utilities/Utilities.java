@@ -37,7 +37,47 @@ public class Utilities {
 	public static int longLength(long n) {
 		return n < 0 ? n < -999999999L ? n < -99999999999999L ? n < -9999999999999999L ? n < -999999999999999999L ? 20 : n < -99999999999999999L ? 19 : 18 : n < -999999999999999L ? 17 : 16 : n < -99999999999L ? n < -9999999999999L ? 15 : n < -999999999999L ? 14 : 13 : n < -9999999999L ? 12 : 11 : n < -9999L ? n < -999999L ? n < -99999999L ? 10 : n < -9999999L ? 9 : 8 : n < -99999L ? 7 : 6 : n < -99L ? n < -999L ? 5 : 4 : n < -9L ? 3 : 2 : n < 1000000000L ? n < 10000L ? n < 100L ? n < 10L ? 1 : 2 : n < 1000L ? 3 : 4 : n < 10000000L ? n < 100000L ? 5 : n < 1000000L ? 6 : 7 : n < 100000000L ? 8 : 9 : n < 100000000000000L ? n < 1000000000000L ? n < 100000000000L ? n < 10000000000L ? 10 : 11 : 12 : n < 10000000000000L ? 13 : 14 : n < 100000000000000000L ? n < 10000000000000000L ? n < 1000000000000000L ? 15 : 16 : 17 : n < 1000000000000000000L ? 18 : 19;
 	}
-	
+
+	public static String toBinaryString(byte b) {
+		String binaryString = String.format("%8s", Integer.toBinaryString(b & 0xff)).replace(' ', '0');
+
+		while(binaryString.length() < Byte.SIZE) {
+			binaryString = '0' + binaryString;
+		}
+
+		return binaryString;
+	}
+
+	public static String toBinaryString(short s) {
+		String binaryString = String.format("%8s", Integer.toBinaryString(s & 0xffff)).replace(' ', '0');
+
+		while(binaryString.length() < Short.SIZE) {
+			binaryString = '0' + binaryString;
+		}
+
+		return binaryString;
+	}
+
+	public static String toBinaryString(int i) {
+		String binaryString = String.format("%8s", Integer.toBinaryString(i & 0xffffffff)).replace(' ', '0');
+
+		while(binaryString.length() < Integer.SIZE) {
+			binaryString = '0' + binaryString;
+		}
+
+		return binaryString;
+	}
+
+	public static String toBinaryString(long l) {
+		String binaryString = String.format("%8s", Long.toBinaryString(l)).replace(' ', '0');
+
+		while(binaryString.length() < Long.SIZE) {
+			binaryString = '0' + binaryString;
+		}
+
+		return binaryString;
+	}
+
 	public static Point parsePoint(String data) {
 		if(data == null) { return null; }
 		
@@ -177,46 +217,6 @@ public class Utilities {
 		}
 		
 		return upper - lower;
-	}
-
-	public static String toBinaryString(byte b) {
-		String binaryString = String.format("%8s", Integer.toBinaryString(b & 0xff)).replace(' ', '0');
-
-		while(binaryString.length() < 8) {
-			binaryString = '0' + binaryString;
-		}
-
-		return binaryString;
-	}
-
-	public static String toBinaryString(short s) {
-		String binaryString = String.format("%8s", Integer.toBinaryString(s & 0xffff)).replace(' ', '0');
-
-		while(binaryString.length() < 16) {
-			binaryString = '0' + binaryString;
-		}
-
-		return binaryString;
-	}
-
-	public static String toBinaryString(int i) {
-		String binaryString = String.format("%8s", Integer.toBinaryString(i & 0xffffffff)).replace(' ', '0');
-
-		while(binaryString.length() < 32) {
-			binaryString = '0' + binaryString;
-		}
-
-		return binaryString;
-	}
-
-	public static String toBinaryString(long l) {
-		String binaryString = String.format("%8s", Long.toBinaryString(l)).replace(' ', '0');
-
-		while(binaryString.length() < 64) {
-			binaryString = '0' + binaryString;
-		}
-
-		return binaryString;
 	}
 
 	public static String reverseString(String data) {

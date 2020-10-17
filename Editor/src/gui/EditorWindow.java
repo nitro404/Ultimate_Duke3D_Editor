@@ -14,12 +14,15 @@ import console.*;
 import item.*;
 import group.*;
 import palette.*;
+import art.*;
 import action.*;
 import editor.*;
 import plugin.*;
 import version.*;
 
-public class EditorWindow implements WindowListener, ComponentListener, ChangeListener, ActionListener, GroupActionListener, PaletteActionListener, UpdateListener, Updatable {
+public class EditorWindow implements WindowListener, ComponentListener, ChangeListener, ActionListener, GroupActionListener, PaletteActionListener, ArtActionListener, UpdateListener, Updatable {
+	
+// TODO: add support for audio files, animation files, map files, binary text files, make dat palettes instantiable
 	
 	private JFrame m_frame;
 	private JTabbedPane m_mainTabbedPane;
@@ -50,6 +53,16 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 	private JMenuItem m_groupRenameFileMenuItem;
 	private JMenuItem m_groupExtractFilesMenuItem;
 	private JMenuItem m_groupExtractAllFilesMenuItem;
+	private JMenu m_artMenu;
+	private JMenuItem m_artClearTileMenuItem;
+	private JMenuItem m_artSwapTilesMenuItem;
+	private JMenuItem m_artReplaceTileMenuItem;
+	private JMenuItem m_artImportTilesMenuItem;
+	private JMenuItem m_artExtractTileMenuItem;
+	private JMenuItem m_artExtractAllTilesMenuItem;
+	private JMenuItem m_artSetNumberMenuItem;
+	private JMenuItem m_artSetNumberOfTilesMenuItem;
+	private JMenuItem m_artSetLegacyTileCountMenuItem;
 	private JMenu m_selectMenu;
 	private JMenuItem m_selectInverseMenuItem;
 	private JMenuItem m_selectRandomMenuItem;
@@ -75,6 +88,12 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 	private JMenuItem m_settingsConsoleLogFileNameMenuItem;
 	private JMenuItem m_settingsLogDirectoryNameMenuItem;
 	private JMenuItem m_settingsVersionFileURLMenuItem;
+	private JMenuItem m_settingsPaletteFilePathMenuItem;
+	private JCheckBoxMenuItem m_settingsAutomaticRelativePaletteOverrideMenuItem;
+	private JMenuItem m_settingsLookupFilePathMenuItem;
+	private JCheckBoxMenuItem m_settingsAutomaticRelativeLookupOverrideMenuItem;
+	private JMenuItem m_settingsTileButtonPressedColourMenuItem;
+	private JMenuItem m_settingsTileButtonBackgroundColourMenuItem;
 	private JMenuItem m_settingsBackgroundColourMenuItem;
 	private JCheckBoxMenuItem m_settingsAutoScrollConsoleMenuItem;
 	private JMenuItem m_settingsMaxConsoleHistoryMenuItem;
@@ -194,6 +213,9 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		update();
 		
+// TODO: temporary testing
+loadItem(new File("test/TILES009.ART"));
+		
 		return true;
 	}
 	
@@ -244,6 +266,17 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_groupRemoveFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.Event.CTRL_MASK));
 		m_groupExtractFilesMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.Event.CTRL_MASK));
 
+		m_artMenu = new JMenu("Art");
+		m_artClearTileMenuItem = new JMenuItem("Clear Tile");
+		m_artSwapTilesMenuItem = new JMenuItem("Swap Tiles");
+		m_artReplaceTileMenuItem = new JMenuItem("Replace Tile");
+		m_artImportTilesMenuItem = new JMenuItem("Import Tiles");
+		m_artExtractTileMenuItem = new JMenuItem("Extract Tile");
+		m_artExtractAllTilesMenuItem = new JMenuItem("Extract All Tiles");
+		m_artSetNumberMenuItem = new JMenuItem("Set Number");
+		m_artSetNumberOfTilesMenuItem = new JMenuItem("Set Number of Tiles");
+		m_artSetLegacyTileCountMenuItem = new JMenuItem("Set Legacy Tile Count");
+		
 		m_selectMenu = new JMenu("Select");
 		m_selectInverseMenuItem = new JMenuItem("Inverse");
 		m_selectRandomMenuItem = new JMenuItem("Random");
@@ -280,6 +313,12 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_settingsConsoleLogFileNameMenuItem = new JMenuItem("Console Log File Name");
 		m_settingsLogDirectoryNameMenuItem = new JMenuItem("Log Directory Name");
 		m_settingsVersionFileURLMenuItem = new JMenuItem("Version File URL");
+		m_settingsPaletteFilePathMenuItem = new JMenuItem("Default Palette File Path");
+		m_settingsAutomaticRelativePaletteOverrideMenuItem = new JCheckBoxMenuItem("Automatic Relative Palette Override");
+		m_settingsLookupFilePathMenuItem = new JMenuItem("Default Lookup File Path");
+		m_settingsAutomaticRelativeLookupOverrideMenuItem = new JCheckBoxMenuItem("Automatic Relative Lookup Override");
+		m_settingsTileButtonPressedColourMenuItem = new JMenuItem("Set Tile Button Pressed Colour");
+		m_settingsTileButtonBackgroundColourMenuItem = new JMenuItem("Set Tile Button Background Colour");
 		m_settingsBackgroundColourMenuItem = new JMenuItem("Background Colour");
 		m_settingsAutoScrollConsoleMenuItem = new JCheckBoxMenuItem("Auto-Scroll Console");
 		m_settingsMaxConsoleHistoryMenuItem = new JMenuItem("Max Console History");
@@ -289,6 +328,8 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_settingsSaveSettingsMenuItem = new JMenuItem("Save Settings");
 		m_settingsReloadSettingsMenuItem = new JMenuItem("Reload Settings");
 		m_settingsResetSettingsMenuItem = new JMenuItem("Reset Settings");
+		m_settingsAutomaticRelativePaletteOverrideMenuItem.setSelected(SettingsManager.defaultAutomaticRelativePaletteOverride);
+		m_settingsAutomaticRelativeLookupOverrideMenuItem.setSelected(SettingsManager.defaultAutomaticRelativeLookupOverride);
 		m_settingsAutoScrollConsoleMenuItem.setSelected(SettingsManager.defaultAutoScrollConsole);
 		m_settingsAutoSaveSettingsMenuItem.setSelected(SettingsManager.defaultAutoSaveSettings);
 		m_settingsLogConsoleMenuItem.setSelected(SettingsManager.defaultLogConsole);
@@ -328,6 +369,15 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_groupRenameFileMenuItem.addActionListener(this);
 		m_groupExtractFilesMenuItem.addActionListener(this);
 		m_groupExtractAllFilesMenuItem.addActionListener(this);
+		m_artClearTileMenuItem.addActionListener(this);
+		m_artSwapTilesMenuItem.addActionListener(this);
+		m_artReplaceTileMenuItem.addActionListener(this);
+		m_artImportTilesMenuItem.addActionListener(this);
+		m_artExtractTileMenuItem.addActionListener(this);
+		m_artExtractAllTilesMenuItem.addActionListener(this);
+		m_artSetNumberMenuItem.addActionListener(this);
+		m_artSetNumberOfTilesMenuItem.addActionListener(this);
+		m_artSetLegacyTileCountMenuItem.addActionListener(this);
 		m_selectInverseMenuItem.addActionListener(this);
 		m_selectRandomMenuItem.addActionListener(this);
 		m_selectAllMenuItem.addActionListener(this);
@@ -348,6 +398,12 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_settingsConsoleLogFileNameMenuItem.addActionListener(this);
 		m_settingsLogDirectoryNameMenuItem.addActionListener(this);
 		m_settingsVersionFileURLMenuItem.addActionListener(this);
+		m_settingsPaletteFilePathMenuItem.addActionListener(this);
+		m_settingsAutomaticRelativePaletteOverrideMenuItem.addActionListener(this);
+		m_settingsLookupFilePathMenuItem.addActionListener(this);
+		m_settingsAutomaticRelativeLookupOverrideMenuItem.addActionListener(this);
+		m_settingsTileButtonPressedColourMenuItem.addActionListener(this);
+		m_settingsTileButtonBackgroundColourMenuItem.addActionListener(this);
 		m_settingsBackgroundColourMenuItem.addActionListener(this);
 		m_settingsAutoScrollConsoleMenuItem.addActionListener(this);
 		m_settingsMaxConsoleHistoryMenuItem.addActionListener(this);
@@ -386,6 +442,16 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_groupMenu.add(m_groupRenameFileMenuItem);
 		m_groupMenu.add(m_groupExtractFilesMenuItem);
 		m_groupMenu.add(m_groupExtractAllFilesMenuItem);
+
+		m_artMenu.add(m_artClearTileMenuItem);
+		m_artMenu.add(m_artSwapTilesMenuItem);
+		m_artMenu.add(m_artReplaceTileMenuItem);
+		m_artMenu.add(m_artImportTilesMenuItem);
+		m_artMenu.add(m_artExtractTileMenuItem);
+		m_artMenu.add(m_artExtractAllTilesMenuItem);
+		m_artMenu.add(m_artSetNumberMenuItem);
+		m_artMenu.add(m_artSetNumberOfTilesMenuItem);
+		m_artMenu.add(m_artSetLegacyTileCountMenuItem);
 		
 		m_selectMenu.add(m_selectInverseMenuItem);
 		m_selectMenu.add(m_selectRandomMenuItem);
@@ -413,6 +479,12 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_settingsMenu.add(m_settingsConsoleLogFileNameMenuItem);
 		m_settingsMenu.add(m_settingsLogDirectoryNameMenuItem);
 		m_settingsMenu.add(m_settingsVersionFileURLMenuItem);
+		m_settingsMenu.add(m_settingsPaletteFilePathMenuItem);
+		m_settingsMenu.add(m_settingsAutomaticRelativePaletteOverrideMenuItem);
+		m_settingsMenu.add(m_settingsLookupFilePathMenuItem);
+		m_settingsMenu.add(m_settingsAutomaticRelativeLookupOverrideMenuItem);
+		m_settingsMenu.add(m_settingsTileButtonPressedColourMenuItem);
+		m_settingsMenu.add(m_settingsTileButtonBackgroundColourMenuItem);
 		m_settingsMenu.add(m_settingsBackgroundColourMenuItem);
 		m_settingsMenu.add(m_settingsAutoScrollConsoleMenuItem);
 		m_settingsMenu.add(m_settingsMaxConsoleHistoryMenuItem);
@@ -440,6 +512,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		m_menuBar.add(m_fileMenu);
 		m_menuBar.add(m_groupMenu);
+		m_menuBar.add(m_artMenu);
 		m_menuBar.add(m_selectMenu);
 		m_menuBar.add(m_sortMenu);
 		m_menuBar.add(m_processMenu);
@@ -836,6 +909,12 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		else if(newItem instanceof Palette) {
 			((PalettePanel) newItemPanel).addPaletteActionListener(this);
 		}
+		else if(newItem instanceof Art) {
+			ArtPanel newArtPanel = ((ArtPanel) newItemPanel);
+			newArtPanel.addArtActionListener(this);
+			newArtPanel.setTileButtonPressedColour(SettingsManager.instance.tileButtonPressedColour);
+			newArtPanel.setTileButtonBackgroundColour(SettingsManager.instance.tileButtonBackgroundColour);
+		}
 		
 		addItem(newItemPanel);
 		
@@ -1020,6 +1099,12 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		}
 		else if(item instanceof Palette) {
 			((PalettePanel) itemPanel).addPaletteActionListener(this);
+		}
+		else if(item instanceof Art) {
+			ArtPanel artPanel = ((ArtPanel) itemPanel);
+			artPanel.addArtActionListener(this);
+			artPanel.setTileButtonPressedColour(SettingsManager.instance.tileButtonPressedColour);
+			artPanel.setTileButtonBackgroundColour(SettingsManager.instance.tileButtonBackgroundColour);
 		}
 
 		addItem(itemPanel);
@@ -2092,6 +2177,248 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		return true;
 	}
+
+// TODO: [extractAllTiles?] export art (to image files + metadata)
+
+	public boolean setSelectedArtNumber() {
+		ItemPanel itemPanel = getSelectedItemPanel();
+		
+		if(itemPanel == null) {
+			return false;
+		}
+		
+		if(itemPanel instanceof ArtPanel) {
+			return setArtNumber((ArtPanel) itemPanel);
+		}
+		
+		return false;
+	}
+	
+	public boolean setArtNumber(ArtPanel artPanel) {
+		String input = JOptionPane.showInputDialog(m_frame, "Please enter the desired art number:", artPanel.getArt().getNumber());
+		if(input == null) { return false; }
+		
+		int artNumber = -1;
+
+		try {
+			artNumber = Integer.parseInt(input);
+		}
+		catch(NumberFormatException exception) {
+			JOptionPane.showMessageDialog(m_frame, "Invalid art number entered.", "Invalid Number", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+
+		try {
+			artPanel.getArt().setNumber(artNumber);
+		}
+		catch(IllegalArgumentException exception) {
+			JOptionPane.showMessageDialog(m_frame, exception.getMessage(), "Invalid Art Number", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean setSelectedArtNumberOfTiles() {
+		ItemPanel itemPanel = getSelectedItemPanel();
+		
+		if(itemPanel == null) {
+			return false;
+		}
+		
+		if(itemPanel instanceof ArtPanel) {
+			return setArtNumberOfTiles((ArtPanel) itemPanel);
+		}
+		
+		return false;
+	}
+
+	public boolean setArtNumberOfTiles(ArtPanel artPanel) {
+		String input = JOptionPane.showInputDialog(m_frame, "Please enter the desired number of tiles:\n\nNote that changing this value may make the art file incompatible\nwith Duke Nukem 3D and will also update the local tile start value.", artPanel.getArt().numberOfTiles());
+		if(input == null) { return false; }
+		
+		int numberOfTiles = -1;
+
+		try {
+			numberOfTiles = Integer.parseInt(input);
+		}
+		catch(NumberFormatException exception) {
+			JOptionPane.showMessageDialog(m_frame, "Invalid number of tiles value entered.", "Invalid Number", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		int currentNumberOfTiles = artPanel.getArt().numberOfTiles();
+		
+		if(numberOfTiles == currentNumberOfTiles) {
+			return true;
+		}
+		
+		if(numberOfTiles < currentNumberOfTiles) {
+			int numberOfTilesToTruncate = currentNumberOfTiles - numberOfTiles;
+			int choice = JOptionPane.showConfirmDialog(m_frame, "This will truncate " + numberOfTilesToTruncate + " tile" + (numberOfTilesToTruncate == 1 ? "" : "s") + ", are you sure you wish to continue?", "Tile Truncation", JOptionPane.YES_NO_CANCEL_OPTION);
+			if(choice == JOptionPane.NO_OPTION || choice == JOptionPane.CANCEL_OPTION) { return false; }
+		}
+		
+		try {
+			artPanel.getArt().setNumberOfTiles(numberOfTiles);
+		}
+		catch(IllegalArgumentException exception) {
+			JOptionPane.showMessageDialog(m_frame, exception.getMessage(), "Invalid Number of Tiles", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean setSelectedArtLegacyTileCount() {
+		ItemPanel itemPanel = getSelectedItemPanel();
+		
+		if(itemPanel == null) {
+			return false;
+		}
+		
+		if(itemPanel instanceof ArtPanel) {
+			return setArtLegacyTileCount((ArtPanel) itemPanel);
+		}
+		
+		return false;
+	}
+
+	public boolean setArtLegacyTileCount(ArtPanel artPanel) {
+		String input = JOptionPane.showInputDialog(m_frame, "Please enter the desired art legacy tile count value:", artPanel.getArt().getLegacyTileCount());
+		if(input == null) { return false; }
+		
+		int legacyTileCount = -1;
+
+		try {
+			legacyTileCount = Integer.parseInt(input);
+		}
+		catch(NumberFormatException exception) {
+			JOptionPane.showMessageDialog(m_frame, "Invalid legacy tile count value entered.", "Invalid Number", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+
+		artPanel.getArt().setLegacyTileCount(legacyTileCount);
+		
+		return true;
+	}
+	
+	public void clearTile(TileButton tileButton) {
+		tileButton.getTile().clear();
+	}
+
+// TODO: swapTilesInArt
+
+// TODO: replaceTileInArt
+	public boolean replaceTileInArt(TileButton tileButton) {
+		if(tileButton == null) { return false; }
+		
+		JFileChooser fileChooser = new JFileChooser(SettingsManager.instance.previousGroupFileDirectory);
+		fileChooser.setDialogTitle("Select Replacement Image");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
+		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return false; }
+		if(fileChooser.getSelectedFile() == null) {
+			String message = "No image file selected!";
+			
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Invalid Image File", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
+		
+// TODO: re-factor this:
+		SettingsManager.instance.previousGroupFileDirectory = Utilities.getFilePath(fileChooser.getCurrentDirectory());
+		
+// TODO: temporary:
+		try {
+			tileButton.getTile().setImage(fileChooser.getSelectedFile());
+			
+			return true;
+		}
+		catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		catch(TileReadException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+// TODO: importTilesIntoArt
+	
+	public boolean extractTileFromArt(ArtPanel artPanel, TileButton tileButton) {
+		if(tileButton == null) { return false; }
+
+		JFileChooser fileChooser = new JFileChooser(SettingsManager.instance.previousExtractArtTileDirectory);
+		fileChooser.setDialogTitle("Extract Tile #" + Utilities.addLeadingZeroes(tileButton.getTile().getNumber(), 4));
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
+		if(fileChooser.showSaveDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return false; }
+		if(fileChooser.getSelectedFile() == null) {
+			String message = "No directory selected!";
+			
+			SystemConsole.instance.writeLine(message);
+			
+			JOptionPane.showMessageDialog(m_frame, message, "Invalid Directory", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
+		
+// TODO: change this so it's unique per file type (ie. previousTileExtract/previousGroupFileExtract or whatever:
+
+// TODO: getCurrentDirectory().getPath() -> getSelectedFile().getPath() where appropriate !! current dir gets the parent dir
+		
+		SettingsManager.instance.previousExtractArtTileDirectory = fileChooser.getSelectedFile().getPath();
+		
+		if(!fileChooser.getSelectedFile().exists()) {
+			int choice = JOptionPane.showConfirmDialog(m_frame, "The specified directory does not exist, create it?", "Non-Existent Directory", JOptionPane.YES_NO_CANCEL_OPTION);
+			if(choice == JOptionPane.NO_OPTION || choice == JOptionPane.CANCEL_OPTION) { return false; }
+			
+			try {
+				fileChooser.getSelectedFile().mkdirs();
+			}
+			catch(SecurityException e) {
+				String message = "Failed to create the specified directory or directory structure, please ensure that you have write permission for this location. Exception message: " + e.getMessage();
+				
+				SystemConsole.instance.writeLine(message);
+				
+				JOptionPane.showMessageDialog(m_frame, message, "Directory Creation Failed", JOptionPane.ERROR_MESSAGE);
+				
+				return false;
+			}
+		}
+		
+		TileFormat tileFormat = (TileFormat) JOptionPane.showInputDialog(m_frame, "Choose a tile image file format:", "Choose File Format", JOptionPane.QUESTION_MESSAGE, null, TileFormat.FORMATS, TileFormat.FORMATS[0]);
+		if(tileFormat == null) { return false; }
+		
+// TODO: choose palette?
+// TODO: check if already exists and prompt to overwrite
+// TODO: prompt for file type
+		
+// TODO: temporary:
+		try {
+			return tileButton.getTile().writeTo(fileChooser.getSelectedFile().getPath(), false, true, tileFormat, true);
+		}
+		catch(IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		catch(TileWriteException e) {
+			e.printStackTrace();
+		}
+		catch(MetadataWriteException e) {
+			e.printStackTrace();
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+// TODO: extractTilesFromArt
 	
 	public boolean closeSelectedItem() {
 		return closeItem(getSelectedItemPanel());
@@ -2343,7 +2670,9 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		if(m_updating) { return; }
 		
 		m_updating = true;
-		
+
+		m_settingsAutomaticRelativePaletteOverrideMenuItem.setSelected(SettingsManager.instance.automaticRelativePaletteOverride);
+		m_settingsAutomaticRelativeLookupOverrideMenuItem.setSelected(SettingsManager.instance.automaticRelativeLookupOverride);
 		m_settingsAutoScrollConsoleMenuItem.setSelected(SettingsManager.instance.autoScrollConsole);
 		m_settingsLogConsoleMenuItem.setSelected(SettingsManager.instance.logConsole);
 		m_settingsSuppressUpdatesMenuItem.setSelected(SettingsManager.instance.suppressUpdates);
@@ -2352,7 +2681,10 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		ItemPanel selectedItemPanel = getSelectedItemPanel();
 		GroupPanel selectedGroupPanel = (selectedItemPanel instanceof GroupPanel) ? (GroupPanel) selectedItemPanel : null;
+		ArtPanel selectedArtPanel = (selectedItemPanel instanceof ArtPanel) ? (ArtPanel) selectedItemPanel : null;
 		Group selectedGroup = selectedGroupPanel == null ? null : selectedGroupPanel.getGroup();
+		Art selectedArt = selectedArtPanel == null ? null : selectedArtPanel.getArt();
+		boolean hasNonEmptyTile = selectedArt == null ? false : selectedArt.hasNonEmptyTile();
 		boolean itemTabSelected = m_mainTabbedPane.getSelectedIndex() != m_mainTabbedPane.getTabCount() - 1;
 		boolean groupHasFiles = selectedGroup != null && selectedGroup.numberOfFiles() != 0;
 		m_fileSaveMenuItem.setEnabled(itemTabSelected);
@@ -2373,6 +2705,16 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_groupRenameFileMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1);
 		m_groupExtractFilesMenuItem.setEnabled(selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() != 0);
 		m_groupExtractAllFilesMenuItem.setEnabled(selectedGroup != null && selectedGroup.numberOfFiles() != 0);
+
+		m_artClearTileMenuItem.setEnabled(selectedArtPanel != null);
+		m_artSwapTilesMenuItem.setEnabled(hasNonEmptyTile);
+		m_artReplaceTileMenuItem.setEnabled(selectedArtPanel != null);
+		m_artImportTilesMenuItem.setEnabled(selectedArtPanel != null);
+		m_artExtractTileMenuItem.setEnabled(hasNonEmptyTile);
+		m_artExtractAllTilesMenuItem.setEnabled(hasNonEmptyTile);
+		m_artSetNumberMenuItem.setEnabled(selectedArtPanel != null);
+		m_artSetNumberOfTilesMenuItem.setEnabled(selectedArtPanel != null);
+		m_artSetLegacyTileCountMenuItem.setEnabled(selectedArtPanel != null);
 		
 		m_selectInverseMenuItem.setEnabled(groupHasFiles);
 		m_selectRandomMenuItem.setEnabled(groupHasFiles);
@@ -2458,6 +2800,106 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_updating = false;
 		
 		updateWindow();
+	}
+
+	public boolean promptPaletteFilePath() {
+		int choice = JOptionPane.showConfirmDialog(m_frame, "Would you like to use the default palette?", "Use Default Palette", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		if(choice == JOptionPane.YES_OPTION) {
+			SettingsManager.instance.paletteFilePath = "";
+			
+			Editor.updatePalette(true);
+			
+			return true;
+		}
+		
+		JFileChooser fileChooser = new JFileChooser(Utilities.isEmptyString(SettingsManager.instance.paletteFilePath) ? System.getProperty("user.dir") : Utilities.getFilePath(new File(SettingsManager.instance.paletteFilePath)));
+		fileChooser.setDialogTitle("Select Palette File");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
+		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return false; }
+		File selectedFile = fileChooser.getSelectedFile();
+		if(selectedFile == null || !selectedFile.isFile() || !selectedFile.exists()) { return false; }
+		
+		SettingsManager.instance.paletteFilePath = selectedFile.getPath();
+		
+		Editor.updatePalette(true);
+		
+		return true;
+	}
+
+	public boolean promptLookupFilePath() {
+		int choice = JOptionPane.showConfirmDialog(m_frame, "Would you like to use the default lookup?", "Use Default Lookup", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		if(choice == JOptionPane.YES_OPTION) {
+			SettingsManager.instance.lookupFilePath = "";
+			
+			Editor.updateLookup(true);
+			
+			return true;
+		}
+		
+		JFileChooser fileChooser = new JFileChooser(Utilities.isEmptyString(SettingsManager.instance.lookupFilePath) ? System.getProperty("user.dir") : Utilities.getFilePath(new File(SettingsManager.instance.lookupFilePath)));
+		fileChooser.setDialogTitle("Select Lookup File");
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
+		if(fileChooser.showOpenDialog(m_frame) != JFileChooser.APPROVE_OPTION) { return false; }
+		File selectedFile = fileChooser.getSelectedFile();
+		if(selectedFile == null || !selectedFile.isFile() || !selectedFile.exists()) { return false; }
+		
+		SettingsManager.instance.lookupFilePath = selectedFile.getPath();
+		
+		Editor.updateLookup(true);
+		
+		return true;
+	}
+
+	public void changeTileButtonPressedColourPrompt() {
+		int choice = JOptionPane.showConfirmDialog(m_frame, "Would you prefer to remove the tile button pressed colour instead?", "Remove Tile Button Pressed Colour", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		if(choice == JOptionPane.YES_OPTION) {
+			SettingsManager.instance.tileButtonPressedColour = null;
+		}
+		else {
+			Color newColour = JColorChooser.showDialog(null, "Choose tile button pressed colour", SettingsManager.instance.tileButtonPressedColour);
+			if(newColour == null) { return; }
+			
+			SettingsManager.instance.tileButtonPressedColour = newColour;
+		}
+		
+		for(int i=0;i<m_itemPanels.size();i++) {
+			ItemPanel itemPanel = m_itemPanels.elementAt(i);
+			
+			if(!(itemPanel instanceof ArtPanel)) {
+				continue;
+			}
+			
+			((ArtPanel) itemPanel).setTileButtonPressedColour(SettingsManager.instance.tileButtonPressedColour);
+		}
+	}
+
+	public void changeTileButtonBackgroundColourPrompt() {
+		int choice = JOptionPane.showConfirmDialog(m_frame, "Would you prefer to remove the tile button background colour instead?", "Remove Tile Button Background Colour", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		if(choice == JOptionPane.YES_OPTION) {
+			SettingsManager.instance.tileButtonBackgroundColour = null;
+		}
+		else {
+			Color newColour = JColorChooser.showDialog(null, "Choose tile button background colour", SettingsManager.instance.tileButtonBackgroundColour);
+			if(newColour == null) { return; }
+			
+			SettingsManager.instance.tileButtonBackgroundColour = newColour;
+		}
+		
+		for(int i=0;i<m_itemPanels.size();i++) {
+			ItemPanel itemPanel = m_itemPanels.elementAt(i);
+			
+			if(!(itemPanel instanceof ArtPanel)) {
+				continue;
+			}
+			
+			((ArtPanel) itemPanel).setTileButtonBackgroundColour(SettingsManager.instance.tileButtonBackgroundColour);
+		}
 	}
 	
 	public void changeBackgroundColourPrompt() {
@@ -2617,6 +3059,42 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		else if(e.getSource() == m_groupExtractAllFilesMenuItem) {
 			extractAllFilesFromSelectedGroup();
 		}
+		// prompt for a tile to clear
+		else if(e.getSource() == m_artClearTileMenuItem) {
+// TODO: query for and clear specified tile
+		}
+		// prompt for two tiles to swap
+		else if(e.getSource() == m_artSwapTilesMenuItem) {
+// TODO: query for and swap specified tiles
+		}
+		// prompt for two tiles to swap
+		else if(e.getSource() == m_artReplaceTileMenuItem) {
+// TODO: query for and replace specified tile with desired image
+		}
+		// prompt for tiles to import
+		else if(e.getSource() == m_artImportTilesMenuItem) {
+// TODO: query for and import tiles
+		}
+		// prompt for a tile to extract
+		else if(e.getSource() == m_artExtractTileMenuItem) {
+// TODO: query for and extract specified tile
+		}
+		// prompt for extracting all tiles
+		else if(e.getSource() == m_artExtractAllTilesMenuItem) {
+// TODO: extract all tiles
+		}
+		// set art number
+		else if(e.getSource() == m_artSetNumberMenuItem) {
+			setSelectedArtNumber();
+		}
+		// set art number of tiles
+		else if(e.getSource() == m_artSetNumberOfTilesMenuItem) {
+			setSelectedArtNumberOfTiles();
+		}
+		// set art legacy tile count
+		else if(e.getSource() == m_artSetLegacyTileCountMenuItem) {
+			setSelectedArtLegacyTileCount();
+		}
 		// inverse file selection
 		else if(e.getSource() == m_selectInverseMenuItem) {
 			ItemPanel selectedItemPanel = getSelectedItemPanel();
@@ -2752,6 +3230,38 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			if(!newVersionFileURL.equalsIgnoreCase(SettingsManager.instance.versionFileURL)) {
 				SettingsManager.instance.versionFileURL = newVersionFileURL;
 			}
+		}
+		// change the default palette file path
+		else if(e.getSource() == m_settingsPaletteFilePathMenuItem) {
+			if(promptPaletteFilePath()) {
+				JOptionPane.showMessageDialog(m_frame, "You must re-open any art files for this to take effect.", "Reload Required", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+		// change whether relative palette files can override the default palette
+		else if(e.getSource() == m_settingsAutomaticRelativePaletteOverrideMenuItem) {
+			SettingsManager.instance.automaticRelativePaletteOverride = m_settingsAutomaticRelativePaletteOverrideMenuItem.isSelected();
+			
+			JOptionPane.showMessageDialog(m_frame, "You must re-open any art files for this to take effect.", "Reload Required", JOptionPane.INFORMATION_MESSAGE);
+		}
+		// change the default lookup file path
+		else if(e.getSource() == m_settingsLookupFilePathMenuItem) {
+			if(promptLookupFilePath()) {
+				JOptionPane.showMessageDialog(m_frame, "You must re-open any art files for this to take effect.", "Reload Required", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}
+		// change whether relative lookup files can override the default lookup
+		else if(e.getSource() == m_settingsAutomaticRelativeLookupOverrideMenuItem) {
+			SettingsManager.instance.automaticRelativeLookupOverride = m_settingsAutomaticRelativeLookupOverrideMenuItem.isSelected();
+			
+			JOptionPane.showMessageDialog(m_frame, "You must re-open any art files for this to take effect.", "Reload Required", JOptionPane.INFORMATION_MESSAGE);
+		}
+		// prompt for a new tile button pressed colour
+		else if(e.getSource() == m_settingsTileButtonPressedColourMenuItem) {
+			changeTileButtonPressedColourPrompt();
+		}
+		// prompt for a new tile button background colour
+		else if(e.getSource() == m_settingsTileButtonBackgroundColourMenuItem) {
+			changeTileButtonBackgroundColourPrompt();
 		}
 		// prompt for a new background colour
 		else if(e.getSource() == m_settingsBackgroundColourMenuItem) {
@@ -3026,6 +3536,70 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 				
 			case Close:
 				closeItem(action.getSource());
+				break;
+				
+			case DoNothing:
+			case Invalid:
+				return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean handleArtAction(ArtAction action) {
+		if(!ArtAction.isvalid(action)) { return false; }
+		
+		switch(action.getAction()) {
+			case Save:
+				saveItem(action.getSource());
+				break;
+				
+			case SaveAs:
+				saveItemAsNew(action.getSource());
+				break;
+
+			case ClearTile:
+				clearTile(action.getTarget());
+				break;
+
+			case SwapTiles:
+// TODO: handle swap tiles action
+				break;
+				
+			case ReplaceTile:
+				replaceTileInArt(action.getTarget());
+				break;
+
+			case ImportTiles:
+// TODO: handle import tiles action
+				break;
+				
+			case ExtractTile:
+				extractTileFromArt(action.getSource(), action.getTarget());
+				break;
+
+			case ExtractTiles:
+// TODO: handle extract tiles action
+				break;
+
+			case ExtractAllTiles:
+// TODO: handle extract all tiles action
+				break;
+				
+			case Close:
+				closeItem(action.getSource());
+				break;
+				
+			case SetNumber:
+				setArtNumber(action.getSource());
+				break;
+			
+			case SetNumberOfTiles:
+				setArtNumberOfTiles(action.getSource());
+				break;
+				
+			case SetLegacyTileCount:
+				setArtLegacyTileCount(action.getSource());
 				break;
 				
 			case DoNothing:
