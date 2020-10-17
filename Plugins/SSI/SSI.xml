@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<plugin name="Sunstorm Interactive SSI Group File" version="1.1" type="Group" jar="SSI.jar">
+	<formats>
+		<format extension="SSI" />
+	</formats>
+	
+	<classes>
+		<class type="Item" name="group.GroupSSI" />
+		<class type="Item Panel" name="gui.GroupPanelSSI" />
+	</classes>
+</plugin>

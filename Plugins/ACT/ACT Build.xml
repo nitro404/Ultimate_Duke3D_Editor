@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="Ultimate Duke Nukem 3D Editor ACT Plugin" default="build" basedir=".">
+	
+	<description>
+		Ultimate Duke Nukem 3D Editor ACT Plugin
+	</description>
+	
+	<property name="jarName" value="ACT" />
+	<property name="sourceDir" value="${basedir}/src" />
+	<property name="outputDir" value="${basedir}/bin" />
+	<property name="library" value="../../Plugin Library/Plugin Library.jar" />
+	<property name="verbose" value="false" />
+	
+	<target name="clean" description="Clean Output Directory">
+		<delete dir="${outputDir}" />
+	</target>
+	
+	<target name="prepare" depends="clean" description="Create Output Directory">
+		<mkdir dir="${outputDir}" />
+	</target>
+	
+	<target name="compile" depends="prepare" description="Compile All Source Files">
+		<javac srcdir="${sourceDir}" destdir="${outputDir}" verbose="${verbose}" classpath="${library}" includeantruntime="false" />
+	</target>
+	
+	<target name="package" description="Package Plugin Jar">
+		<jar jarfile="${jarName}.jar" basedir="${outputDir}" />
+	</target>
+	
+	<target name="build" depends="compile,package" description="Compile and Package Plugin" />
+	
+</project>

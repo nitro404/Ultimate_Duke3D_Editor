@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="Ultimate Duke Nukem 3D Editor Plugin Library" default="build" basedir=".">
+	
+	<description>
+		Ultimate Duke Nukem 3D Editor Plugin Library
+	</description>
+	
+	<property name="libraryJarName" value="Plugin Library" />
+	<property name="sourceDir" value="${basedir}/src" />
+	<property name="outputDir" value="${basedir}/bin" />
+	<property name="verbose" value="false" />
+	
+	<target name="clean" description="Clean Output Directory">
+		<delete dir="${outputDir}" />
+	</target>
+	
+	<target name="prepare" depends="clean" description="Create Output Directory">
+		<mkdir dir="${outputDir}" />
+	</target>
+	
+	<target name="compile" depends="prepare" description="Compile All Source Files">
+		<javac srcdir="${sourceDir}" destdir="${outputDir}" verbose="${verbose}" includeantruntime="false" />
+	</target>
+	
+	<target name="package" description="Package Plugin Library Jar">
+		<jar jarfile="${libraryJarName}.jar" basedir="${outputDir}" />
+	</target>
+	
+	<target name="build" depends="compile,package" description="Compile and Package Plugin Library" />
+	
+</project>

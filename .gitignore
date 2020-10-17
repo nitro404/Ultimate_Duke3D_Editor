@@ -5,13 +5,15 @@
 **/Logs/*
 **/Release/*
 **/DOSBox/
-Group Manager.ini
-Group Manager.cfg
+Ultimate Duke 3D Editor.ini
+Ultimate Duke 3D Editor.cfg
 Plugins/GRP Plugin/GRP.jar
 Plugins/SSI Plugin/SSI.jar
+Plugins/ACT Plugin/ACT.jar
+Plugins/DAT Plugin/DAT.jar
+Plugins/Image Plugin/Image.jar
+Plugins/PAL Plugin/PAL.jar
 Plugin Library/Plugin Library.jar
-Group Manager/Duke Nukem 3D Group Manager*.jar
-Duke Nukem 3D Group Manager.txt
 *.GRP
 *.SSI
 *.ZIP
@@ -29,3 +31,5 @@ VOC2WAV5.TXT
 WAV2VOC2.TXT
 stderr.txt
 stdout.txt
+\!Duke Nukem 3D Group Manager.txt
+\!Duke Nukem 3D Palette Editor.txt

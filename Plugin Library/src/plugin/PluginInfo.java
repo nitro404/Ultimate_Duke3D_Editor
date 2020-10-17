@@ -2,10 +2,8 @@ package plugin;
 
 import java.util.*;
 import java.io.*;
-
 import javax.xml.stream.*;
 import javax.xml.stream.events.*;
-
 import utilities.*;
 import variable.*;
 import console.*;

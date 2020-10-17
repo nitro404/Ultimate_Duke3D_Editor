@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<plugin name="Converted Group Finder" version="1.0" type="Group Processor" jar="Converted Group Finder.jar">
-	<classes>
-		<class type="Group Processor" name="group.ConvertedGroupFinder" />
-	</classes>
-</plugin>

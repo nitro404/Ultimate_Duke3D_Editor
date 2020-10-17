@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<plugin name="File Counter" version="1.0" type="Group Processor" jar="File Counter.jar">
-	<classes>
-		<class type="Group Processor" name="group.FileCounter" />
-	</classes>
-</plugin>
