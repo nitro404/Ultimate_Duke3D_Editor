@@ -1,12 +1,17 @@
 package editor;
 
+import java.util.*;
 import java.io.*;
+import java.awt.*;
 import javax.swing.*;
 import gui.*;
 import utilities.*;
 import settings.*;
 import console.*;
+import exception.*;
 import version.*;
+import plugin.*;
+import palette.*;
 
 public class Editor {
 	
@@ -16,6 +21,8 @@ public class Editor {
 	public static SystemConsole console = null;
 	public static ExtendedClassLoader classLoader = null;
 	public static EditorPluginManager pluginManager = null;
+	public static Palette palette;
+	public static Palette lookup;
 	private boolean m_initialized;
 	private static int currentItemNumber = 1;
 	public static final String VERSION = "1.0.0";
@@ -24,6 +31,8 @@ public class Editor {
 		editorWindow = new EditorWindow();
 		
 		instance = this;
+		palette = Palette.DEFAULT_PALETTE;
+		lookup = Palette.DEFAULT_LOOKUP;
 		settings = new SettingsManager();
 		classLoader = new ExtendedClassLoader();
 		console = new SystemConsole();
@@ -86,6 +95,8 @@ public class Editor {
 			pluginManager.loadPlugins();
 		}
 		
+		updatePalettes(true);
+		
 		m_initialized = true;
 		
 		boolean error = false;
@@ -113,6 +124,208 @@ public class Editor {
 	
 	public static int currentItemNumber() {
 		return currentItemNumber;
+	}
+
+	public static Palette loadPalette(File paletteFile) {
+		return loadPalette(paletteFile, false);
+	}
+
+	public static Palette loadPalette(File paletteFile, boolean showMessages) {
+		return loadPalette(paletteFile, false, showMessages);
+	}
+
+	public static Palette loadLookup(File lookupFile) {
+		return loadLookup(lookupFile, false);
+	}
+
+	public static Palette loadLookup(File lookupFile, boolean showMessages) {
+		return loadPalette(lookupFile, true, showMessages);
+	}
+	
+	private static Palette loadPalette(File paletteFile, boolean isLookup, boolean showMessages) {
+		String type = isLookup ? "lookup" : "palette";
+		String extension = Utilities.getFileExtension(paletteFile.getName());
+		
+		Vector<FilePlugin> plugins = EditorPluginManager.instance.getPluginsForFileFormat(extension);
+		if(plugins == null || plugins.isEmpty()) {
+			String message = "No plugin found to load default " + type + " file. Perhaps you forgot to load all plugins? Using default " + type + " instead.";
+			
+			SystemConsole.instance.writeLine(message);
+			
+			if(showMessages) {
+				JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "No Plugin Found", JOptionPane.ERROR_MESSAGE);
+			}
+			
+			return null;
+		}
+		
+		FilePlugin plugin = EditorPluginManager.instance.getPreferredPluginPrompt(extension);
+		if(plugin == null) { return null; }
+		
+		if(!(plugin instanceof PalettePlugin)) {
+			String message = "Plugin is not a valid palette plugin, cannot load " + type + " file. Using default " + type + " instead.";
+			
+			SystemConsole.instance.writeLine(message);
+
+			if(showMessages) {
+				JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "Invalid Plugin Type", JOptionPane.ERROR_MESSAGE);
+			}
+			
+			return null;
+		}
+		
+		Palette palette = null;
+		try { palette = (Palette) plugin.getNewItemInstance(paletteFile); }
+		catch(ItemInstantiationException e) {
+			String message = e.getMessage() + " Using default " + type + " instead.";
+
+			SystemConsole.instance.writeLine(message);
+
+			if(showMessages) {
+				JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
+			}
+			
+			return null;
+		}
+		if(palette == null) {
+			String message = "Failed to instantiate \"" + plugin.getName() + " (" + plugin.getSupportedFileFormatsAsString() + ")\" plugin when attempting to read " + type + " file: \"" + paletteFile.getName() + "\". Using default " + type + " instead.";
+			
+			SystemConsole.instance.writeLine(message);
+
+			if(showMessages) {
+				JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "Plugin Instantiation Failed", JOptionPane.ERROR_MESSAGE);
+			}
+			
+			return null;
+		}
+		
+		try {
+			if(!palette.load()) {
+				String message = "Failed to load " + type + " file: \"" + paletteFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedFileFormatsAsString() + ")\". Using default " + type + " instead.";
+				
+				SystemConsole.instance.writeLine(message);
+
+				if(showMessages) {
+					JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "File Loading Failed", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				return null;
+			}
+		}
+		catch(HeadlessException e) {
+			String message = "Exception thrown while loading file: \"" + paletteFile.getName() + "\" using plugin: \"" + plugin.getName() + " (" + plugin.getSupportedFileFormatsAsString() + "): " + e.getMessage() + " Using default " + type + " instead.";
+			
+			SystemConsole.instance.writeLine(message);
+
+			if(showMessages) {
+				JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "Palette Loading Failed", JOptionPane.ERROR_MESSAGE);
+			}
+			
+			return null;
+		}
+		catch(ItemReadException e) {
+			String message = e.getMessage() + " Using default " + type + " instead.";
+
+			SystemConsole.instance.writeLine(message);
+
+			if(showMessages) {
+				JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "Palette Loading Failed", JOptionPane.ERROR_MESSAGE);
+			}
+			
+			return null;
+		}
+		catch(DeserializationException e) {
+			String message = e.getMessage() + " Using default " + type + " instead.";
+
+			SystemConsole.instance.writeLine(message);
+
+			if(showMessages) {
+				JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "Palette Deserialization Failed", JOptionPane.ERROR_MESSAGE);
+			}
+			
+			return null;
+		}
+		
+		if(isLookup && palette.numberOfPalettes() < 5) {
+			String message = "Expected lookup to contain at least 5 sub-palettes, but found " + palette.numberOfPalettes() + ". Using default " + type + " instead.";
+
+			SystemConsole.instance.writeLine(message);
+
+			if(showMessages) {
+				JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "Invalid Lookup Palette", JOptionPane.ERROR_MESSAGE);
+			}
+			
+			return null;
+		}
+		
+		return palette;
+	}
+
+	public static void updatePalette() {
+		updatePalette(false);
+	}
+
+	public static void updatePalette(boolean showMessages) {
+		if(Utilities.isNonEmptyString(settings.paletteFilePath)) {
+			File paletteFile = new File(settings.paletteFilePath);
+			
+			if(paletteFile.isFile() && paletteFile.exists()) {
+				palette = loadPalette(paletteFile, showMessages);
+				
+				if(palette != null) {
+					return;
+				}
+			}
+			else {
+				String message = "Palette file is missing or invalid, using default palette instead.\nCheck your settings and ensure that the palette file still exists!";
+
+				if(showMessages) {
+					SystemConsole.instance.writeLine(message);
+				}
+				
+				JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "Palette File Missing", JOptionPane.WARNING_MESSAGE);
+			}
+		}
+		
+		palette = Palette.DEFAULT_PALETTE;
+	}
+
+	public static void updateLookup() {
+		updateLookup(false);
+	}
+	
+	public static void updateLookup(boolean showMessages) {
+		if(Utilities.isNonEmptyString(settings.lookupFilePath)) {
+			File lookupFile = new File(settings.lookupFilePath);
+			
+			if(lookupFile.isFile() && lookupFile.exists()) {
+				lookup = loadLookup(lookupFile, showMessages);
+				
+				if(lookup != null) {
+					return;
+				}
+			}
+			else {
+				String message = "Lookup file is missing or invalid, using default lookup instead.\nCheck your settings and ensure that the lookup file still exists!";
+				
+				if(showMessages) {
+					SystemConsole.instance.writeLine(message);
+				}
+				
+				JOptionPane.showMessageDialog(editorWindow.getFrame(), message, "Lookup File Missing", JOptionPane.WARNING_MESSAGE);
+			}
+		}
+		
+		lookup = Palette.DEFAULT_LOOKUP;
+	}
+
+	public static void updatePalettes() {
+		updatePalettes(false);
+	}
+
+	public static void updatePalettes(boolean showMessages) {
+		updatePalette(showMessages);
+		updateLookup(showMessages);
 	}
 	
 	public boolean createLogDirectory() {
