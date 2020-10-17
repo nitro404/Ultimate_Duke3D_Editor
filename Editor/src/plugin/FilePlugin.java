@@ -62,7 +62,7 @@ abstract public class FilePlugin extends Plugin {
 	public boolean hasSupportedFileFormat(String fileFormat) {
 		if(fileFormat == null) { return false; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return false; }
+		if(formattedFileFormat.isEmpty()) { return false; }
 		
 		for(int i=0;i<m_supportedFileFormats.size();i++) {
 			if(m_supportedFileFormats.elementAt(i).equalsIgnoreCase(formattedFileFormat)) {
@@ -126,7 +126,7 @@ abstract public class FilePlugin extends Plugin {
 	public int indexOfSupportedFileFormat(String fileFormat) {
 		if(fileFormat == null) { return -1; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return -1; }
+		if(formattedFileFormat.isEmpty()) { return -1; }
 		
 		for(int i=0;i<m_supportedFileFormats.size();i++) {
 			if(m_supportedFileFormats.elementAt(i).equalsIgnoreCase(formattedFileFormat)) {
@@ -139,7 +139,7 @@ abstract public class FilePlugin extends Plugin {
 	public boolean addSupportedFileFormat(String fileFormat) {
 		if(fileFormat == null) { return false; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return false; }
+		if(formattedFileFormat.isEmpty()) { return false; }
 		
 		for(int i=0;i<m_supportedFileFormats.size();i++) {
 			if(m_supportedFileFormats.elementAt(i).equalsIgnoreCase(formattedFileFormat)) {
@@ -184,7 +184,9 @@ abstract public class FilePlugin extends Plugin {
 			newItem = (Item) constructor.newInstance(file);
 		}
 		catch(Exception e) {
-			throw new ItemInstantiationException("Failed to instantiate class \"" + m_itemClassName + "\": " + e.getMessage());
+			SystemConsole.instance.writeException(e);
+			
+			throw new ItemInstantiationException("Failed to instantiate item class \"" + m_itemClassName + "\": " + e.getMessage());
 		}
 		
 		return newItem;
@@ -206,6 +208,8 @@ abstract public class FilePlugin extends Plugin {
 			newItemPanel = (ItemPanel) constructor.newInstance(item);
 		}
 		catch(Exception e) {
+			SystemConsole.instance.writeException(e);
+
 			throw new ItemPanelInstantiationException("Failed to instantiate item panel class \"" + m_panelClassName + "\": " + e.getMessage());
 		}
 		
@@ -232,7 +236,7 @@ abstract public class FilePlugin extends Plugin {
 				}
 				
 				line = input.trim();
-				if(line.length() == 0 || Utilities.isComment(line)) { continue; }
+				if(line.isEmpty() || Utilities.isComment(line)) { continue; }
 				
 				v = Variable.parseFrom(line);
 				if(v == null) { continue; }
@@ -377,7 +381,7 @@ abstract public class FilePlugin extends Plugin {
 									if(extension == null) {
 										SystemConsole.instance.writeLine("Missing \"extension\" attribute in format XML node of plugin definition file for file plugin \"" + m_name + "\".");
 									}
-									else if(extension.length() == 0) {
+									else if(extension.isEmpty()) {
 										SystemConsole.instance.writeLine("Encountered empty file extension in format XML node of plugin definition file for file plugin \"" + m_name + "\".");
 									}
 									else {
@@ -450,7 +454,7 @@ abstract public class FilePlugin extends Plugin {
 										
 										itemClassName = className;
 										
-										if(itemClassName.length() == 0) {
+										if(itemClassName.isEmpty()) {
 											try { in.close(); } catch (IOException e2) { }
 											
 											throw new PluginLoadException("Empty item class name specified inside classes XML node of plugin definition file for file plugin \"" + m_name + "\".");
@@ -463,7 +467,7 @@ abstract public class FilePlugin extends Plugin {
 										
 										panelClassName = className;
 										
-										if(panelClassName.length() == 0) {
+										if(panelClassName.isEmpty()) {
 											try { in.close(); } catch (IOException e2) { }
 											
 											throw new PluginLoadException("Empty panel class name specified inside classes XML node of plugin definition file for file plugin \"" + m_name + "\".");

@@ -26,7 +26,6 @@ public abstract class Group extends Item {
 		m_sortType = GroupFileSortType.defaultSortType;
 		m_sortDirection = SortDirection.defaultDirection;
 		m_autoSortFiles = SettingsManager.defaultAutoSortFiles;
-		m_loaded = false;
 		m_groupSortListeners = new Vector<GroupSortListener>();
 	}
 	
@@ -185,6 +184,20 @@ public abstract class Group extends Item {
 			fileSize += m_files.elementAt(i).getDataSize();
 		}
 		return fileSize;
+	}
+	
+	public String getGroupFileSizeString() {
+		int size = getGroupFileSize();
+
+		if(size < 1000) {
+			return size + " B";
+		}
+		else if(size < 1000000) {
+			return String.format("%.2f", size / 1000.0) + " KB";
+		}
+		else {
+			return String.format("%.2f", size / 1000000.0) + " MB";
+		}
 	}
 	
 	public int numberOfFiles() {
@@ -389,7 +402,7 @@ public abstract class Group extends Item {
 	public Vector<String> getFileExtensions() {
 		Vector<String> extensions = new Vector<String>();
 		
-		if(m_files.size() == 0) { return extensions; }
+		if(m_files.isEmpty()) { return extensions; }
 		
 		HashMap<String, Integer> extensionMap = new HashMap<String, Integer>();
 		
@@ -411,6 +424,21 @@ public abstract class Group extends Item {
 		}
 		
 		return extensions;
+	}
+
+	public String getFileExtensionsAsString() {
+		String extensionsString = "";
+		Vector<String> extensions = getFileExtensions();
+		
+		for(int i = 0; i < extensions.size(); i++) {
+			if(!extensionsString.isEmpty()) {
+				extensionsString += ", ";
+			}
+			
+			extensionsString += extensions.elementAt(i);
+		}
+		
+		return extensionsString;
 	}
 	
 	public boolean extractFile(int index, String directory) throws IOException {
@@ -572,8 +600,8 @@ public abstract class Group extends Item {
 		if(file == null || !file.isFile() || !file.exists()) { return false; }
 		
 		if(file.getName().length() > GroupFile.MAX_FILE_NAME_LENGTH) {
-        	SystemConsole.instance.writeLine("Warning: Truncating file name \"" + file.getName() + "\", exceeds max length of " + GroupFile.MAX_FILE_NAME_LENGTH + ".");
-        }
+			SystemConsole.instance.writeLine("Warning: Truncating file name \"" + file.getName() + "\", exceeds max length of " + GroupFile.MAX_FILE_NAME_LENGTH + ".");
+		}
 		
 		GroupFile newGroupFile = null;
 		try { newGroupFile = GroupFile.readFrom(file); }
@@ -615,7 +643,7 @@ public abstract class Group extends Item {
 	}
 	
 	public int addFiles(Vector<GroupFile> files) {
-		if(files == null || files.size() == 0) { return 0; }
+		if(files == null || files.isEmpty()) { return 0; }
 		
 		return addFiles(files, DEFAULT_REPLACE_FILES);
 	}
@@ -1086,7 +1114,7 @@ public abstract class Group extends Item {
 	}
 
 	public int removeFiles(Vector<GroupFile> files) {
-		if(files == null || files.size() == 0) { return 0; }
+		if(files == null || files.isEmpty()) { return 0; }
 
 		int numberOfFilesRemoved = 0;
 		
@@ -1134,7 +1162,7 @@ public abstract class Group extends Item {
 	protected Vector<GroupFile> mergeSortFiles(Vector<GroupFile> groupFiles) {
 		if(groupFiles == null) { return null; }
 		
-		if(groupFiles.size() == 0) {
+		if(groupFiles.isEmpty()) {
 			return new Vector<GroupFile>();
 		}
 		

@@ -34,12 +34,16 @@ public class GroupZIP extends Group {
 		return true;
 	}
 
+	public boolean isInitialized() {
+		return true;
+	}
+
 	public ItemFileType getDefaultFileType() {
 		return FILE_TYPES[0];
 	}
 	
 	public String getDefaultFileExtension() {
-		return FILE_TYPES[0].getExtension(0);
+		return FILE_TYPES[0].getExtension();
 	}
 	
 	public ItemFileType[] getFileTypes() {
@@ -57,14 +61,18 @@ public class GroupZIP extends Group {
 	public boolean load() throws GroupReadException {
 		if(m_file == null || !m_file.exists()) { return false; }
 		
+		m_loading = true;
+		
 		// verify that the file has an extension
 		String extension = Utilities.getFileExtension(m_file.getName());
 		if(extension == null) {
+			m_loading = false;
 			throw new GroupReadException("File \"" + m_file.getName() + "\" has no extension.");
 		}
 		
 		// verify that the file extension is supported
 		if(!hasFileTypeWithExtension(extension)) {
+			m_loading = false;
 			throw new GroupReadException("File \"" + m_file.getName() +  "\" has unsupported extension: " + extension);
 		}
 		
@@ -77,62 +85,64 @@ public class GroupZIP extends Group {
 			zipFile = new ZipFile(m_file);
 		}
 		catch(ZipException e) {
+			m_loading = false;
 			throw new GroupReadException("Error decompressing " + FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\": " + e.getMessage());
 		}
 		catch(IOException e) {
+			m_loading = false;
 			throw new GroupReadException("Error reading " + FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\": " + e.getMessage());
 		}
 
-	    Enumeration<? extends ZipEntry> zipFileEntries = zipFile.entries();
-	    
+		Enumeration<? extends ZipEntry> zipFileEntries = zipFile.entries();
+		
 		SystemConsole.instance.writeLine("Opened " + FILE_TYPES[0].getName() + " file: \"" + m_file.getName() + "\", detected " + zipFile.size() + " files.");
 		
 		ZipEntry zipFileEntry = null;
 		InputStream zipFileEntryStream = null;
 		String zipEntryFileName;
-	    int fileNumber = 1;
-	    try {
-		    while(zipFileEntries.hasMoreElements()) {
-		        zipFileEntry = zipFileEntries.nextElement();
-		        zipFileEntryStream = zipFile.getInputStream(zipFileEntry);
-		        
-		        if(zipFileEntry.getSize() < 0) {
-		        	zipFile.close();
-		        	
-		        	throw new GroupReadException("Error decompressing file #" + fileNumber + " in " + FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\": Unknown decompressed data size.");
-		        }
-		        
-		        fileData = new byte[(int) zipFileEntry.getSize()];
-		        zipFileEntryStream.read(fileData);
-		        
-		        zipEntryFileName = Utilities.getFileNameNoPath(zipFileEntry.getName());
-		        
-		        if(zipEntryFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) {
-		        	SystemConsole.instance.writeLine("Warning: Truncating file #" + fileNumber + " name (" + zipEntryFileName + "), exceeds max length of " + GroupFile.MAX_FILE_NAME_LENGTH + ".");
-		        }
-		        
-		        groupFiles.add(new GroupFile(zipEntryFileName, fileData));
-		        
-		        fileNumber++;
-		    }
-	    }
-	    catch(ZipException e) {
-	    	throw new GroupReadException("Error decompressing file #" + fileNumber + " in " + FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\": " + e.getMessage());
-	    }
-	    catch(IOException e) {
-	    	throw new GroupReadException("Error reading file #" + fileNumber + " in " + FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\": " + e.getMessage());
-	    }
-	    
-	    try { zipFile.close(); }
-	    catch(IOException e) { }
-		
-	    addFiles(groupFiles);
-	    
-	    if(!(shouldSortFiles() && shouldAutoSortFiles())) {
-			setChanged(false);
+		int fileNumber = 1;
+		try {
+			while(zipFileEntries.hasMoreElements()) {
+				zipFileEntry = zipFileEntries.nextElement();
+				zipFileEntryStream = zipFile.getInputStream(zipFileEntry);
+				
+				if(zipFileEntry.getSize() < 0) {
+					zipFile.close();
+					
+					throw new GroupReadException("Error decompressing file #" + fileNumber + " in " + FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\": Unknown decompressed data size.");
+				}
+				
+				fileData = new byte[(int) zipFileEntry.getSize()];
+				zipFileEntryStream.read(fileData);
+				
+				zipEntryFileName = Utilities.getFileNameNoPath(zipFileEntry.getName());
+				
+				if(zipEntryFileName.length() > GroupFile.MAX_FILE_NAME_LENGTH) {
+					SystemConsole.instance.writeLine("Warning: Truncating file #" + fileNumber + " name (" + zipEntryFileName + "), exceeds max length of " + GroupFile.MAX_FILE_NAME_LENGTH + ".");
+				}
+				
+				groupFiles.add(new GroupFile(zipEntryFileName, fileData));
+				
+				fileNumber++;
+			}
+		}
+		catch(ZipException e) {
+			m_loading = false;
+			throw new GroupReadException("Error decompressing file #" + fileNumber + " in " + FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\": " + e.getMessage());
+		}
+		catch(IOException e) {
+			m_loading = false;
+			throw new GroupReadException("Error reading file #" + fileNumber + " in " + FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\": " + e.getMessage());
 		}
 		
-		m_loaded = true;
+		try { zipFile.close(); }
+		catch(IOException e) { }
+		
+		addFiles(groupFiles);
+		
+		m_loading = false;
+		
+		setChanged(!checkSameFileOrder(groupFiles));
 		
 		SystemConsole.instance.writeLine(FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\" decompressed successfully, " + groupFiles.size() + " files loaded into memory.");
 		

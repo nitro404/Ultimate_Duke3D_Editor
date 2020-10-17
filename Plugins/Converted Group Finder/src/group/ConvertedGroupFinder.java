@@ -42,7 +42,7 @@ public class ConvertedGroupFinder extends GroupProcessor {
 	}
 
 	public void groupProcessingCompleted() {
-		if(m_convertedGroups.size() == 0) {
+		if(m_convertedGroups.isEmpty()) {
 			SystemConsole.instance.writeLine("No converted groups found.");
 			
 			JOptionPane.showMessageDialog(null, "No converted groups found.", "No Converted Groups", JOptionPane.INFORMATION_MESSAGE);

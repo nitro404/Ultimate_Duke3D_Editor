@@ -26,10 +26,10 @@ public class GroupCollection {
 	}
 	
 	public boolean hasGroup(String fileName) {
-		if(fileName == null || fileName.length() == 0) { return false; }
+		if(fileName == null || fileName.isEmpty()) { return false; }
 		
 		String formattedName = fileName.trim();
-		if(formattedName.length() == 0) { return false; }
+		if(formattedName.isEmpty()) { return false; }
 		
 		File f = null;
 		for(int i=0;i<m_groups.size();i++) {
@@ -65,7 +65,7 @@ public class GroupCollection {
 	}
 	
 	public boolean hasGroupWithFile(String fileName) {
-		if(fileName == null || fileName.length() == 0) { return false; }
+		if(fileName == null || fileName.isEmpty()) { return false; }
 		
 		for(int i=0;i<m_groups.size();i++) {
 			if(m_groups.elementAt(i).hasFile(fileName)) {
@@ -88,10 +88,10 @@ public class GroupCollection {
 	}
 	
 	public int indexOfGroup(String fileName) {
-		if(fileName == null || fileName.length() == 0) { return -1; }
+		if(fileName == null || fileName.isEmpty()) { return -1; }
 		
 		String formattedName = fileName.trim();
-		if(formattedName.length() == 0) { return -1; }
+		if(formattedName.isEmpty()) { return -1; }
 		
 		File f = null;
 		for(int i=0;i<m_groups.size();i++) {
@@ -127,7 +127,7 @@ public class GroupCollection {
 	}
 	
 	public int indexOfFirstGroupWithFile(String fileName) {
-		if(fileName == null || fileName.length() == 0) { return -1; }
+		if(fileName == null || fileName.isEmpty()) { return -1; }
 		
 		for(int i=0;i<m_groups.size();i++) {
 			if(m_groups.elementAt(i).hasFile(fileName)) {
@@ -156,10 +156,10 @@ public class GroupCollection {
 	}
 	
 	public Group getGroup(String fileName) {
-		if(fileName == null || fileName.length() == 0) { return null; }
+		if(fileName == null || fileName.isEmpty()) { return null; }
 		
 		String formattedName = fileName.trim();
-		if(formattedName.length() == 0) { return null; }
+		if(formattedName.isEmpty()) { return null; }
 		
 		File f = null;
 		for(int i=0;i<m_groups.size();i++) {
@@ -184,7 +184,7 @@ public class GroupCollection {
 	}
 	
 	public Group getFirstGroupWithFile(String fileName) {
-		if(fileName == null || fileName.length() == 0) { return null; }
+		if(fileName == null || fileName.isEmpty()) { return null; }
 		
 		for(int i=0;i<m_groups.size();i++) {
 			if(m_groups.elementAt(i).hasFile(fileName)) {
@@ -201,7 +201,7 @@ public class GroupCollection {
 	}
 	
 	public Vector<Group> getGroupsWithFile(String fileName) {
-		if(fileName == null || fileName.length() == 0) { return null; }
+		if(fileName == null || fileName.isEmpty()) { return null; }
 		
 		Vector<Group> groupsWithFile = new Vector<Group>();
 		
@@ -246,10 +246,10 @@ public class GroupCollection {
 	}
 	
 	public boolean removeGroup(String fileName) {
-		if(fileName == null || fileName.length() == 0) { return false; }
+		if(fileName == null || fileName.isEmpty()) { return false; }
 		
 		String formattedName = fileName.trim();
-		if(formattedName.length() == 0) { return false; }
+		if(formattedName.isEmpty()) { return false; }
 		
 		File f = null;
 		for(int i=0;i<m_groups.size();i++) {

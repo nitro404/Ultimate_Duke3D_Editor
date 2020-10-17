@@ -105,7 +105,7 @@ public class GroupAction {
 	}
 
 	public int addSelectedFiles(Vector<GroupFile> files) {
-		if(files == null || files.size() == 0) { return 0; }
+		if(files == null || files.isEmpty()) { return 0; }
 		
 		int numberOfFilesAdded = 0;
 		

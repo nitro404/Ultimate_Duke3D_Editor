@@ -107,7 +107,7 @@ public class PluginInfo {
 				}
 				
 				line = input.trim();
-				if(line.length() == 0 || Utilities.isComment(line)) { continue; }
+				if(line.isEmpty() || Utilities.isComment(line)) { continue; }
 				
 				v = Variable.parseFrom(line);
 				if(v == null) { continue; }

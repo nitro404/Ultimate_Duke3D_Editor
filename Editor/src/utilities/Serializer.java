@@ -178,7 +178,7 @@ public class Serializer {
 	// serialize the specified byte string
 	public static byte[] serializeByteString(String s) {
 		if(s == null) { return null; }
-		if(s.length() == 0) { return null; }
+		if(s.isEmpty()) { return null; }
 		
 		byte[] data = new byte[s.length()];
 		
@@ -215,7 +215,7 @@ public class Serializer {
 	
 	// serialize the specified string
 	public static byte[] serializeString(String s, Endianness e) {
-		if(s == null || s.length() == 0 || !e.isValid()) { return null; }
+		if(s == null || s.isEmpty() || !e.isValid()) { return null; }
 		
 		byte[] data = new byte[s.length() * 2];
 		

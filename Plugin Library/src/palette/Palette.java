@@ -3,6 +3,7 @@ package palette;
 import java.util.*;
 import java.io.*;
 import java.awt.*;
+import java.awt.image.*;
 import exception.*;
 import item.*;
 
@@ -11,6 +12,9 @@ public abstract class Palette extends Item {
 	public static final int PALETTE_WIDTH = 16;
 	public static final int PALETTE_HEIGHT = 16;
 	public static final int NUMBER_OF_COLOURS = PALETTE_WIDTH * PALETTE_HEIGHT;
+
+	public static final Palette DEFAULT_PALETTE = new GenericPalette();
+	public static final Palette DEFAULT_LOOKUP = new GenericLookup();
 	
 	public Palette() {
 		super();
@@ -70,11 +74,30 @@ public abstract class Palette extends Item {
 		return true;
 	}
 	
+	public abstract int getPaletteFileSize();
+	
+	public abstract int numberOfBytesPerPixel();
+	
 	public Color getPixel(int x, int y) {
-		return getPixel(0, x, y);
+		return getPixel(x, y, 0);
 	}
 	
-	public abstract Color getPixel(int index, int x, int y);
+	public abstract Color getPixel(int x, int y, int index);
+
+
+	public Color lookupPixel(byte value) {
+		return lookupPixel(value, 0);
+	}
+
+	public Color lookupPixel(byte value, int index) {
+		int adjustedValue = value & 0xff;
+		
+		if(adjustedValue < 0 || adjustedValue >= Palette.NUMBER_OF_COLOURS) {
+			return null;
+		}
+
+		return getPixel(adjustedValue % Palette.PALETTE_WIDTH, (int) Math.floor(adjustedValue / Palette.PALETTE_HEIGHT), index);
+	}
 
 	public boolean updatePixel(int x, int y, Color c) {
 		return updatePixel(x, y, c, 0);
@@ -91,7 +114,7 @@ public abstract class Palette extends Item {
 	public Color[] getAllColourData() {
 		return getColourData(0);
 	}
-	
+
 	public boolean updateColourData(Color colourData[]) {
 		return updateColourData(0, 0, colourData);
 	}
@@ -114,6 +137,60 @@ public abstract class Palette extends Item {
 	
 	public boolean fillAllWithColour(Color c) {
 		return fillWithColour(c, -1);
+	}
+
+	public IndexColorModel getIndexColourModel() {
+		return getIndexColourModel(0, true);
+	}
+
+	public IndexColorModel getIndexColourModel(int index) {
+		return getIndexColourModel(index, true);
+	}
+
+	public IndexColorModel getIndexColourModel(boolean transparent) {
+		return getIndexColourModel(0, transparent);
+	}
+
+	public IndexColorModel getIndexColourModel(int index, boolean transparent) {
+		int numberOfColours = PALETTE_HEIGHT * PALETTE_WIDTH;
+		Color c = null;
+		int pixelIndex = -1;
+		byte r[] = new byte[numberOfColours];
+		byte g[] = new byte[numberOfColours];
+		byte b[] = new byte[numberOfColours];
+		
+		for(int j=0;j<PALETTE_HEIGHT;j++) {
+			for(int i=0;i<PALETTE_WIDTH;i++) {
+				pixelIndex = (j * PALETTE_WIDTH) + i;
+				c = getPixel(i, j, index);
+				
+				r[pixelIndex] = (byte) c.getRed();
+				g[pixelIndex] = (byte) c.getGreen();
+				b[pixelIndex] = (byte) c.getBlue();
+			}
+		}
+		
+		return transparent
+			? new IndexColorModel(8, numberOfColours, r, g, b, 255)
+			: new IndexColorModel(8, numberOfColours, r, g, b);
+	}
+	
+	public IndexColorModel[] getAllIndexColourModels(boolean transparent) {
+		IndexColorModel palettes[] = new IndexColorModel[numberOfPalettes()];
+
+		for(int i = 0; i < numberOfPalettes(); i++) {
+			palettes[i] = getIndexColourModel(i, transparent);
+		}
+		
+		return palettes;
+	}
+	
+	public static boolean isValidIndexColourModel(IndexColorModel colourModel) {
+		return colourModel != null &&
+			   colourModel.getPixelSize() == 8 &&
+			   (colourModel.getTransparentPixel() == -1 || colourModel.getTransparentPixel() == 255) &&
+			   colourModel.getMapSize() == NUMBER_OF_COLOURS &&
+			   colourModel.isValid();
 	}
 	
 }

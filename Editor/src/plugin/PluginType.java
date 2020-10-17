@@ -1,6 +1,7 @@
 package plugin;
 
 import java.lang.reflect.*;
+import console.*;
 import exception.*;
 
 public class PluginType {
@@ -45,6 +46,8 @@ public class PluginType {
 			newPlugin = (Plugin) constructor.newInstance(pluginName, pluginVersion, jarFileName, configFileName, directoryName);
 		}
 		catch(Exception e) {
+			SystemConsole.instance.writeException(e);
+
 			throw new PluginInstantiationException("Failed to instantiate plugin class \"" + m_class.getName() + "\": " + e.getMessage());
 		}
 		

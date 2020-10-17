@@ -31,12 +31,24 @@ public class PaletteACT extends Palette {
 		return true;
 	}
 
+	public boolean isInitialized() {
+		return m_data != null;
+	}
+
+	public int getPaletteFileSize() {
+		return m_data == null ? 0 : m_data.length;
+	}
+
+	public int numberOfBytesPerPixel() {
+		return BPP;
+	}
+
 	public ItemFileType getDefaultFileType() {
 		return FILE_TYPES[0];
 	}
 	
 	public String getDefaultFileExtension() {
-		return FILE_TYPES[0].getExtension(0);
+		return FILE_TYPES[0].getExtension();
 	}
 	
 	public ItemFileType[] getFileTypes() {
@@ -47,8 +59,8 @@ public class PaletteACT extends Palette {
 		return index == 0 ? PALETTE_DESCRIPTION : null;
 	}
 	
-	public Color getPixel(int index, int x, int y) {
-		if(!m_loaded || m_data == null || x < 0 || y < 0 || x > PALETTE_WIDTH - 1 || y > PALETTE_HEIGHT - 1 || index != 0) { return null; }
+	public Color getPixel(int x, int y, int index) {
+		if(!isInitialized() || x < 0 || y < 0 || x > PALETTE_WIDTH - 1 || y > PALETTE_HEIGHT - 1 || index != 0) { return null; }
 		
 		// compute the offset in the palette data array, accounting for the the y position and x position
 		// note that each pixel is 3 bytes (RGB), hence BBP (bytes per pixel)
@@ -68,7 +80,7 @@ public class PaletteACT extends Palette {
 	}
 	
 	public boolean updatePixel(int x, int y, Color c, int index) {
-		if(!m_loaded || m_data == null || c == null || x < 0 || y < 0 || x > PALETTE_WIDTH - 1 || y > PALETTE_HEIGHT - 1 || index != 0) { return false; }
+		if(!isInitialized() || c == null || x < 0 || y < 0 || x > PALETTE_WIDTH - 1 || y > PALETTE_HEIGHT - 1 || index != 0) { return false; }
 		
 		// compute the offset in the palette data array, accounting for the the y position and x position
 		// note that each pixel is 3 bytes (RGB), hence BBP (bytes per pixel)
@@ -83,7 +95,7 @@ public class PaletteACT extends Palette {
 	}
 
 	public Color[] getColourData(int index) {
-		if(index != 0 || !m_loaded || m_data == null) { return null; }
+		if(!isInitialized() || index != 0) { return null; }
 		
 		// iterate over the entire palette and convert each piece of data to a Color object
 		Color colourData[] = new Color[NUMBER_OF_COLOURS];
@@ -104,10 +116,9 @@ public class PaletteACT extends Palette {
 		
 		// if the palette is not already loaded / initialized, and is instantiable
 		// initialize the data and set it to default values
-		if(!m_loaded) {
+		if(!isInitialized()) {
 			if(isInstantiable()) {
 				m_data = new byte[PALETTE_SIZE_RGB];
-				m_loaded = true;
 			}
 			else {
 				return false;
@@ -139,10 +150,9 @@ public class PaletteACT extends Palette {
 		
 		// if the palette is not already loaded / initialized, and is instantiable
 		// initialize the data and set it to default values
-		if(!m_loaded) {
+		if(!isInitialized()) {
 			if(isInstantiable()) {
 				m_data = new byte[PALETTE_SIZE_RGB];
-				m_loaded = true;
 			}
 			else {
 				return false;
@@ -170,19 +180,24 @@ public class PaletteACT extends Palette {
 	public boolean load() throws PaletteReadException {
 		if(m_file == null || !m_file.exists()) { return false; }
 
+		m_loading = true;
+
 		// verify that the file has an extension
 		String extension = Utilities.getFileExtension(m_file.getName());
 		if(extension == null) {
+			m_loading = false;
 			throw new PaletteReadException("File " + m_file.getName() + " has no extension.");
 		}
 		
 		// verify that the file extension is supported
 		if(!hasFileTypeWithExtension(extension)) {
+			m_loading = false;
 			throw new PaletteReadException("File \"" + m_file.getName() +  "\" has unsupported extension: " + extension);
 		}
 		
 		// check to make sure that the file is not too big to be stored in memory
 		if(m_file.length() > Integer.MAX_VALUE) {
+			m_loading = false;
 			throw new PaletteReadException("File \"" + m_file.getName() +  "\" is too large to store in memory.");
 		}
 		
@@ -195,21 +210,24 @@ public class PaletteACT extends Palette {
 			in.close();
 		}
 		catch(FileNotFoundException e) {
+			m_loading = false;
 			throw new PaletteReadException("File \"" + m_file.getName() +  "\" not found.");
 		}
 		catch(IOException e) {
+			m_loading = false;
 			throw new PaletteReadException("Error reading file \"" + m_file.getName() +  "\": " + e.getMessage());
 		}
 		
 		// verify that the data is not missing any information, and contains all required colour data
 		if(data.length < PALETTE_SIZE_RGB) {
+			m_loading = false;
 			throw new PaletteReadException("Palette file \"" + m_file.getName() + " is incomplete or corrupted.");
 		}
 		
 		// update the local memory to the data read in from file
 		m_data = data;
-		
-		m_loaded = true;
+
+		m_loading = false;
 		
 		return true;
 	}
@@ -220,7 +238,7 @@ public class PaletteACT extends Palette {
 		}
 		
 		// check that the palette has a file set and that the palette is loaded
-		if(!m_loaded) {
+		if(!isInitialized()) {
 			throw new PaletteWriteException("Palette ACT file has no data to save.");
 		}
 		

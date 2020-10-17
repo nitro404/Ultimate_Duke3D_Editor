@@ -4,10 +4,6 @@ public enum PaletteActionType {
 	DoNothing,
 	Save,
 	SaveAs,
-	AddFiles,
-	RemoveFiles,
-	ReplaceFile,
-	ExtractFiles,
 	Import,
 	Export,
 	Close,
@@ -19,10 +15,6 @@ public enum PaletteActionType {
 		"Do Nothing",
 		"Save",
 		"Save As",
-		"Add Files",
-		"Remove Files",
-		"Replace File",
-		"Extract Files",
 		"Import",
 		"Export",
 		"Close",
@@ -70,7 +62,7 @@ public enum PaletteActionType {
 	public static PaletteActionType parseFrom(String data) {
 		if(data == null) { return Invalid; }
 		String temp = data.trim();
-		if(temp.length() == 0) { return Invalid; }
+		if(temp.isEmpty()) { return Invalid; }
 		
 		for(int i=0;i<numberOfPaletteActionTypes();i++) {
 			if(temp.equalsIgnoreCase(values()[i].name()) || temp.equalsIgnoreCase(displayNames[i])) {

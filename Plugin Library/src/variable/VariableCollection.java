@@ -29,11 +29,11 @@ public class VariableCollection {
 	}
 	
 	public boolean hasCategory(String category) {
-		if(category == null || category.length() == 0 || m_categories.size() == 0) { return false; }
+		if(category == null || category.isEmpty() || m_categories.isEmpty()) { return false; }
 		
 		String formattedCategory = category.trim();
 		
-		if(formattedCategory.length() == 0) { return false; }
+		if(formattedCategory.isEmpty()) { return false; }
 		
 		for(int i=0;i<m_categories.size();i++) {
 			if(formattedCategory.equalsIgnoreCase(m_categories.elementAt(i))) {
@@ -51,11 +51,11 @@ public class VariableCollection {
 	 * @return the index of the category, if it was found.
 	 */
 	public int indexOfCategory(String category) {
-		if(category == null || category.length() == 0 || m_categories.size() == 0) { return -1; }
+		if(category == null || category.isEmpty() || m_categories.isEmpty()) { return -1; }
 		
 		String formattedCategory = category.trim();
 		
-		if(formattedCategory.length() == 0) { return -1; }
+		if(formattedCategory.isEmpty()) { return -1; }
 		
 		for(int i=0;i<m_categories.size();i++) {
 			if(formattedCategory.equalsIgnoreCase(m_categories.elementAt(i))) {
@@ -85,11 +85,11 @@ public class VariableCollection {
 	 * @return the index of the category, after it was added.
 	 */
 	public int addCategory(String category) {
-		if(category == null || category.length() == 0) { return Variable.NO_CATEGORY; }
+		if(category == null || category.isEmpty()) { return Variable.NO_CATEGORY; }
 		
 		String formattedCategory = category.trim();
 		
-		if(formattedCategory.length() == 0) { return Variable.NO_CATEGORY; }
+		if(formattedCategory.isEmpty()) { return Variable.NO_CATEGORY; }
 		
 		for(int i=0;i<m_categories.size();i++) {
 			if(formattedCategory.equalsIgnoreCase(m_categories.elementAt(i))) {
@@ -108,11 +108,11 @@ public class VariableCollection {
 	 * @param data the name of the category to be removed.
 	 */
 	public void removeCategory(String category) {
-		if(category == null || category.length() == 0) { return; }
+		if(category == null || category.isEmpty()) { return; }
 		
 		String formattedCategory = category.trim();
 		
-		if(formattedCategory.length() == 0) { return; }
+		if(formattedCategory.isEmpty()) { return; }
 
 		int categoryIndex = indexOfCategory(formattedCategory);
 
@@ -140,11 +140,11 @@ public class VariableCollection {
 	 * @return true if a Variable with an id matching the specified parameter is found.
 	 */
 	public boolean hasVariable(String id) {
-		if(id == null || id.length() == 0) { return false; }
+		if(id == null || id.isEmpty()) { return false; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return false; }
+		if(formattedID.isEmpty()) { return false; }
 		
 		// loop through and check to see if any variables contain a matching id
 		for(int i=0;i<m_variables.size();i++) {
@@ -164,11 +164,11 @@ public class VariableCollection {
 	 * @return true if a Variable with an id matching the specified parameters is found.
 	 */
 	public boolean hasVariable(String id, String category) {
-		if(id == null || id.length() == 0) { return false; }
+		if(id == null || id.isEmpty()) { return false; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return false; }
+		if(formattedID.isEmpty()) { return false; }
 		
 		int categoryIndex = indexOfCategory(category);
 		
@@ -210,11 +210,11 @@ public class VariableCollection {
 	 * @return the index of the Variable matching the specified id if it exists, otherwise returns -1.
 	 */
 	public int indexOfVariable(String id) {
-		if(id == null || id.length() == 0) { return -1; }
+		if(id == null || id.isEmpty()) { return -1; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return -1; }
+		if(formattedID.isEmpty()) { return -1; }
 		
 		// loop through and check to see if any variables contain a matching id
 		for(int i=0;i<m_variables.size();i++) {
@@ -234,11 +234,11 @@ public class VariableCollection {
 	 * @return the index of the Variable matching the specified id and category if it exists, otherwise returns -1.
 	 */
 	public int indexOfVariable(String id, String category) {
-		if(id == null || id.length() == 0) { return -1; }
+		if(id == null || id.isEmpty()) { return -1; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return -1; }
+		if(formattedID.isEmpty()) { return -1; }
 		
 		int categoryIndex = indexOfCategory(category);
 		
@@ -293,11 +293,11 @@ public class VariableCollection {
 	 * @return the Variable matching the corresponding id if it exists in the collection of Variables, otherwise returns null.
 	 */
 	public Variable getVariable(String id) {
-		if(id == null || id.length() == 0) { return null; }
+		if(id == null || id.isEmpty()) { return null; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return null; }
+		if(formattedID.isEmpty()) { return null; }
 		
 		// loop through and check to see if any variables contain a matching id, if one exists then return the value of the corresponding Variable
 		for(int i=0;i<m_variables.size();i++) {
@@ -317,11 +317,11 @@ public class VariableCollection {
 	 * @return the Variable matching the corresponding id and category if it exists in the collection of Variables, otherwise returns null.
 	 */
 	public Variable getVariable(String id, String category) {
-		if(id == null || id.length() == 0) { return null; }
+		if(id == null || id.isEmpty()) { return null; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return null; }
+		if(formattedID.isEmpty()) { return null; }
 		
 		int categoryIndex = indexOfCategory(category);
 		
@@ -343,11 +343,11 @@ public class VariableCollection {
 	 * @return the value of a Variable matching the corresponding id if it exists in the collection of Variables, otherwise returns null.
 	 */
 	public String getValue(String id) {
-		if(id == null || id.length() == 0) { return null; }
+		if(id == null || id.isEmpty()) { return null; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return null; }
+		if(formattedID.isEmpty()) { return null; }
 		
 		// loop through and check to see if any variables contain a matching id, if one exists then return the value of the corresponding Variable
 		for(int i=0;i<m_variables.size();i++) {
@@ -367,11 +367,11 @@ public class VariableCollection {
 	 * @return the value of a Variable matching the corresponding id and category if it exists in the collection of Variables, otherwise returns null.
 	 */
 	public String getValue(String id, String category) {
-		if(id == null || id.length() == 0) { return null; }
+		if(id == null || id.isEmpty()) { return null; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return null; }
+		if(formattedID.isEmpty()) { return null; }
 		
 		int categoryIndex = indexOfCategory(category);
 		
@@ -414,11 +414,11 @@ public class VariableCollection {
 	 * @param value the value to update the Variable with.
 	 */
 	public void setValue(String id, String value) {
-		if(id == null || id.length() == 0) { return; }
+		if(id == null || id.isEmpty()) { return; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return; }
+		if(formattedID.isEmpty()) { return; }
 		
 		boolean valueUpdated = false;
 		
@@ -533,11 +533,11 @@ public class VariableCollection {
 	 * @param category the name of the category associated with the Variable.
 	 */
 	public void setValue(String id, String value, String category) {
-		if(id == null || id.length() == 0) { return; }
+		if(id == null || id.isEmpty()) { return; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return; }
+		if(formattedID.isEmpty()) { return; }
 
 		int categoryIndex = indexOfCategory(category);
 		
@@ -649,7 +649,7 @@ public class VariableCollection {
 	 * @return true if the Variable is valid and was added or updated.
 	 */
 	public boolean addVariable(String id, String value) {
-		if(id == null || id.length() == 0) { return false; }
+		if(id == null || id.isEmpty()) { return false; }
 		
 		return addVariable(id, value, true);
 	}
@@ -663,11 +663,11 @@ public class VariableCollection {
 	 * @return true if the Variable is valid and was added or updated.
 	 */
 	public boolean addVariable(String id, String value, boolean update) {
-		if(id == null || id.length() == 0) { return false; }
+		if(id == null || id.isEmpty()) { return false; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return false; }
+		if(formattedID.isEmpty()) { return false; }
 		
 		Variable v = getVariable(formattedID);
 		
@@ -693,7 +693,7 @@ public class VariableCollection {
 	 * @return true if the Variable is valid and was added or updated.
 	 */
 	public boolean addVariable(String id, String value, String category) {
-		if(id == null || id.length() == 0) { return false; }
+		if(id == null || id.isEmpty()) { return false; }
 		
 		return addVariable(id, value, category, true);
 	}
@@ -708,11 +708,11 @@ public class VariableCollection {
 	 * @return true if the Variable is valid and was added or updated.
 	 */
 	public boolean addVariable(String id, String value, String category, boolean update) {
-		if(id == null || id.length() == 0) { return false; }
+		if(id == null || id.isEmpty()) { return false; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return false; }
+		if(formattedID.isEmpty()) { return false; }
 		
 		Variable v = getVariable(formattedID, category);
 		
@@ -737,7 +737,7 @@ public class VariableCollection {
 	 * @return true if the Variable is valid and not already contained within the collection of Variables.
 	 */
 	public boolean addVariable(Variable v) {
-		if(v == null || v.getID().length() == 0) { return false; }
+		if(v == null || v.getID().isEmpty()) { return false; }
 		
 		return addVariable(v, true);
 	}
@@ -750,7 +750,7 @@ public class VariableCollection {
 	 * @return true if the Variable is valid and was added or updated.
 	 */
 	public boolean addVariable(Variable v, boolean update) {
-		if(v == null || v.getID().length() == 0 || v.getCategory() >= m_categories.size()) { return false; }
+		if(v == null || v.getID().isEmpty() || v.getCategory() >= m_categories.size()) { return false; }
 		
 		int variableIndex = indexOfVariable(v);
 		
@@ -862,11 +862,11 @@ public class VariableCollection {
 	 * @return true if the Variable was located and removed from the collection of Variables.
 	 */
 	public boolean removeVariable(String id) {
-		if(id == null || id.length() == 0) { return false; }
+		if(id == null || id.isEmpty()) { return false; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return false; }
+		if(formattedID.isEmpty()) { return false; }
 		
 		// loop through and check to see if any variables contain a matching id, and remove the corresponding Variable if one is found
 		for(int i=0;i<m_variables.size();i++) {
@@ -887,11 +887,11 @@ public class VariableCollection {
 	 * @return true if the Variable was located and removed from the collection of Variables.
 	 */
 	public boolean removeVariable(String id, String category) {
-		if(id == null || id.length() == 0) { return false; }
+		if(id == null || id.isEmpty()) { return false; }
 		
 		String formattedID = id.trim();
 		
-		if(formattedID.length() == 0) { return false; }
+		if(formattedID.isEmpty()) { return false; }
 		
 		int categoryIndex = indexOfCategory(category);
 		
@@ -914,7 +914,7 @@ public class VariableCollection {
 	 * @return true if the Variable was located and removed from the collection of Variables.
 	 */
 	public boolean removeVariable(Variable v) {
-		if(v == null || v.getID().length() == 0) { return false; }
+		if(v == null || v.getID().isEmpty()) { return false; }
 		
 		// loop through and check to see if any variables contain a matching id, and remove the corresponding Variable if one is found
 		for(int i=0;i<m_variables.size();i++) {
@@ -1047,7 +1047,7 @@ public class VariableCollection {
 			while((input = in.readLine()) != null) {
 				data = input.trim();
 				
-				if(data.length() == 0) {
+				if(data.isEmpty()) {
 					category = null;
 					categoryIndex = Variable.NO_CATEGORY;
 					continue;

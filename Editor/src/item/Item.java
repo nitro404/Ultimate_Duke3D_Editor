@@ -9,14 +9,13 @@ abstract public class Item {
 
 	protected File m_file;
 	protected ItemFileType m_fileType;
-	protected boolean m_loaded;
 	protected boolean m_changed;
+	protected boolean m_loading;
 	protected Vector<ItemChangeListener> m_itemChangeListeners;
 	
 	public Item() {
 		m_file = null;
 		m_fileType = getDefaultFileType();
-		m_loaded = false;
 		m_changed = false;
 		m_itemChangeListeners = new Vector<ItemChangeListener>();
 	}
@@ -24,7 +23,6 @@ abstract public class Item {
 	public Item(String fileName) {
 		m_file = fileName == null ? null : new File(fileName);
 		m_fileType = getDefaultFileType();
-		m_loaded = false;
 		m_changed = false;
 		m_itemChangeListeners = new Vector<ItemChangeListener>();
 	}
@@ -32,40 +30,36 @@ abstract public class Item {
 	public Item(File file) {
 		m_file = file;
 		m_fileType = getDefaultFileType();
-		m_loaded = false;
 		m_changed = false;
 		m_itemChangeListeners = new Vector<ItemChangeListener>();
 	}
 
 	public Item(ItemFileType fileType) throws InvalidFileTypeException, UnsupportedFileTypeException {
-		if(!fileType.isValid()) { throw new InvalidFileTypeException("Cannot create item with " + fileType == null ? "null file type" : (fileType.getName().isEmpty() ? "empty name" : "no file extensions") + "."); }
-		if(fileType != null && !hasFileType(fileType)) { throw new UnsupportedFileTypeException("Unsupported group file type: \"" + fileType.getName() + "\" for item class: \"" + getClass().getName() + "\"."); }
+		if(fileType == null) { throw new InvalidFileTypeException("Cannot create item without a file type."); }
+		if(!hasFileType(fileType)) { throw new UnsupportedFileTypeException("Unsupported group file type: \"" + fileType.getName() + "\" for item class: \"" + getClass().getName() + "\"."); }
 
 		m_file = null;
 		m_fileType = fileType == null ? getDefaultFileType() : fileType;
-		m_loaded = false;
 		m_changed = false;
 		m_itemChangeListeners = new Vector<ItemChangeListener>();
 	}
 	
 	public Item(String fileName, ItemFileType fileType) throws InvalidFileTypeException, UnsupportedFileTypeException {
-		if(!fileType.isValid()) { throw new InvalidFileTypeException("Cannot create item with " + fileType == null ? "null file type" : (fileType.getName().isEmpty() ? "empty name" : "no file extensions") + "."); }
-		if(fileType != null && !hasFileType(fileType)) { throw new UnsupportedFileTypeException("Unsupported group file type: \"" + fileType.getName() + "\" for item class: \"" + getClass().getName() + "\"."); }
+		if(fileType == null) { throw new InvalidFileTypeException("Cannot create item without a file type."); }
+		if(!hasFileType(fileType)) { throw new UnsupportedFileTypeException("Unsupported group file type: \"" + fileType.getName() + "\" for item class: \"" + getClass().getName() + "\"."); }
 
 		m_file = fileName == null ? null : new File(fileName);
 		m_fileType = fileType == null ? getDefaultFileType() : fileType;
-		m_loaded = false;
 		m_changed = false;
 		m_itemChangeListeners = new Vector<ItemChangeListener>();
 	}
 
 	public Item(File file, ItemFileType fileType) throws InvalidFileTypeException, UnsupportedFileTypeException {
-		if(!fileType.isValid()) { throw new InvalidFileTypeException("Cannot create item with " + fileType == null ? "null file type" : (fileType.getName().isEmpty() ? "empty name" : "no file extensions") + "."); }
-		if(fileType != null && !hasFileType(fileType)) { throw new UnsupportedFileTypeException("Unsupported group file type: \"" + fileType.getName() + "\" for item class: \"" + getClass().getName() + "\"."); }
+		if(fileType == null) { throw new InvalidFileTypeException("Cannot create item without a file type."); }
+		if(!hasFileType(fileType)) { throw new UnsupportedFileTypeException("Unsupported group file type: \"" + fileType.getName() + "\" for item class: \"" + getClass().getName() + "\"."); }
 
 		m_file = file;
 		m_fileType = fileType == null ? getDefaultFileType() : fileType;
-		m_loaded = false;
 		m_changed = false;
 		m_itemChangeListeners = new Vector<ItemChangeListener>();
 	}
@@ -81,18 +75,24 @@ abstract public class Item {
 	public void setFile(File newFile) {
 		m_file = newFile;
 	}
-	
-	public boolean isLoaded() {
-		return m_loaded;
-	}
 
 	abstract public boolean isInstantiable();
+
+	abstract public boolean isInitialized();
+	
+	public boolean isLoading() {
+		return m_loading;
+	}
 
 	public boolean isChanged() {
 		return m_changed;
 	}
 	
 	public void setChanged(boolean changed) {
+		if(!isInitialized() || isLoading()) {
+			return;
+		}
+
 		m_changed = changed;
 		
 		notifyItemChanged();
@@ -107,11 +107,11 @@ abstract public class Item {
 	}
 	
 	public String getFileTypeDefaultExtension() {
-		return m_fileType.getExtension(0);
+		return m_fileType.getExtension();
 	}
 	
 	public boolean setFileType(ItemFileType fileType) {
-		if(!ItemFileType.isValid(fileType) || !hasFileType(fileType)) { return false; }
+		if(fileType == null || !hasFileType(fileType)) { return false; }
 		
 		m_fileType = fileType;
 		
@@ -130,16 +130,16 @@ abstract public class Item {
 		ItemFileType defaultFileType = getDefaultFileType();
 		if(defaultFileType == null) { return null; }
 		
-		return defaultFileType.numberOfExtensions() == 0 ? null : defaultFileType.getExtension(0);
+		return defaultFileType.getExtension();
 	}
 	
 	public abstract ItemFileType[] getFileTypes();
 	
 	public boolean hasFileType(String fileType) {
-		if(fileType == null || fileType.length() == 0) { return false; }
+		if(fileType == null || fileType.isEmpty()) { return false; }
 		
 		String formattedType = fileType.trim();
-		if(formattedType.length() == 0) { return false; }
+		if(formattedType.isEmpty()) { return false; }
 		
 		for(int i=0;i<getFileTypes().length;i++) {
 			if(formattedType.equalsIgnoreCase(getFileTypes()[i].getName())) {
@@ -150,7 +150,7 @@ abstract public class Item {
 	}
 	
 	public boolean hasFileType(ItemFileType fileType) {
-		if(!ItemFileType.isValid(fileType)) { return false; }
+		if(fileType == null) { return false; }
 		
 		for(int i=0;i<getFileTypes().length;i++) {
 			if(getFileTypes()[i].equals(fileType)) {
@@ -161,10 +161,10 @@ abstract public class Item {
 	}
 	
 	public boolean hasFileTypeWithExtension(String extension) {
-		if(extension == null || extension.length() == 0) { return false; }
+		if(extension == null || extension.isEmpty()) { return false; }
 		
 		String formattedExtension = extension.trim();
-		if(formattedExtension.length() == 0) { return false; }
+		if(formattedExtension.isEmpty()) { return false; }
 		
 		for(int i=0;i<getFileTypes().length;i++) {
 			if(getFileTypes()[i].hasExtension(formattedExtension)) {
@@ -175,10 +175,10 @@ abstract public class Item {
 	}
 	
 	public int indexOfFileType(String fileType) {
-		if(fileType == null || fileType.length() == 0) { return -1; }
+		if(fileType == null || fileType.isEmpty()) { return -1; }
 		
 		String formattedType = fileType.trim();
-		if(formattedType.length() == 0) { return -1; }
+		if(formattedType.isEmpty()) { return -1; }
 		
 		for(int i=0;i<getFileTypes().length;i++) {
 			if(formattedType.equalsIgnoreCase(getFileTypes()[i].getName())) {
@@ -189,7 +189,7 @@ abstract public class Item {
 	}
 	
 	public int indexOfFileType(ItemFileType fileType) {
-		if(!ItemFileType.isValid(fileType)) { return -1; }
+		if(fileType == null) { return -1; }
 		
 		for(int i=0;i<getFileTypes().length;i++) {
 			if(getFileTypes()[i].equals(fileType)) {
@@ -200,10 +200,10 @@ abstract public class Item {
 	}
 	
 	public int indexOfFirstFileTypeWithExtension(String extension) {
-		if(extension == null || extension.length() == 0) { return -1; }
+		if(extension == null || extension.isEmpty()) { return -1; }
 		
 		String formattedExtension = extension.trim();
-		if(formattedExtension.length() == 0) { return -1; }
+		if(formattedExtension.isEmpty()) { return -1; }
 		
 		for(int i=0;i<getFileTypes().length;i++) {
 			if(getFileTypes()[i].hasExtension(formattedExtension)) {
@@ -220,10 +220,10 @@ abstract public class Item {
 	}
 	
 	public ItemFileType getFileType(String fileType) {
-		if(fileType == null || fileType.length() == 0) { return null; }
+		if(fileType == null || fileType.isEmpty()) { return null; }
 		
 		String formattedType = fileType.trim();
-		if(formattedType.length() == 0) { return null; }
+		if(formattedType.isEmpty()) { return null; }
 		
 		for(int i=0;i<getFileTypes().length;i++) {
 			if(formattedType.equalsIgnoreCase(getFileTypes()[i].getName())) {
@@ -234,10 +234,10 @@ abstract public class Item {
 	}
 	
 	public ItemFileType getFirstFileTypeWithExtension(String extension) {
-		if(extension == null || extension.length() == 0) { return null; }
+		if(extension == null || extension.isEmpty()) { return null; }
 		
 		String formattedExtension = extension.trim();
-		if(formattedExtension.length() == 0) { return null; }
+		if(formattedExtension.isEmpty()) { return null; }
 		
 		for(int i=0;i<getFileTypes().length;i++) {
 			if(getFileTypes()[i].hasExtension(formattedExtension)) {
@@ -248,10 +248,10 @@ abstract public class Item {
 	}
 	
 	public Vector<ItemFileType> getFileTypesWithExtension(String extension) {
-		if(extension == null || extension.length() == 0) { return null; }
+		if(extension == null || extension.isEmpty()) { return null; }
 		
 		String formattedExtension = extension.trim();
-		if(formattedExtension.length() == 0) { return null; }
+		if(formattedExtension.isEmpty()) { return null; }
 		
 		Vector<ItemFileType> fileTypesWithExtension = new Vector<ItemFileType>();
 		
@@ -263,7 +263,7 @@ abstract public class Item {
 		return fileTypesWithExtension;
 	}
 
-	public abstract boolean load() throws ItemReadException;
+	public abstract boolean load() throws ItemReadException, DeserializationException;
 	
 	public abstract boolean save() throws ItemWriteException;
 	

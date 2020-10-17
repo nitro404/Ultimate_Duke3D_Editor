@@ -48,13 +48,17 @@ public class GroupGRP extends Group {
 	public boolean isInstantiable() {
 		return true;
 	}
-	
+
+	public boolean isInitialized() {
+		return true;
+	}
+
 	public ItemFileType getDefaulFileType() {
 		return FILE_TYPES[0];
 	}
 	
 	public String getDefaultFileExtension() {
-		return FILE_TYPES[0].getExtension(0);
+		return FILE_TYPES[0].getExtension();
 	}
 	
 	public ItemFileType[] getFileTypes() {
@@ -71,20 +75,25 @@ public class GroupGRP extends Group {
 	
 	public boolean load() throws GroupReadException {
 		if(m_file == null || !m_file.exists()) { return false; }
+
+		m_loading = true;
 		
 		// verify that the file has an extension
 		String extension = Utilities.getFileExtension(m_file.getName());
 		if(extension == null) {
+			m_loading = false;
 			throw new GroupReadException("File \"" + m_file.getName() + "\" has no extension.");
 		}
 		
 		// verify that the file extension is supported
 		if(!hasFileTypeWithExtension(extension)) {
+			m_loading = false;
 			throw new GroupReadException("File \"" + m_file.getName() +  "\" has unsupported extension: " + extension);
 		}
 		
 		// check to make sure that the file is not too big to be stored in memory
 		if(m_file.length() > Integer.MAX_VALUE) {
+			m_loading = false;
 			throw new GroupReadException("File \"" + m_file.getName() +  "\" is too large to store in memory.");
 		}
 		
@@ -97,9 +106,11 @@ public class GroupGRP extends Group {
 			in.close();
 		}
 		catch(FileNotFoundException e) {
+			m_loading = false;
 			throw new GroupReadException("File \"" + m_file.getName() +  "\" not found.");
 		}
 		catch(IOException e) {
+			m_loading = false;
 			throw new GroupReadException("Error reading file \"" + m_file.getName() +  "\": " + e.getMessage());
 		}
 		
@@ -109,6 +120,7 @@ public class GroupGRP extends Group {
 		
 		// verify that the data is long enough to contain header information
 		if(data.length < offset + HEADER_LENGTH) {
+			m_loading = false;
 			throw new GroupReadException("Group file \"" + m_file.getName() + "\" is incomplete or corrupted: missing header text.");
 		}
 		
@@ -116,6 +128,7 @@ public class GroupGRP extends Group {
 		String headerText = Serializer.deserializeByteString(Arrays.copyOfRange(data, offset, offset + HEADER_TEXT_LENGTH));
 		
 		if(!headerText.trim().equalsIgnoreCase(HEADER_TEXT)) {
+			m_loading = false;
 			throw new GroupReadException(FILE_TYPES[0].getName() + " file \"" + m_file.getName() +  "\" is not a valid format, missing " + HEADER_TEXT + " specification in header.");
 		}
 		
@@ -125,6 +138,7 @@ public class GroupGRP extends Group {
 		
 		// verify that the data is long enough to contain the number of files specification
 		if(data.length < offset + NUMBER_OF_FILES_LENGTH) {
+			m_loading = false;
 			throw new GroupReadException(FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing number of files value.");
 		}
 		
@@ -132,6 +146,7 @@ public class GroupGRP extends Group {
 		int numberOfFiles = Serializer.deserializeInteger(Arrays.copyOfRange(data, offset, offset + NUMBER_OF_FILES_LENGTH), FILE_ENDIANNESS);
 		
 		if(numberOfFiles < 0) {
+			m_loading = false;
 			throw new GroupReadException(FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\" has a negative number of files value.");
 		}
 		
@@ -146,6 +161,7 @@ public class GroupGRP extends Group {
 		for(int i=0;i<numberOfFiles;i++) {
 			// verify that the data is long enough to contain the file name
 			if(data.length < offset + GROUP_FILE_NAME_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing file #" + (i + 1) + " name.");
 			}
 			
@@ -156,6 +172,7 @@ public class GroupGRP extends Group {
 			
 			// verify that the data is long enough to contain the file size value
 			if(data.length < offset + GROUP_FILE_SIZE_LENGTH) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\" is incomplete or corrupted: missing file #" + (i + 1) + " size value.");
 			}
 			
@@ -163,6 +180,7 @@ public class GroupGRP extends Group {
 			fileSize = Serializer.deserializeInteger(Arrays.copyOfRange(data, offset, offset + GROUP_FILE_SIZE_LENGTH), FILE_ENDIANNESS);
 			
 			if(fileSize < 0) {
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\" file #" + (i + 1) + " size can not be negative.");
 			}
 			
@@ -179,6 +197,7 @@ public class GroupGRP extends Group {
 			if(data.length < offset + g.getFileSize()) {
 				int numberOfMissingBytes = g.getFileSize() - (data.length - offset);
 				int numberOfAdditionalFiles = groupFiles.size() - i - 1;
+				m_loading = false;
 				throw new GroupReadException(FILE_TYPES[0].getName() + " file \"" + m_file.getName() + "\" is corrupted: missing " + numberOfMissingBytes + " of " + g.getFileSize() + " byte" + (g.getFileSize() == 1 ? "" : "s") + " for file #" + (i + 1) + " (\"" + g.getFileName() + "\") data." + (numberOfAdditionalFiles == 0 ? "" : " There is also an additional " + numberOfAdditionalFiles + " file" + (numberOfAdditionalFiles == 1 ? "" : "s") + " that are missing data."));
 			}
 			else {
@@ -189,12 +208,10 @@ public class GroupGRP extends Group {
 		}
 		
 		addFiles(groupFiles);
+
+		m_loading = false;
 		
-		if(!(shouldSortFiles() && shouldAutoSortFiles())) {
-			setChanged(false);
-		}
-		
-		m_loaded = true;
+		setChanged(!checkSameFileOrder(groupFiles));
 		
 		SystemConsole.instance.writeLine(FILE_TYPES[0].getName() + " file parsed successfully, " + groupFiles.size() + " files loaded into memory.");
 		

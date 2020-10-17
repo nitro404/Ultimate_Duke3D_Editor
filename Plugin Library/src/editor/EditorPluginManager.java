@@ -9,7 +9,6 @@ import console.*;
 import plugin.*;
 import group.*;
 import palette.*;
-import art.*;
 
 public class EditorPluginManager extends PluginManager {
 	
@@ -26,7 +25,7 @@ public class EditorPluginManager extends PluginManager {
 	public Vector<FilePlugin> getPluginsForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
+		if(formattedFileFormat.isEmpty()) { return null; }
 		
 		FilePlugin filePlugin = null;
 		Vector<FilePlugin> filePlugins = new Vector<FilePlugin>();
@@ -47,7 +46,7 @@ public class EditorPluginManager extends PluginManager {
 	public boolean hasPluginForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return false; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return false; }
+		if(formattedFileFormat.isEmpty()) { return false; }
 		
 		FilePlugin filePlugin = null;
 		for(int i=0;i<m_plugins.size();i++) {
@@ -67,7 +66,7 @@ public class EditorPluginManager extends PluginManager {
 	public int numberOfPluginsForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return 0; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return 0; }
+		if(formattedFileFormat.isEmpty()) { return 0; }
 		
 		int numberOfPlugins = 0;
 		
@@ -89,7 +88,7 @@ public class EditorPluginManager extends PluginManager {
 	public int indexOfFirstPluginForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return -1; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return -1; }
+		if(formattedFileFormat.isEmpty()) { return -1; }
 		
 		FilePlugin filePlugin = null;
 		for(int i=0;i<m_plugins.size();i++) {
@@ -109,7 +108,7 @@ public class EditorPluginManager extends PluginManager {
 	public String getPluginsAsStringExcludingFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
+		if(formattedFileFormat.isEmpty()) { return null; }
 		
 		Plugin plugin = null;
 		FilePlugin filePlugin = null;
@@ -137,7 +136,7 @@ public class EditorPluginManager extends PluginManager {
 	public Vector<FilePlugin> getPluginsExcludingFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
+		if(formattedFileFormat.isEmpty()) { return null; }
 		
 		Plugin plugin = null;
 		FilePlugin filePlugin = null;
@@ -229,7 +228,7 @@ public class EditorPluginManager extends PluginManager {
 		if(fileFormat == null) { return null; }
 		
 		Vector<FilePlugin> plugins = getPluginsForFileFormat(fileFormat);
-		if(plugins == null || plugins.size() == 0) { return null; }
+		if(plugins == null || plugins.isEmpty()) { return null; }
 		
 		FilePlugin plugin = null;
 
@@ -307,7 +306,7 @@ public class EditorPluginManager extends PluginManager {
 	public Vector<GroupPlugin> getGroupPluginsForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
+		if(formattedFileFormat.isEmpty()) { return null; }
 		
 		GroupPlugin groupPlugin = null;
 		Vector<GroupPlugin> groupPlugins = new Vector<GroupPlugin>();
@@ -328,7 +327,7 @@ public class EditorPluginManager extends PluginManager {
 	public boolean hasGroupPluginForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return false; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return false; }
+		if(formattedFileFormat.isEmpty()) { return false; }
 		
 		GroupPlugin groupPlugin = null;
 		for(int i=0;i<m_plugins.size();i++) {
@@ -348,7 +347,7 @@ public class EditorPluginManager extends PluginManager {
 	public int numberOfGroupPluginsForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return 0; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return 0; }
+		if(formattedFileFormat.isEmpty()) { return 0; }
 		
 		int numberOfGroupPlugins = 0;
 		
@@ -370,7 +369,7 @@ public class EditorPluginManager extends PluginManager {
 	public int indexOfFirstGroupPluginForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return -1; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return -1; }
+		if(formattedFileFormat.isEmpty()) { return -1; }
 		
 		GroupPlugin groupPlugin = null;
 		for(int i=0;i<m_plugins.size();i++) {
@@ -390,7 +389,7 @@ public class EditorPluginManager extends PluginManager {
 	public String getGroupPluginsAsStringExcludingFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
+		if(formattedFileFormat.isEmpty()) { return null; }
 		
 		Plugin plugin = null;
 		GroupPlugin groupPlugin = null;
@@ -418,7 +417,7 @@ public class EditorPluginManager extends PluginManager {
 	public Vector<GroupPlugin> getGroupPluginsExcludingFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
+		if(formattedFileFormat.isEmpty()) { return null; }
 		
 		Plugin plugin = null;
 		GroupPlugin groupPlugin = null;
@@ -509,7 +508,7 @@ public class EditorPluginManager extends PluginManager {
 	public Vector<PalettePlugin> getPalettePluginsForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
+		if(formattedFileFormat.isEmpty()) { return null; }
 		
 		PalettePlugin palettePlugin = null;
 		Vector<PalettePlugin> palettePlugins = new Vector<PalettePlugin>();
@@ -530,7 +529,7 @@ public class EditorPluginManager extends PluginManager {
 	public boolean hasPalettePluginForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return false; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return false; }
+		if(formattedFileFormat.isEmpty()) { return false; }
 		
 		PalettePlugin palettePlugin = null;
 		for(int i=0;i<m_plugins.size();i++) {
@@ -550,7 +549,7 @@ public class EditorPluginManager extends PluginManager {
 	public int numberOfPalettePluginsForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return 0; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return 0; }
+		if(formattedFileFormat.isEmpty()) { return 0; }
 		
 		int numberOfPalettePlugins = 0;
 		
@@ -572,7 +571,7 @@ public class EditorPluginManager extends PluginManager {
 	public int indexOfFirstPalettePluginForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return -1; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return -1; }
+		if(formattedFileFormat.isEmpty()) { return -1; }
 		
 		PalettePlugin palettePlugin = null;
 		for(int i=0;i<m_plugins.size();i++) {
@@ -592,7 +591,7 @@ public class EditorPluginManager extends PluginManager {
 	public String getPalettePluginsAsStringExcludingFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
+		if(formattedFileFormat.isEmpty()) { return null; }
 		
 		Plugin plugin = null;
 		PalettePlugin palettePlugin = null;
@@ -620,7 +619,7 @@ public class EditorPluginManager extends PluginManager {
 	public Vector<PalettePlugin> getPalettePluginsExcludingFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
+		if(formattedFileFormat.isEmpty()) { return null; }
 		
 		Plugin plugin = null;
 		PalettePlugin palettePlugin = null;
@@ -687,208 +686,6 @@ public class EditorPluginManager extends PluginManager {
 		}
 		
 		Collection<String> preferredFileFormats = getPreferredFileFormats(PalettePlugin.class);
-		
-		boolean duplicateFileFormat = false;
-		if(preferredFileFormats != null) {
-			for(String preferredFileFormat : preferredFileFormats) {
-				duplicateFileFormat = false;
-				
-				for(int j=0;j<fileFormats.size();j++) {
-					if(fileFormats.elementAt(j).equalsIgnoreCase(preferredFileFormat)) {
-						duplicateFileFormat = true;
-					}
-				}
-				
-				if(duplicateFileFormat) { continue; }
-				
-				fileFormats.add(preferredFileFormat);
-			}
-		}
-		
-		return fileFormats;
-	}
-	
-	public Vector<ArtPlugin> getArtPluginsForFileFormat(String fileFormat) {
-		if(fileFormat == null) { return null; }
-		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
-		
-		ArtPlugin artPlugin = null;
-		Vector<ArtPlugin> artPlugins = new Vector<ArtPlugin>();
-		for(int i=0;i<m_plugins.size();i++) {
-			if(!(m_plugins.elementAt(i) instanceof ArtPlugin)) { continue; }
-			
-			artPlugin = (ArtPlugin) m_plugins.elementAt(i);
-			
-			for(int j=0;j<artPlugin.numberOfSupportedFileFormats();j++) {
-				if(artPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
-					artPlugins.add(artPlugin);
-				}
-			}
-		}
-		return artPlugins;
-	}
-	
-	public boolean hasArtPluginForFileFormat(String fileFormat) {
-		if(fileFormat == null) { return false; }
-		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return false; }
-		
-		ArtPlugin artPlugin = null;
-		for(int i=0;i<m_plugins.size();i++) {
-			if(!(m_plugins.elementAt(i) instanceof ArtPlugin)) { continue; }
-			
-			artPlugin = (ArtPlugin) m_plugins.elementAt(i);
-			
-			for(int j=0;j<artPlugin.numberOfSupportedFileFormats();j++) {
-				if(artPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	public int numberOfArtPluginsForFileFormat(String fileFormat) {
-		if(fileFormat == null) { return 0; }
-		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return 0; }
-		
-		int numberOfArtPlugins = 0;
-		
-		ArtPlugin artPlugin = null;
-		for(int i=0;i<m_plugins.size();i++) {
-			if(!(m_plugins.elementAt(i) instanceof ArtPlugin)) { continue; }
-			
-			artPlugin = (ArtPlugin) m_plugins.elementAt(i);
-			
-			for(int j=0;j<artPlugin.numberOfSupportedFileFormats();j++) {
-				if(artPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
-					numberOfArtPlugins++;
-				}
-			}
-		}
-		return numberOfArtPlugins;
-	}
-	
-	public int indexOfFirstArtPluginForFileFormat(String fileFormat) {
-		if(fileFormat == null) { return -1; }
-		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return -1; }
-		
-		ArtPlugin artPlugin = null;
-		for(int i=0;i<m_plugins.size();i++) {
-			if(!(m_plugins.elementAt(i) instanceof ArtPlugin)) { continue; }
-			
-			artPlugin = (ArtPlugin) m_plugins.elementAt(i);
-			
-			for(int j=0;j<artPlugin.numberOfSupportedFileFormats();j++) {
-				if(artPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
-					return i;
-				}
-			}
-		}
-		return -1;
-	}
-	
-	public String getArtPluginsAsStringExcludingFileFormat(String fileFormat) {
-		if(fileFormat == null) { return null; }
-		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
-		
-		Plugin plugin = null;
-		ArtPlugin artPlugin = null;
-		String artPluginsList = new String();
-		
-		for(int i=0;i<m_plugins.size();i++) {
-			plugin = m_plugins.elementAt(i);
-			
-			if(plugin instanceof ArtPlugin) {
-				artPlugin = (ArtPlugin) plugin;
-				
-				if(!artPlugin.hasSupportedFileFormat(formattedFileFormat)) {
-					if(artPluginsList.length() > 0) {
-						artPluginsList += ", ";
-					}
-					
-					artPluginsList += artPlugin.getName();
-				}
-			}
-		}
-		
-		return artPluginsList;
-	}
-	
-	public Vector<ArtPlugin> getArtPluginsExcludingFileFormat(String fileFormat) {
-		if(fileFormat == null) { return null; }
-		String formattedFileFormat = fileFormat.trim();
-		if(formattedFileFormat.length() == 0) { return null; }
-		
-		Plugin plugin = null;
-		ArtPlugin artPlugin = null;
-		Vector<ArtPlugin> artPlugins = new Vector<ArtPlugin>();
-		
-		for(int i=0;i<m_plugins.size();i++) {
-			plugin = m_plugins.elementAt(i);
-			
-			if(plugin instanceof ArtPlugin) {
-				artPlugin = (ArtPlugin) plugin;
-				
-				if(!artPlugin.hasSupportedFileFormat(formattedFileFormat)) {
-					artPlugins.add(artPlugin);
-				}
-			}
-		}
-		
-		return artPlugins;
-	}
-	
-	public Vector<String> getSupportedArtFileFormats() {
-		Plugin plugin = null;
-		ArtPlugin artPlugin = null;
-		String fileFormat = null;
-		boolean duplicateFileFormat = false;
-		Vector<String> fileFormats = new Vector<String>();
-		
-		for(int i=0;i<m_plugins.size();i++) {
-			plugin = m_plugins.elementAt(i);
-			
-			if(plugin instanceof ArtPlugin) {
-				artPlugin = (ArtPlugin) plugin;
-				
-				for(int j=0;j<artPlugin.numberOfSupportedFileFormats();j++) {
-					fileFormat = artPlugin.getSupportedFileFormat(j).toUpperCase();
-					duplicateFileFormat = false;
-					
-					for(int k=0;k<fileFormats.size();k++) {
-						if(fileFormats.elementAt(k).equalsIgnoreCase(fileFormat)) {
-							duplicateFileFormat = true;
-							break;
-						}
-					}
-					
-					if(duplicateFileFormat) { continue; }
-					
-					fileFormats.add(fileFormat);
-				}
-			}
-		}
-		
-		return fileFormats;
-	}
-	
-	public Vector<String> getSupportedAndPreferredArtFileFormats() {
-		Vector<String> fileFormats = new Vector<String>();
-		
-		Vector<String> supportedFileFormats = getSupportedArtFileFormats();
-		
-		if(supportedFileFormats != null) {
-			for(int i=0;i<supportedFileFormats.size();i++) {
-				fileFormats.add(supportedFileFormats.elementAt(i));
-			}
-		}
-		
-		Collection<String> preferredFileFormats = getPreferredFileFormats(ArtPlugin.class);
 		
 		boolean duplicateFileFormat = false;
 		if(preferredFileFormats != null) {

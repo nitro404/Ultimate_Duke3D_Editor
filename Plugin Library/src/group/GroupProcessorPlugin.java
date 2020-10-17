@@ -65,6 +65,8 @@ public class GroupProcessorPlugin extends Plugin {
 			newGroupProcessor = (GroupProcessor) constructor.newInstance();
 		}
 		catch(Exception e) {
+			SystemConsole.instance.writeException(e);
+
 			throw new GroupProcessorInstantiationException("Failed to instantiate group processor class \"" + m_groupProcessorClassName + "\": " + e.getMessage());
 		}
 		
@@ -87,6 +89,8 @@ public class GroupProcessorPlugin extends Plugin {
 			newGroupProcessorPanel = (GroupProcessorPanel) constructor.newInstance(groupProcessor);
 		}
 		catch(Exception e) {
+			SystemConsole.instance.writeException(e);
+
 			throw new GroupProcessorPanelInstantiationException("Failed to instantiate group processor panel class \"" + m_groupProcessorPanelClassName + "\": " + e.getMessage());
 		}
 		
@@ -115,7 +119,7 @@ public class GroupProcessorPlugin extends Plugin {
 				}
 				
 				line = input.trim();
-				if(line.length() == 0 || Utilities.isComment(line)) { continue; }
+				if(line.isEmpty() || Utilities.isComment(line)) { continue; }
 				
 				v = Variable.parseFrom(line);
 				if(v == null) { continue; }
@@ -150,7 +154,7 @@ public class GroupProcessorPlugin extends Plugin {
 		}
 		
 		m_groupProcessorClassName = groupProcessorClassName;
-		m_groupProcessorPanelClassName = groupProcessorPanelClassName == null ? null : (groupProcessorPanelClassName.length() == 0 ? null : groupProcessorPanelClassName);
+		m_groupProcessorPanelClassName = groupProcessorPanelClassName == null ? null : (groupProcessorPanelClassName.isEmpty() ? null : groupProcessorPanelClassName);
 		
 		m_groupProcessorClass = null;
 		try { m_groupProcessorClass = ExtendedClassLoader.instance.loadClass(m_groupProcessorClassName); }
@@ -259,7 +263,7 @@ public class GroupProcessorPlugin extends Plugin {
 										
 										groupProcessorClassName = className;
 										
-										if(groupProcessorClassName.length() == 0) {
+										if(groupProcessorClassName.isEmpty()) {
 											try { in.close(); } catch (IOException e2) { }
 											
 											throw new PluginLoadException("Empty group processor class name specified inside classes XML node of plugin definition file for group plugin \"" + m_name + "\".");
@@ -272,7 +276,7 @@ public class GroupProcessorPlugin extends Plugin {
 										
 										groupProcessorPanelClassName = className;
 										
-										if(groupProcessorPanelClassName.length() == 0) {
+										if(groupProcessorPanelClassName.isEmpty()) {
 											try { in.close(); } catch (IOException e2) { }
 											
 											throw new PluginLoadException("Empty group processor panel class name specified inside classes XML node of plugin definition file for group plugin \"" + m_name + "\".");
@@ -323,7 +327,7 @@ public class GroupProcessorPlugin extends Plugin {
 		}
 		
 		m_groupProcessorClassName = groupProcessorClassName;
-		m_groupProcessorPanelClassName = groupProcessorPanelClassName == null ? null : (groupProcessorPanelClassName.length() == 0 ? null : groupProcessorPanelClassName);
+		m_groupProcessorPanelClassName = groupProcessorPanelClassName == null ? null : (groupProcessorPanelClassName.isEmpty() ? null : groupProcessorPanelClassName);
 		
 		m_groupProcessorClass = null;
 		try { m_groupProcessorClass = ExtendedClassLoader.instance.loadClass(m_groupProcessorClassName); }

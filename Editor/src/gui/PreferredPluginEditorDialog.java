@@ -7,7 +7,7 @@ import javax.swing.*;
 import plugin.*;
 import editor.*;
 
-public class PreferredPluginEditorDialog extends JDialog implements ActionListener, KeyListener {
+public class PreferredPluginEditorDialog extends JDialog implements ActionListener {
 	
 	private boolean m_submitted;
 	private boolean m_cancelled;
@@ -39,7 +39,17 @@ public class PreferredPluginEditorDialog extends JDialog implements ActionListen
 				cancel();
 			}
 		});
-		
+
+		getRootPane().registerKeyboardAction(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cancel();
+				}
+			},
+			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+			JComponent.WHEN_IN_FOCUSED_WINDOW
+		);
+
 		initComponents();
 		updateLayout();
 	}
@@ -50,22 +60,18 @@ public class PreferredPluginEditorDialog extends JDialog implements ActionListen
 		
 		m_submitButton = new JButton("Save");
 		m_submitButton.setSize(m_submitButton.getPreferredSize());
-		m_submitButton.addKeyListener(this);
 		m_submitButton.addActionListener(this);
 
 		m_addButton = new JButton("Add");
 		m_addButton.setSize(m_addButton.getPreferredSize());
-		m_addButton.addKeyListener(this);
 		m_addButton.addActionListener(this);
 		
 		m_clearButton = new JButton("Clear");
 		m_clearButton.setSize(m_clearButton.getPreferredSize());
-		m_clearButton.addKeyListener(this);
 		m_clearButton.addActionListener(this);
 		
 		m_cancelButton = new JButton("Cancel");
 		m_cancelButton.setSize(m_cancelButton.getPreferredSize());
-		m_cancelButton.addKeyListener(this);
 		m_cancelButton.addActionListener(this);
 		
 		m_mainPanel.add(m_submitButton);
@@ -199,37 +205,7 @@ public class PreferredPluginEditorDialog extends JDialog implements ActionListen
 		
 		setVisible(true);
 	}
-	
-	public void keyTyped(KeyEvent e) { }
-	public void keyReleased(KeyEvent e) { }
-	
-	public void keyPressed(KeyEvent e) {
-		if(e.getSource() == m_submitButton) {
-			if(e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_SPACE) {
-				submit();
-			}
-		}
-		else if(e.getSource() == m_addButton) {
-			if(e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_SPACE) {
-				addEntryPrompt();
-			}
-		}
-		else if(e.getSource() == m_clearButton) {
-			if(e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_SPACE) {
-				clear();
-			}
-		}
-		else if(e.getSource() == m_cancelButton) {
-			if(e.getKeyChar() == KeyEvent.VK_ENTER || e.getKeyChar() == KeyEvent.VK_SPACE) {
-				cancel();
-			}
-		}
-		
-		if(e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-			cancel();
-		}
-	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == m_submitButton) {
 			submit();
@@ -363,7 +339,7 @@ public class PreferredPluginEditorDialog extends JDialog implements ActionListen
 			else {
 				formattedPreferredPluginName = preferredPluginName.trim();
 				
-				if(formattedPreferredPluginName.length() == 0) {
+				if(formattedPreferredPluginName.isEmpty()) {
 					formattedPreferredPluginName = null;
 				}
 			}
@@ -394,7 +370,7 @@ public class PreferredPluginEditorDialog extends JDialog implements ActionListen
 			fileFormat = fileFormats.elementAt(i);
 			
 			plugins = EditorPluginManager.instance.getPluginsForFileFormat(fileFormat);
-			if(plugins == null || plugins.size() == 0) { continue; }
+			if(plugins == null || plugins.isEmpty()) { continue; }
 			
 			preferredPluginIndex = -1;
 			preferredPluginName = EditorPluginManager.instance.getPreferredPluginForFileFormat(fileFormat, FilePlugin.class);

@@ -97,6 +97,75 @@ public class Utilities {
 		}
 	}
 	
+	public static Color getHighContrastYIQColor(Color sourceColour) {
+		return ((sourceColour.getRed() * 299) + (sourceColour.getGreen() * 587) + (sourceColour.getBlue() * 144)) / 1000 < 128 ? Color.WHITE : Color.BLACK;
+	}
+
+	public static boolean isEmptyString(String s) {
+		return isEmptyString(s, true);
+	}
+
+	public static boolean isEmptyString(String s, boolean trim) {
+		if(s == null || s.isEmpty()) {
+			return true;
+		}
+		
+		if(trim)  {
+			return s.trim().isEmpty();
+		}
+		
+		return false;
+	}
+
+	public static boolean isNonEmptyString(String s) {
+		return isNonEmptyString(s, true);
+	}
+
+	public static boolean isNonEmptyString(String s, boolean trim) {
+		if(s == null || s.isEmpty()) {
+			return false;
+		}
+		
+		if(trim)  {
+			return !s.trim().isEmpty();
+		}
+		
+		return true;
+	}
+	
+	public static String trimString(String s) {
+		if(s == null) {
+			return null;
+		}
+		
+		return s.trim();
+	}
+	
+	public static String convertExceptionToString(Exception exception) {
+		if(exception == null) {
+			return null;
+		}
+		
+		StringWriter exceptionWriter = new StringWriter();
+		exception.printStackTrace(new PrintWriter(exceptionWriter));
+		return exceptionWriter.toString();
+	}
+	
+	public static String addLeadingZeroes(int value, int expectedLength) {
+		if(value < 0 || expectedLength <= 1) {
+			return Integer.toString(value);
+		}
+		
+		String formattedValue = Integer.toString(value);
+		int numberOfZeroes = expectedLength - Utilities.intLength(value);
+
+		for(int i = 0; i < numberOfZeroes; i++) {
+			formattedValue = "0" + formattedValue;
+		}
+
+		return formattedValue;
+	}
+	
 	public static int compareCasePercentage(String text) {
 		if(text == null) { return 0; }
 		
@@ -109,7 +178,47 @@ public class Utilities {
 		
 		return upper - lower;
 	}
-	
+
+	public static String toBinaryString(byte b) {
+		String binaryString = String.format("%8s", Integer.toBinaryString(b & 0xff)).replace(' ', '0');
+
+		while(binaryString.length() < 8) {
+			binaryString = '0' + binaryString;
+		}
+
+		return binaryString;
+	}
+
+	public static String toBinaryString(short s) {
+		String binaryString = String.format("%8s", Integer.toBinaryString(s & 0xffff)).replace(' ', '0');
+
+		while(binaryString.length() < 16) {
+			binaryString = '0' + binaryString;
+		}
+
+		return binaryString;
+	}
+
+	public static String toBinaryString(int i) {
+		String binaryString = String.format("%8s", Integer.toBinaryString(i & 0xffffffff)).replace(' ', '0');
+
+		while(binaryString.length() < 32) {
+			binaryString = '0' + binaryString;
+		}
+
+		return binaryString;
+	}
+
+	public static String toBinaryString(long l) {
+		String binaryString = String.format("%8s", Long.toBinaryString(l)).replace(' ', '0');
+
+		while(binaryString.length() < 64) {
+			binaryString = '0' + binaryString;
+		}
+
+		return binaryString;
+	}
+
 	public static String reverseString(String data) {
 		if(data == null) { return null; }
 		
@@ -169,7 +278,7 @@ public class Utilities {
 		if(filePath == null) { return null; }
 		
 		String formattedFilePath = filePath.trim();
-		if(formattedFilePath.length() == 0) { return null; }
+		if(formattedFilePath.isEmpty()) { return null; }
 		
 		int lastFileSeparatorIndex = -1;
 		for(int i=formattedFilePath.length()-1;i>=0;i--) {
@@ -225,15 +334,57 @@ public class Utilities {
 	}
 	
 	public static String appendSlash(String path) {
+		return appendSlash(path, System.getProperty("file.separator").charAt(0));
+	}
+	
+	public static String appendSlash(String path, char separator) {
 		if(path == null) { return null; }
 		String data = path.trim();
-		if(data.length() == 0) { return data; }
+		if(data.isEmpty()) { return data; }
 		
 		if(data.charAt(data.length() - 1) != '/' && data.charAt(data.length() - 1) != '\\') {
-			data  += System.getProperty("file.separator");
+			data += separator;
 		}
 		
 		return data;
+	}
+
+	public static String joinPaths(String ...paths) {
+		return joinPaths(System.getProperty("file.separator").charAt(0), paths);
+	}
+	
+	public static String joinPaths(char separator, String ...paths) {
+		String newPath = "";
+		
+		for(int i = 0; i < paths.length; i++) {
+			String path = paths[i].trim();
+			
+			if(path == null || path.isEmpty()) {
+				continue;
+			}
+			
+			if(newPath.isEmpty()) {
+				if(path.length() == 1 && (path.charAt(0) == '/' || path.charAt(0) == '\\')) {
+					newPath = path;
+				}
+				else {
+					newPath = path.replaceAll("[/\\\\]+$", "");
+				}
+			}
+			else {
+				path = path.replaceAll("^[/\\\\]+", "");
+				
+				if(!path.isEmpty()) {
+					if(newPath.charAt(newPath.length() - 1) != separator) {
+						newPath += separator;
+					}
+					
+					newPath += path;
+				}
+			}
+		}
+
+		return newPath.replace("[/\\\\]", Character.toString(separator));
 	}
 	
 	public static String truncateFileName(String fileName, int maxLength) {
@@ -271,7 +422,7 @@ public class Utilities {
 		
 		String version1 = v1.trim();
 		String version2 = v2.trim();
-		if(version1.length() == 0 || version2.length() == 0) {
+		if(version1.isEmpty() || version2.isEmpty()) {
 			throw new IllegalArgumentException("Cannot compare empty versions.");
 		}
 		
@@ -328,7 +479,7 @@ public class Utilities {
 	}
 	
 	public static boolean isComment(String data, String comment) {
-		if(data == null || comment == null || comment.length() == 0) { return false; }
+		if(data == null || comment == null || comment.isEmpty()) { return false; }
 		
 		int commentStartIndex = -1;
 		for(int i=0;i<data.length();i++) {
