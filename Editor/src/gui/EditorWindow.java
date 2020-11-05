@@ -191,7 +191,13 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_preferredPluginEditorDialog = new PreferredPluginEditorDialog(m_frame);
 		
 		m_initialized = true;
-		
+
+// TODO: temp:
+loadItem(new File("test/PALETTE.DAT"));
+loadItem(new File("test/LOOKUP.DAT"));
+loadItem(new File("test/Non-Standard Palette/extclut/ExtCLUT/PALETTE.DAT"));
+loadItem(new File("test/Non-Standard Palette/extclut/ExtCLUT/LOOKUP.DAT"));
+
 		update();
 		
 		return true;

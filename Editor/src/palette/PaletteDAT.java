@@ -10,20 +10,11 @@ import utilities.*;
 public class PaletteDAT extends Palette {
 	
 	protected byte m_data[];
-	protected DATType m_type;
-	
+
 	public static final int BPP = 3;
 	public static final int COLOUR_SCALE = 4;
-	public static final int PALETTE_OFFSET[] = {0, 6426};
 	public static final int PALETTE_SIZE_RGB = NUMBER_OF_COLOURS * BPP;
-	public static final int NUMBER_OF_DAT_PALETTES[] = {1, 5};
-	public static final String PALETTE_DAT_DESCRIPTION = "Normal";
-	public static final String LOOKUP_DAT_DESCRIPTION[] = { "Underwater", "Night Vision", "Title Screen", "3D Realms Logo", "Episode 1 Ending Animation" };
 
-	public static ItemFileType[] FILE_TYPES = {
-		new ItemFileType("Duke Nukem 3D DAT Palette", "DAT")
-	};
-	
 	public PaletteDAT() {
 		this(null);
 	}
@@ -31,7 +22,6 @@ public class PaletteDAT extends Palette {
 	public PaletteDAT(File file) {
 		super(file);
 		m_data = null;
-		m_type = DATType.Unknown;
 	}
 
 	public boolean isInstantiable() {
@@ -39,8 +29,7 @@ public class PaletteDAT extends Palette {
 	}
 	
 	public boolean isInitialized() {
-		return m_data != null &&
-			   m_type != DATType.Unknown;
+		return m_data != null;
 	}
 
 	public int getPaletteFileSize() {
@@ -51,41 +40,6 @@ public class PaletteDAT extends Palette {
 		return BPP;
 	}
 
-	public ItemFileType getDefaultFileType() {
-		return FILE_TYPES[0];
-	}
-	
-	public String getDefaultFileExtension() {
-		return FILE_TYPES[0].getExtension();
-	}
-	
-	public ItemFileType[] getFileTypes() {
-		return FILE_TYPES;
-	}
-	
-	public int numberOfPalettes() {
-		return m_type == DATType.Unknown ? -1 : NUMBER_OF_DAT_PALETTES[m_type.ordinal()];
-	}
-	
-	public String getPaletteDescription(int index) {
-		if(index < 0 || index >= numberOfPalettes()) { return null; }
-		
-		// return a description of the corresponding sub-palette for each DAT type
-		if(m_type == DATType.Palette) {
-			return PALETTE_DAT_DESCRIPTION;
-		}
-		else if(m_type == DATType.Lookup) {
-			return LOOKUP_DAT_DESCRIPTION[index];
-		}
-		
-		return null;
-	}
-	
-	public DATType getDATType() {
-		// return the type of DAT file (PALETTE / LOOKUP)
-		return m_type;
-	}
-	
 	public Color getPixel(int x, int y, int index) {
 		if(!isInitialized() || x < 0 || y < 0 || x > PALETTE_WIDTH - 1 || y > PALETTE_HEIGHT - 1 || index < 0 || index >= numberOfPalettes()) { return null; }
 		
@@ -277,7 +231,7 @@ public class PaletteDAT extends Palette {
 		
 		// attempt to determine the DAT type
 		// if it is unknown, prompt the user to specify the type
-		m_type = DATType.parseFrom(fileName);
+//		m_type = DATType.parseFrom(fileName);
 
 		if(m_type == DATType.Unknown) {
 			String datTypes[] = new String[DATType.Unknown.ordinal()];
@@ -323,7 +277,7 @@ public class PaletteDAT extends Palette {
 		
 		return true;
 	}
-	
+
 	public boolean save() throws PaletteWriteException {
 		if(m_file == null) {
 			return false;
@@ -347,5 +301,5 @@ public class PaletteDAT extends Palette {
 		
 		return true;
 	}
-	
+
 }
