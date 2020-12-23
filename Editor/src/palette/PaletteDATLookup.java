@@ -33,13 +33,18 @@ public class PaletteDATLookup extends PaletteDAT{
 
 	public int numberOfPalettes() {
 // TODO:
-return -1;
+return LOOKUP_DAT_DESCRIPTION.length;
 	}
 
 	public String getPaletteDescription(int index) {
 		if(index < 0 || index >= numberOfPalettes()) { return null; }
 
 		return LOOKUP_DAT_DESCRIPTION[index];
+	}
+
+	public int getPaletteOffset() {
+// TODO:
+return 0;
 	}
 
 }

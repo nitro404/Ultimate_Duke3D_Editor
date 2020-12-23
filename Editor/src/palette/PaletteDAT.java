@@ -2,12 +2,10 @@ package palette;
 
 import java.io.*;
 import java.awt.*;
-import javax.swing.*;
 import exception.*;
-import item.*;
 import utilities.*;
 
-public class PaletteDAT extends Palette {
+public abstract class PaletteDAT extends Palette {
 	
 	protected byte m_data[];
 
@@ -39,6 +37,8 @@ public class PaletteDAT extends Palette {
 	public int numberOfBytesPerPixel() {
 		return BPP;
 	}
+	
+	public abstract int getPaletteOffset();
 
 	public Color getPixel(int x, int y, int index) {
 		if(!isInitialized() || x < 0 || y < 0 || x > PALETTE_WIDTH - 1 || y > PALETTE_HEIGHT - 1 || index < 0 || index >= numberOfPalettes()) { return null; }
@@ -48,7 +48,7 @@ public class PaletteDAT extends Palette {
 		// the index representing the local sub palette,
 		// the x and y position of the pixel
 		// and the number of bytes per pixel (3)
-		int offset = PALETTE_OFFSET[m_type.ordinal()] + (index * PALETTE_SIZE_RGB) + (y * PALETTE_HEIGHT * BPP) + (x * BPP);
+		int offset = getPaletteOffset() + (index * PALETTE_SIZE_RGB) + (y * PALETTE_HEIGHT * BPP) + (x * BPP);
 		
 		// convert each unsigned byte to an integer, scaled upwards by the colour scale (4)
 		int r = (m_data[offset    ] & 0xFF) * COLOUR_SCALE;
@@ -71,7 +71,7 @@ public class PaletteDAT extends Palette {
 		// the index representing the selected local sub palette,
 		// the x and y position of the pixel
 		// and the number of bytes per pixel (3)
-		int offset = PALETTE_OFFSET[m_type.ordinal()] + (index * PALETTE_SIZE_RGB) + (y * PALETTE_HEIGHT * BPP) + (x * BPP);
+		int offset = getPaletteOffset() + (index * PALETTE_SIZE_RGB) + (y * PALETTE_HEIGHT * BPP) + (x * BPP);
 		
 		// divide each colour channel by the colour scale (4) and then convert it to a byte
 		m_data[offset    ] = (byte) (c.getRed() / COLOUR_SCALE);
@@ -82,7 +82,7 @@ public class PaletteDAT extends Palette {
 	}
 	
 	public Color[] getColourData(int index) {
-		if(!isInitialized() || m_type == DATType.Unknown || index < 0 || index >= numberOfPalettes()) { return null; }
+		if(!isInitialized() || index < 0 || index >= numberOfPalettes()) { return null; }
 		
 		// iterate over the data for the corresponding sub-palette and convert each pixel to a Color object
 		Color colourData[] = new Color[NUMBER_OF_COLOURS];
@@ -95,7 +95,7 @@ public class PaletteDAT extends Palette {
 	}
 	
 	public Color[] getAllColourData() {
-		if(!isInitialized() || m_type == DATType.Unknown) { return null; }
+		if(!isInitialized()) { return null; }
 		
 		// iterate over the data for the all sub-palette and convert each pixel to a Color object
 		Color colourData[] = new Color[NUMBER_OF_COLOURS * numberOfPalettes()];
@@ -110,7 +110,7 @@ public class PaletteDAT extends Palette {
 	}
 	
 	public boolean updateColourData(int index, int dataIndex, Color colourData[]) {
-		if(!isInitialized() || m_type == DATType.Unknown) { return false; }
+		if(!isInitialized()) { return false; }
 		
 		// verify that the colour data is not truncated
 		int dataOffset = (dataIndex * NUMBER_OF_COLOURS);
@@ -128,7 +128,7 @@ public class PaletteDAT extends Palette {
 				// the index representing the selected local sub palette,
 				// the x and y position of the pixel
 				// and the number of bytes per pixel (3)
-				offset = PALETTE_OFFSET[m_type.ordinal()] + (index * PALETTE_SIZE_RGB) + (j * PALETTE_HEIGHT * BPP) + (i * BPP);
+				offset = getPaletteOffset() + (index * PALETTE_SIZE_RGB) + (j * PALETTE_HEIGHT * BPP) + (i * BPP);
 				
 				// calculate the index in the colour data array corresponding
 				// to the pixel to be replaced in the local palette data array
@@ -145,7 +145,7 @@ public class PaletteDAT extends Palette {
 	}
 	
 	public boolean updateAllColourData(Color colourData[]) {
-		if(!isInitialized() || m_type == DATType.Unknown) { return false; }
+		if(!isInitialized()) { return false; }
 		
 		// verify that the colour data is not truncated
 		if(colourData.length < NUMBER_OF_COLOURS * numberOfPalettes()) { return false; }
@@ -162,7 +162,7 @@ public class PaletteDAT extends Palette {
 					// the index representing the current local sub palette,
 					// the x and y position of the pixel
 					// and the number of bytes per pixel (3)
-					offset = PALETTE_OFFSET[m_type.ordinal()] + (p * PALETTE_SIZE_RGB) + (j * PALETTE_HEIGHT * BPP) + (i * BPP);
+					offset = getPaletteOffset() + (p * PALETTE_SIZE_RGB) + (j * PALETTE_HEIGHT * BPP) + (i * BPP);
 					
 					// calculate the index in the colour data array corresponding
 					// to the current pixel to be replaced in the local palette data array
@@ -180,7 +180,7 @@ public class PaletteDAT extends Palette {
 	}
 
 	public boolean fillWithColour(Color c, int index) {
-		if(!isInitialized() || m_type == DATType.Unknown || c == null) { return false; }
+		if(!isInitialized() || c == null) { return false; }
 		
 		// iterate over all local palette data for all sub-palettes and
 		// replace it with the corresponding colour value
@@ -193,7 +193,7 @@ public class PaletteDAT extends Palette {
 					// the index representing the current local sub palette,
 					// the x and y position of the pixel
 					// and the number of bytes per pixel (3)
-					offset = PALETTE_OFFSET[m_type.ordinal()] + (p * PALETTE_SIZE_RGB) + (j * PALETTE_HEIGHT * BPP) + (i * BPP);
+					offset = getPaletteOffset() + (p * PALETTE_SIZE_RGB) + (j * PALETTE_HEIGHT * BPP) + (i * BPP);
 					
 					// divide each colour channel for the specified colour by the colour scale and convert it to a byte
 					m_data[offset    ] = (byte) (c.getRed() / COLOUR_SCALE);
@@ -229,26 +229,6 @@ public class PaletteDAT extends Palette {
 			throw new PaletteReadException("File \"" + m_file.getName() +  "\" has unsupported extension: " + extension);
 		}
 		
-		// attempt to determine the DAT type
-		// if it is unknown, prompt the user to specify the type
-//		m_type = DATType.parseFrom(fileName);
-
-		if(m_type == DATType.Unknown) {
-			String datTypes[] = new String[DATType.Unknown.ordinal()];
-			for(int i=0;i<datTypes.length;i++) {
-				datTypes[i] = DATType.getDisplayName(DATType.values()[i]);
-			}
-			Object value = JOptionPane.showInputDialog(null, "Unable to determine DAT type.\nPlease choose a DAT type from the list:", "Identify DAT Type", JOptionPane.QUESTION_MESSAGE, null, datTypes, datTypes[0]);
-			if(value == null) { return false; }
-			
-			for(int i=0;i<datTypes.length;i++) {
-				if(datTypes[i] == value) {
-					m_type = DATType.values()[i];
-					break;
-				}
-			}
-		}
-		
 		// check to make sure that the file is not too big to be stored in memory
 		if(m_file.length() > Integer.MAX_VALUE) {
 			m_loading = false;
@@ -274,6 +254,8 @@ public class PaletteDAT extends Palette {
 		
 		// update the local memory to the data read in from file
 		m_data = data;
+		
+		m_loading = false;
 		
 		return true;
 	}
