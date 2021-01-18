@@ -8,6 +8,7 @@ import settings.*;
 import console.*;
 import plugin.*;
 import group.*;
+import map.*;
 import palette.*;
 import art.*;
 
@@ -20,6 +21,7 @@ public class EditorPluginManager extends PluginManager {
 
 		addPluginType(GroupPlugin.PLUGIN_TYPE, GroupPlugin.class);
 		addPluginType(GroupProcessorPlugin.PLUGIN_TYPE, GroupProcessorPlugin.class);
+		addPluginType(MapPlugin.PLUGIN_TYPE, MapPlugin.class);
 		addPluginType(PalettePlugin.PLUGIN_TYPE, PalettePlugin.class);
 		addPluginType(ArtPlugin.PLUGIN_TYPE, ArtPlugin.class);
 	}
@@ -501,6 +503,175 @@ public class EditorPluginManager extends PluginManager {
 				if(duplicateFileFormat) { continue; }
 				
 				fileFormats.add(preferredFileFormat);
+			}
+		}
+		
+		return fileFormats;
+	}
+	
+	public Vector<MapPlugin> getMapPluginsForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return null; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return null; }
+		
+		MapPlugin mapPlugin = null;
+		Vector<MapPlugin> mapPlugins = new Vector<MapPlugin>();
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof MapPlugin)) { continue; }
+			
+			mapPlugin = (MapPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<mapPlugin.numberOfSupportedFileFormats();j++) {
+				if(mapPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					mapPlugins.add(mapPlugin);
+				}
+			}
+		}
+		return mapPlugins;
+	}
+	
+	public boolean hasMapPluginForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return false; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return false; }
+		
+		MapPlugin mapPlugin = null;
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof MapPlugin)) { continue; }
+			
+			mapPlugin = (MapPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<mapPlugin.numberOfSupportedFileFormats();j++) {
+				if(mapPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public int numberOfMapPluginsForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return 0; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return 0; }
+		
+		int numberOfMapPlugins = 0;
+		
+		MapPlugin mapPlugin = null;
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof MapPlugin)) { continue; }
+			
+			mapPlugin = (MapPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<mapPlugin.numberOfSupportedFileFormats();j++) {
+				if(mapPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					numberOfMapPlugins++;
+				}
+			}
+		}
+		return numberOfMapPlugins;
+	}
+	
+	public int indexOfFirstMapPluginForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return -1; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return -1; }
+		
+		MapPlugin mapPlugin = null;
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof MapPlugin)) { continue; }
+			
+			mapPlugin = (MapPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<mapPlugin.numberOfSupportedFileFormats();j++) {
+				if(mapPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	public String getMapPluginsAsStringExcludingFileFormat(String fileFormat) {
+		if(fileFormat == null) { return null; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return null; }
+		
+		Plugin plugin = null;
+		MapPlugin mapPlugin = null;
+		String mapPluginsList = new String();
+		
+		for(int i=0;i<m_plugins.size();i++) {
+			plugin = m_plugins.elementAt(i);
+			
+			if(plugin instanceof MapPlugin) {
+				mapPlugin = (MapPlugin) plugin;
+				
+				if(!mapPlugin.hasSupportedFileFormat(formattedFileFormat)) {
+					if(mapPluginsList.length() > 0) {
+						mapPluginsList += ", ";
+					}
+					
+					mapPluginsList += mapPlugin.getName();
+				}
+			}
+		}
+		
+		return mapPluginsList;
+	}
+	
+	public Vector<MapPlugin> getMapPluginsExcludingFileFormat(String fileFormat) {
+		if(fileFormat == null) { return null; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return null; }
+		
+		Plugin plugin = null;
+		MapPlugin mapPlugin = null;
+		Vector<MapPlugin> mapPlugins = new Vector<MapPlugin>();
+		
+		for(int i=0;i<m_plugins.size();i++) {
+			plugin = m_plugins.elementAt(i);
+			
+			if(plugin instanceof MapPlugin) {
+				mapPlugin = (MapPlugin) plugin;
+				
+				if(!mapPlugin.hasSupportedFileFormat(formattedFileFormat)) {
+					mapPlugins.add(mapPlugin);
+				}
+			}
+		}
+		
+		return mapPlugins;
+	}
+	
+	public Vector<String> getSupportedMapFileFormats() {
+		Plugin plugin = null;
+		MapPlugin mapPlugin = null;
+		String fileFormat = null;
+		boolean duplicateFileFormat = false;
+		Vector<String> fileFormats = new Vector<String>();
+		
+		for(int i=0;i<m_plugins.size();i++) {
+			plugin = m_plugins.elementAt(i);
+			
+			if(plugin instanceof MapPlugin) {
+				mapPlugin = (MapPlugin) plugin;
+				
+				for(int j=0;j<mapPlugin.numberOfSupportedFileFormats();j++) {
+					fileFormat = mapPlugin.getSupportedFileFormat(j).toUpperCase();
+					duplicateFileFormat = false;
+					
+					for(int k=0;k<fileFormats.size();k++) {
+						if(fileFormats.elementAt(k).equalsIgnoreCase(fileFormat)) {
+							duplicateFileFormat = true;
+							break;
+						}
+					}
+					
+					if(duplicateFileFormat) { continue; }
+					
+					fileFormats.add(fileFormat);
+				}
 			}
 		}
 		
