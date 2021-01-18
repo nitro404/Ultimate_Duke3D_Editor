@@ -13,13 +13,15 @@ import settings.*;
 import console.*;
 import item.*;
 import group.*;
+import map.*;
+import map.Map;
 import palette.*;
 import action.*;
 import editor.*;
 import plugin.*;
 import version.*;
 
-public class EditorWindow implements WindowListener, ComponentListener, ChangeListener, ActionListener, GroupActionListener, PaletteActionListener, UpdateListener, Updatable {
+public class EditorWindow implements WindowListener, ComponentListener, ChangeListener, ActionListener, GroupActionListener, PaletteActionListener, MapActionListener, UpdateListener, Updatable {
 	
 	private JFrame m_frame;
 	private JTabbedPane m_mainTabbedPane;
@@ -30,6 +32,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 
 	private ProgressDialog m_progressDialog;
 	private PreferredPluginEditorDialog m_preferredPluginEditorDialog;
+	private OffsetMapSoundRangeDialog m_offsetMapSoundRangeDialog;
 	
 	private JMenuBar m_menuBar;
 	private JMenu m_fileMenu;
@@ -43,6 +46,8 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 	private JMenuItem m_fileCloseMenuItem;
 	private JMenuItem m_fileCloseAllMenuItem;
 	private JMenuItem m_fileExitMenuItem;
+	private JMenu m_mapMenu;
+	private JMenuItem m_mapOffsetSoundRangeMenuItem;
 	private JMenu m_groupMenu;
 	private JMenuItem m_groupAddFilesMenuItem;
 	private JMenuItem m_groupRemoveFilesMenuItem;
@@ -189,6 +194,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 
 		m_progressDialog = new ProgressDialog(m_frame);
 		m_preferredPluginEditorDialog = new PreferredPluginEditorDialog(m_frame);
+		m_offsetMapSoundRangeDialog = new OffsetMapSoundRangeDialog(m_frame);
 		
 		m_initialized = true;
 		
@@ -227,6 +233,9 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_fileExportMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.Event.CTRL_MASK));
 		m_fileCloseMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.Event.CTRL_MASK));
 		m_fileExitMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.Event.CTRL_MASK));
+		
+		m_mapMenu = new JMenu("Map");
+		m_mapOffsetSoundRangeMenuItem = new JMenuItem("Offset Sound Range");
 		
 		m_groupMenu = new JMenu("Group");
 		m_groupAddFilesMenuItem = new JMenuItem("Add Files");
@@ -322,6 +331,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_fileCloseMenuItem.addActionListener(this);
 		m_fileCloseAllMenuItem.addActionListener(this);
 		m_fileExitMenuItem.addActionListener(this);
+		m_mapOffsetSoundRangeMenuItem.addActionListener(this);
 		m_groupAddFilesMenuItem.addActionListener(this);
 		m_groupRemoveFilesMenuItem.addActionListener(this);
 		m_groupReplaceFileMenuItem.addActionListener(this);
@@ -379,6 +389,8 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_fileMenu.add(m_fileCloseMenuItem);
 		m_fileMenu.add(m_fileCloseAllMenuItem);
 		m_fileMenu.add(m_fileExitMenuItem);
+
+		m_mapMenu.add(m_mapOffsetSoundRangeMenuItem);
 
 		m_groupMenu.add(m_groupAddFilesMenuItem);
 		m_groupMenu.add(m_groupRemoveFilesMenuItem);
@@ -439,6 +451,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_helpMenu.add(m_helpAboutMenuItem);
 		
 		m_menuBar.add(m_fileMenu);
+		m_menuBar.add(m_mapMenu);
 		m_menuBar.add(m_groupMenu);
 		m_menuBar.add(m_selectMenu);
 		m_menuBar.add(m_sortMenu);
@@ -833,6 +846,9 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		else if(newItem instanceof Group) {
 			((GroupPanel) newItemPanel).addGroupActionListener(this);
 		}
+		else if(newItem instanceof Map) {
+			((MapPanel) newItemPanel).addMapActionListener(this);
+		}
 		else if(newItem instanceof Palette) {
 			((PalettePanel) newItemPanel).addPaletteActionListener(this);
 		}
@@ -1018,6 +1034,9 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		if(item instanceof Group) {
 			((GroupPanel) itemPanel).addGroupActionListener(this);
 		}
+		else if(item instanceof Map) {
+			((MapPanel) itemPanel).addMapActionListener(this);
+		}
 		else if(item instanceof Palette) {
 			((PalettePanel) itemPanel).addPaletteActionListener(this);
 		}
@@ -1128,7 +1147,30 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		
 		update();
 	}
+
+	public Vector<Sound> offsetSoundRangeInSelectedMap() throws IllegalArgumentException, SoundNumberUnderflowException, SoundNumberOverflowException {
+		ItemPanel itemPanel = getSelectedItemPanel();
+		
+		if(itemPanel == null || !(itemPanel instanceof MapPanel)) {
+			return null;
+		}
+		
+		return offsetSoundRangeInMap((MapPanel) itemPanel);
+	}
 	
+	public Vector<Sound> offsetSoundRangeInMap(MapPanel mapPanel) throws IllegalArgumentException, SoundNumberUnderflowException, SoundNumberOverflowException {
+		Map map = mapPanel.getMap();
+		if(map == null) { return null; }
+
+		m_offsetMapSoundRangeDialog.display();
+
+		if(!m_offsetMapSoundRangeDialog.userSubmitted()) {
+			return null;
+		}
+
+		return map.offsetSoundRange(m_offsetMapSoundRangeDialog.getSoundRangeStart(), m_offsetMapSoundRangeDialog.getSoundRangeEnd(), m_offsetMapSoundRangeDialog.getSoundRangeOffset());
+	}
+
 	public int addFilesToSelectedGroup() {
 		ItemPanel itemPanel = getSelectedItemPanel();
 		
@@ -2351,7 +2393,9 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_settingsAutoSaveSettingsMenuItem.setSelected(SettingsManager.instance.autoSaveSettings);
 		
 		ItemPanel selectedItemPanel = getSelectedItemPanel();
+		MapPanel selectedMapPanel = (selectedItemPanel instanceof MapPanel) ? (MapPanel) selectedItemPanel : null;
 		GroupPanel selectedGroupPanel = (selectedItemPanel instanceof GroupPanel) ? (GroupPanel) selectedItemPanel : null;
+		Map selectedMap = selectedMapPanel == null ? null : selectedMapPanel.getMap();
 		Group selectedGroup = selectedGroupPanel == null ? null : selectedGroupPanel.getGroup();
 		boolean itemTabSelected = m_mainTabbedPane.getSelectedIndex() != m_mainTabbedPane.getTabCount() - 1;
 		boolean groupHasFiles = selectedGroup != null && selectedGroup.numberOfFiles() != 0;
@@ -2363,6 +2407,8 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		m_fileExportMenuItem.setEnabled(itemTabSelected);
 		m_fileCloseMenuItem.setEnabled(itemTabSelected);
 		m_fileCloseAllMenuItem.setEnabled(m_itemPanels.size() != 0);
+
+		m_mapOffsetSoundRangeMenuItem.setEnabled(selectedMap != null);
 
 		m_groupAddFilesMenuItem.setEnabled(selectedGroupPanel != null);
 		m_groupRemoveFilesMenuItem.setText("Remove File" + (selectedGroupPanel != null && selectedGroupPanel.numberOfSelectedFiles() == 1 ? "" : "s"));
@@ -2592,6 +2638,24 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		// close the program
 		else if(e.getSource() == m_fileExitMenuItem) {
 			close();
+		}
+		else if(e.getSource() == m_mapOffsetSoundRangeMenuItem) {
+			try {
+				Vector<Sound> offsetSounds = offsetSoundRangeInSelectedMap();
+
+				if(offsetSounds != null) {
+					JOptionPane.showMessageDialog(m_frame, "Offset " + offsetSounds.size() + " map sound" + (offsetSounds.size() == 1 ? "" : "s") + ".", "Sounds Offset", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+			catch (IllegalArgumentException exception) {
+				JOptionPane.showMessageDialog(m_frame, exception.getMessage(), "Sound Range Offsetting Failed", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (SoundNumberUnderflowException exception) {
+				JOptionPane.showMessageDialog(m_frame, exception.getMessage(), "Sound Range Offsetting Failed", JOptionPane.ERROR_MESSAGE);
+			}
+			catch (SoundNumberOverflowException exception) {
+				JOptionPane.showMessageDialog(m_frame, exception.getMessage(), "Sound Range Offsetting Failed", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		// add files to selected group
 		else if(e.getSource() == m_groupAddFilesMenuItem) {
@@ -2994,6 +3058,30 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 				
 			case CloseAll:
 				closeAllItems();
+				break;
+				
+			case DoNothing:
+			case Invalid:
+				return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean handleMapAction(MapAction action) {
+		if(!MapAction.isvalid(action)) { return false; }
+		
+		switch(action.getAction()) {
+			case Save:
+				saveItem(action.getSource());
+				break;
+				
+			case SaveAs:
+				saveItemAsNew(action.getSource());
+				break;
+
+			case Close:
+				closeItem(action.getSource());
 				break;
 				
 			case DoNothing:
