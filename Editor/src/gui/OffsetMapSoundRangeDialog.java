@@ -19,6 +19,7 @@ public class OffsetMapSoundRangeDialog extends JDialog implements ActionListener
 	protected short m_soundRangeOffset;
 	protected JPanel m_mainPanel;
 	protected JButton m_updateButton;
+	protected JButton m_defaultsButton;
 	protected JButton m_cancelButton;
 	protected JLabel m_soundRangeStartLabel;
 	protected JLabel m_soundRangeEndLabel;
@@ -68,6 +69,7 @@ public class OffsetMapSoundRangeDialog extends JDialog implements ActionListener
 
 		initComponents();
 		updateLayout();
+		reset();
 	}
 	
 	protected void initComponents() {
@@ -77,6 +79,10 @@ public class OffsetMapSoundRangeDialog extends JDialog implements ActionListener
 		m_updateButton = new JButton("Offset Sounds");
 		m_updateButton.setSize(m_updateButton.getPreferredSize());
 		m_updateButton.addActionListener(this);
+
+		m_defaultsButton = new JButton("Defaults");
+		m_defaultsButton.setSize(m_defaultsButton.getPreferredSize());
+		m_defaultsButton.addActionListener(this);
 
 		m_cancelButton = new JButton("Cancel");
 		m_cancelButton.setSize(m_cancelButton.getPreferredSize());
@@ -103,6 +109,7 @@ public class OffsetMapSoundRangeDialog extends JDialog implements ActionListener
 		};
 
 		m_mainPanel.add(m_updateButton);
+		m_mainPanel.add(m_defaultsButton);
 		m_mainPanel.add(m_cancelButton);
 
 		JLabel label = null;
@@ -223,11 +230,6 @@ public class OffsetMapSoundRangeDialog extends JDialog implements ActionListener
 				return;
 			}
 		}
-		else if(m_soundRangeEnd + m_soundRangeOffset > BuildConstants.MAX_NUMBER_OF_SOUNDS) {
-			if(JOptionPane.showConfirmDialog(SwingUtilities.getRoot(this), "Sound offset is too high, would result in sound values exceeding the max sound value of " + BuildConstants.MAX_NUMBER_OF_SOUNDS + ".\nAre you sure you wish to continue?", "High Sound Offset", JOptionPane.YES_NO_CANCEL_OPTION) != JOptionPane.YES_OPTION) {
-				return;
-			}
-		}
 
 		m_submitted = true;
 		
@@ -261,8 +263,6 @@ public class OffsetMapSoundRangeDialog extends JDialog implements ActionListener
 	public void display() {
 		m_cancelled = false;
 		m_submitted = false;
-
-		reset();
 
 		setVisible(true);
 	}
@@ -370,7 +370,7 @@ public class OffsetMapSoundRangeDialog extends JDialog implements ActionListener
 			if(preferredSize.height > maxLabelHeight) { maxLabelHeight = preferredSize.height; }
 		}
 
-		int maxTextFieldWidth = 70;
+		int maxTextFieldWidth = 152;
 		int maxTextFieldHeight = 0;
 
 		for(int i = 0; i < m_textFields.length; i++) {
@@ -405,9 +405,10 @@ public class OffsetMapSoundRangeDialog extends JDialog implements ActionListener
 
 		int buttonHeight = 0;
 		if(m_updateButton.getHeight() > buttonHeight) { buttonHeight = m_updateButton.getHeight(); }
+		if(m_defaultsButton.getHeight() > buttonHeight) { buttonHeight = m_defaultsButton.getHeight(); }
 		if(m_cancelButton.getHeight() > buttonHeight) { buttonHeight = m_cancelButton.getHeight(); }
 
-		int buttonAreaWidth = m_updateButton.getWidth() + m_cancelButton.getWidth() + (padding * 2);
+		int buttonAreaWidth = m_updateButton.getWidth() + m_defaultsButton.getWidth() + m_cancelButton.getWidth() + (padding * 3);
 
 		int panelWidth = maxLabelWidth + maxTextFieldWidth + (padding * 4);
 		int panelHeight = (m_labels.length * (elementHeight + padding)) + buttonHeight + (padding * 2);
@@ -415,6 +416,8 @@ public class OffsetMapSoundRangeDialog extends JDialog implements ActionListener
 		int buttonXPosition = (panelWidth / 2) - (buttonAreaWidth / 2);
 		m_updateButton.setLocation(buttonXPosition, elementYPosition);
 		buttonXPosition += m_updateButton.getWidth() + padding;
+		m_defaultsButton.setLocation(buttonXPosition, elementYPosition);
+		buttonXPosition += m_defaultsButton.getWidth() + padding;
 		m_cancelButton.setLocation(buttonXPosition, elementYPosition);
 
 		m_mainPanel.setPreferredSize(new Dimension(panelWidth, panelHeight));
@@ -430,6 +433,9 @@ public class OffsetMapSoundRangeDialog extends JDialog implements ActionListener
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == m_updateButton) {
 			submit();
+		}
+		else if(e.getSource() == m_defaultsButton) {
+			reset();
 		}
 		else if(e.getSource() == m_cancelButton) {
 			cancel();

@@ -473,6 +473,10 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 	}
 
 	public Vector<Sound> offsetSoundRange(short soundRangeStart, short soundRangeEnd, short soundRangeOffset) throws IllegalArgumentException, SoundNumberUnderflowException, SoundNumberOverflowException {
+		return offsetSoundRange(soundRangeStart, soundRangeEnd, soundRangeOffset, false);
+	}
+
+	public Vector<Sound> offsetSoundRange(short soundRangeStart, short soundRangeEnd, short soundRangeOffset, boolean verbose) throws IllegalArgumentException, SoundNumberUnderflowException, SoundNumberOverflowException {
 		if(soundRangeStart < 0 || soundRangeStart > BuildConstants.MAX_NUMBER_OF_SOUNDS) {
 			throw new IllegalArgumentException("Invalid sound range start, expected number between 0 and " + BuildConstants.MAX_NUMBER_OF_SOUNDS + ", inclusively.");
 		}
@@ -521,9 +525,23 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 				continue;
 			}
 
-			sound.setSoundNumber((short) (soundNumber + soundRangeOffset));
+			newSoundNumber = (short) (soundNumber + soundRangeOffset);
+
+// TODO: better way to do this?
+
+			if(verbose) {
+				SystemConsole.instance.writeLine("Offsetting sound #" + (i + 1) + " from value " + soundNumber + " to " + newSoundNumber + ".");
+			}
+
+			sound.setSoundNumber(newSoundNumber);
+
+// TODO: does not mark level as changed
 
 			offsetSounds.add(sound);
+		}
+
+		if(verbose) {
+			SystemConsole.instance.writeLine("Offset " + offsetSounds.size() + " sound" + (offsetSounds.size() == 1 ? "" : "s") + ".");
 		}
 
 		return offsetSounds;
