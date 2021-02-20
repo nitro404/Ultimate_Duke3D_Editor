@@ -1253,7 +1253,7 @@ loadItem(new File("test/TILES009.ART"));
 			return null;
 		}
 
-		return map.offsetSoundRange(m_offsetMapSoundRangeDialog.getSoundRangeStart(), m_offsetMapSoundRangeDialog.getSoundRangeEnd(), m_offsetMapSoundRangeDialog.getSoundRangeOffset());
+		return map.offsetSoundRange(m_offsetMapSoundRangeDialog.getSoundRangeStart(), m_offsetMapSoundRangeDialog.getSoundRangeEnd(), m_offsetMapSoundRangeDialog.getSoundRangeOffset(), true);
 	}
 
 	public int addFilesToSelectedGroup() {
