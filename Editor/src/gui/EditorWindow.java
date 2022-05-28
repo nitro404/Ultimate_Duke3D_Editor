@@ -220,7 +220,7 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 		update();
 		
 // TODO: temporary testing
-loadItem(new File("test/TILES009.ART"));
+//loadItem(new File("test/TILES009.ART"));
 		
 		return true;
 	}

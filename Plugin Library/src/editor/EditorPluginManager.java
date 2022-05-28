@@ -8,7 +8,9 @@ import settings.*;
 import console.*;
 import plugin.*;
 import group.*;
+import map.*;
 import palette.*;
+import art.*;
 
 public class EditorPluginManager extends PluginManager {
 	
@@ -19,7 +21,9 @@ public class EditorPluginManager extends PluginManager {
 
 		addPluginType(GroupPlugin.PLUGIN_TYPE, GroupPlugin.class);
 		addPluginType(GroupProcessorPlugin.PLUGIN_TYPE, GroupProcessorPlugin.class);
+		addPluginType(MapPlugin.PLUGIN_TYPE, MapPlugin.class);
 		addPluginType(PalettePlugin.PLUGIN_TYPE, PalettePlugin.class);
+		addPluginType(ArtPlugin.PLUGIN_TYPE, ArtPlugin.class);
 	}
 	
 	public Vector<FilePlugin> getPluginsForFileFormat(String fileFormat) {
@@ -505,6 +509,175 @@ public class EditorPluginManager extends PluginManager {
 		return fileFormats;
 	}
 	
+	public Vector<MapPlugin> getMapPluginsForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return null; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return null; }
+		
+		MapPlugin mapPlugin = null;
+		Vector<MapPlugin> mapPlugins = new Vector<MapPlugin>();
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof MapPlugin)) { continue; }
+			
+			mapPlugin = (MapPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<mapPlugin.numberOfSupportedFileFormats();j++) {
+				if(mapPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					mapPlugins.add(mapPlugin);
+				}
+			}
+		}
+		return mapPlugins;
+	}
+	
+	public boolean hasMapPluginForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return false; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return false; }
+		
+		MapPlugin mapPlugin = null;
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof MapPlugin)) { continue; }
+			
+			mapPlugin = (MapPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<mapPlugin.numberOfSupportedFileFormats();j++) {
+				if(mapPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public int numberOfMapPluginsForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return 0; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return 0; }
+		
+		int numberOfMapPlugins = 0;
+		
+		MapPlugin mapPlugin = null;
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof MapPlugin)) { continue; }
+			
+			mapPlugin = (MapPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<mapPlugin.numberOfSupportedFileFormats();j++) {
+				if(mapPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					numberOfMapPlugins++;
+				}
+			}
+		}
+		return numberOfMapPlugins;
+	}
+	
+	public int indexOfFirstMapPluginForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return -1; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return -1; }
+		
+		MapPlugin mapPlugin = null;
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof MapPlugin)) { continue; }
+			
+			mapPlugin = (MapPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<mapPlugin.numberOfSupportedFileFormats();j++) {
+				if(mapPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	public String getMapPluginsAsStringExcludingFileFormat(String fileFormat) {
+		if(fileFormat == null) { return null; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return null; }
+		
+		Plugin plugin = null;
+		MapPlugin mapPlugin = null;
+		String mapPluginsList = new String();
+		
+		for(int i=0;i<m_plugins.size();i++) {
+			plugin = m_plugins.elementAt(i);
+			
+			if(plugin instanceof MapPlugin) {
+				mapPlugin = (MapPlugin) plugin;
+				
+				if(!mapPlugin.hasSupportedFileFormat(formattedFileFormat)) {
+					if(mapPluginsList.length() > 0) {
+						mapPluginsList += ", ";
+					}
+					
+					mapPluginsList += mapPlugin.getName();
+				}
+			}
+		}
+		
+		return mapPluginsList;
+	}
+	
+	public Vector<MapPlugin> getMapPluginsExcludingFileFormat(String fileFormat) {
+		if(fileFormat == null) { return null; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return null; }
+		
+		Plugin plugin = null;
+		MapPlugin mapPlugin = null;
+		Vector<MapPlugin> mapPlugins = new Vector<MapPlugin>();
+		
+		for(int i=0;i<m_plugins.size();i++) {
+			plugin = m_plugins.elementAt(i);
+			
+			if(plugin instanceof MapPlugin) {
+				mapPlugin = (MapPlugin) plugin;
+				
+				if(!mapPlugin.hasSupportedFileFormat(formattedFileFormat)) {
+					mapPlugins.add(mapPlugin);
+				}
+			}
+		}
+		
+		return mapPlugins;
+	}
+	
+	public Vector<String> getSupportedMapFileFormats() {
+		Plugin plugin = null;
+		MapPlugin mapPlugin = null;
+		String fileFormat = null;
+		boolean duplicateFileFormat = false;
+		Vector<String> fileFormats = new Vector<String>();
+		
+		for(int i=0;i<m_plugins.size();i++) {
+			plugin = m_plugins.elementAt(i);
+			
+			if(plugin instanceof MapPlugin) {
+				mapPlugin = (MapPlugin) plugin;
+				
+				for(int j=0;j<mapPlugin.numberOfSupportedFileFormats();j++) {
+					fileFormat = mapPlugin.getSupportedFileFormat(j).toUpperCase();
+					duplicateFileFormat = false;
+					
+					for(int k=0;k<fileFormats.size();k++) {
+						if(fileFormats.elementAt(k).equalsIgnoreCase(fileFormat)) {
+							duplicateFileFormat = true;
+							break;
+						}
+					}
+					
+					if(duplicateFileFormat) { continue; }
+					
+					fileFormats.add(fileFormat);
+				}
+			}
+		}
+		
+		return fileFormats;
+	}
+	
 	public Vector<PalettePlugin> getPalettePluginsForFileFormat(String fileFormat) {
 		if(fileFormat == null) { return null; }
 		String formattedFileFormat = fileFormat.trim();
@@ -686,6 +859,208 @@ public class EditorPluginManager extends PluginManager {
 		}
 		
 		Collection<String> preferredFileFormats = getPreferredFileFormats(PalettePlugin.class);
+		
+		boolean duplicateFileFormat = false;
+		if(preferredFileFormats != null) {
+			for(String preferredFileFormat : preferredFileFormats) {
+				duplicateFileFormat = false;
+				
+				for(int j=0;j<fileFormats.size();j++) {
+					if(fileFormats.elementAt(j).equalsIgnoreCase(preferredFileFormat)) {
+						duplicateFileFormat = true;
+					}
+				}
+				
+				if(duplicateFileFormat) { continue; }
+				
+				fileFormats.add(preferredFileFormat);
+			}
+		}
+		
+		return fileFormats;
+	}
+	
+	public Vector<ArtPlugin> getArtPluginsForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return null; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return null; }
+		
+		ArtPlugin artPlugin = null;
+		Vector<ArtPlugin> artPlugins = new Vector<ArtPlugin>();
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof ArtPlugin)) { continue; }
+			
+			artPlugin = (ArtPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<artPlugin.numberOfSupportedFileFormats();j++) {
+				if(artPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					artPlugins.add(artPlugin);
+				}
+			}
+		}
+		return artPlugins;
+	}
+	
+	public boolean hasArtPluginForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return false; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return false; }
+		
+		ArtPlugin artPlugin = null;
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof ArtPlugin)) { continue; }
+			
+			artPlugin = (ArtPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<artPlugin.numberOfSupportedFileFormats();j++) {
+				if(artPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public int numberOfArtPluginsForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return 0; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return 0; }
+		
+		int numberOfArtPlugins = 0;
+		
+		ArtPlugin artPlugin = null;
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof ArtPlugin)) { continue; }
+			
+			artPlugin = (ArtPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<artPlugin.numberOfSupportedFileFormats();j++) {
+				if(artPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					numberOfArtPlugins++;
+				}
+			}
+		}
+		return numberOfArtPlugins;
+	}
+	
+	public int indexOfFirstArtPluginForFileFormat(String fileFormat) {
+		if(fileFormat == null) { return -1; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return -1; }
+		
+		ArtPlugin artPlugin = null;
+		for(int i=0;i<m_plugins.size();i++) {
+			if(!(m_plugins.elementAt(i) instanceof ArtPlugin)) { continue; }
+			
+			artPlugin = (ArtPlugin) m_plugins.elementAt(i);
+			
+			for(int j=0;j<artPlugin.numberOfSupportedFileFormats();j++) {
+				if(artPlugin.getSupportedFileFormat(j).equalsIgnoreCase(formattedFileFormat)) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	
+	public String getArtPluginsAsStringExcludingFileFormat(String fileFormat) {
+		if(fileFormat == null) { return null; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return null; }
+		
+		Plugin plugin = null;
+		ArtPlugin artPlugin = null;
+		String artPluginsList = new String();
+		
+		for(int i=0;i<m_plugins.size();i++) {
+			plugin = m_plugins.elementAt(i);
+			
+			if(plugin instanceof ArtPlugin) {
+				artPlugin = (ArtPlugin) plugin;
+				
+				if(!artPlugin.hasSupportedFileFormat(formattedFileFormat)) {
+					if(artPluginsList.length() > 0) {
+						artPluginsList += ", ";
+					}
+					
+					artPluginsList += artPlugin.getName();
+				}
+			}
+		}
+		
+		return artPluginsList;
+	}
+	
+	public Vector<ArtPlugin> getArtPluginsExcludingFileFormat(String fileFormat) {
+		if(fileFormat == null) { return null; }
+		String formattedFileFormat = fileFormat.trim();
+		if(formattedFileFormat.isEmpty()) { return null; }
+		
+		Plugin plugin = null;
+		ArtPlugin artPlugin = null;
+		Vector<ArtPlugin> artPlugins = new Vector<ArtPlugin>();
+		
+		for(int i=0;i<m_plugins.size();i++) {
+			plugin = m_plugins.elementAt(i);
+			
+			if(plugin instanceof ArtPlugin) {
+				artPlugin = (ArtPlugin) plugin;
+				
+				if(!artPlugin.hasSupportedFileFormat(formattedFileFormat)) {
+					artPlugins.add(artPlugin);
+				}
+			}
+		}
+		
+		return artPlugins;
+	}
+	
+	public Vector<String> getSupportedArtFileFormats() {
+		Plugin plugin = null;
+		ArtPlugin artPlugin = null;
+		String fileFormat = null;
+		boolean duplicateFileFormat = false;
+		Vector<String> fileFormats = new Vector<String>();
+		
+		for(int i=0;i<m_plugins.size();i++) {
+			plugin = m_plugins.elementAt(i);
+			
+			if(plugin instanceof ArtPlugin) {
+				artPlugin = (ArtPlugin) plugin;
+				
+				for(int j=0;j<artPlugin.numberOfSupportedFileFormats();j++) {
+					fileFormat = artPlugin.getSupportedFileFormat(j).toUpperCase();
+					duplicateFileFormat = false;
+					
+					for(int k=0;k<fileFormats.size();k++) {
+						if(fileFormats.elementAt(k).equalsIgnoreCase(fileFormat)) {
+							duplicateFileFormat = true;
+							break;
+						}
+					}
+					
+					if(duplicateFileFormat) { continue; }
+					
+					fileFormats.add(fileFormat);
+				}
+			}
+		}
+		
+		return fileFormats;
+	}
+	
+	public Vector<String> getSupportedAndPreferredArtFileFormats() {
+		Vector<String> fileFormats = new Vector<String>();
+		
+		Vector<String> supportedFileFormats = getSupportedArtFileFormats();
+		
+		if(supportedFileFormats != null) {
+			for(int i=0;i<supportedFileFormats.size();i++) {
+				fileFormats.add(supportedFileFormats.elementAt(i));
+			}
+		}
+		
+		Collection<String> preferredFileFormats = getPreferredFileFormats(ArtPlugin.class);
 		
 		boolean duplicateFileFormat = false;
 		if(preferredFileFormats != null) {

@@ -75,7 +75,7 @@ public class ArtPanel extends ScrollableItemPanel implements ArtChangeListener, 
 		update();
 		
 // TODO: temporary debugging:
-m_tileDialog.display(m_art.getTileByNumber(2524));
+//m_tileDialog.display(m_art.getTileByNumber(2524));
 		
 		return true;
 	}

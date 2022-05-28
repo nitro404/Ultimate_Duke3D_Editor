@@ -19,6 +19,7 @@ public class SettingsManager {
 	public String previousSaveDirectory;
 	public String previousGroupFileDirectory;
 	public String previousExtractGroupFileDirectory;
+	public String previousExtractArtTileDirectory;
 	public String previousProcessingDirectory;
 	public boolean sortAllGroups;
 	public boolean autoSortFiles;
@@ -39,6 +40,12 @@ public class SettingsManager {
 	public int windowHeight;
 	public boolean autoScrollConsole;
 	public int maxConsoleHistory;
+	public String paletteFilePath;
+	public boolean automaticRelativePaletteOverride;
+	public String lookupFilePath;
+	public boolean automaticRelativeLookupOverride;
+	public Color tileButtonPressedColour;
+	public Color tileButtonBackgroundColour;
 	public Color backgroundColour;
 	
 	public static final String defaultSettingsFileName = "Ultimate Duke 3D Editor.ini";
@@ -47,6 +54,7 @@ public class SettingsManager {
 	public static final String defaultSaveDirectory = System.getProperty("user.dir");
 	public static final String defaultGroupFileDirectory = System.getProperty("user.dir");
 	public static final String defaultExtractGroupFileDirectory = System.getProperty("user.dir");
+	public static final String defaultExtractArtTileDirectory = System.getProperty("user.dir");
 	public static final String defaultProcessingDirectory = System.getProperty("user.dir");
 	public static final boolean defaultSortAllGroups = false;
 	public static final boolean defaultAutoSortFiles = true;
@@ -67,6 +75,10 @@ public class SettingsManager {
 	public static final int defaultWindowHeight = 768;
 	public static final boolean defaultAutoScrollConsole = true;
 	public static final int defaultMaxConsoleHistory = 512;
+	public static final boolean defaultAutomaticRelativePaletteOverride = true;
+	public static final boolean defaultAutomaticRelativeLookupOverride = true;
+	public static final Color defaultTileButtonPressedColour = Color.GREEN;
+	public static final Color defaultTileButtonBackgroundColour = Color.MAGENTA;
 	public static final Color defaultBackgroundColour = new Color(238, 238, 238);
 	
 	public SettingsManager() {
@@ -90,6 +102,7 @@ public class SettingsManager {
 		previousSaveDirectory = defaultSaveDirectory;
 		previousGroupFileDirectory = defaultGroupFileDirectory;
 		previousExtractGroupFileDirectory = defaultExtractGroupFileDirectory;
+		previousExtractArtTileDirectory = defaultExtractArtTileDirectory;
 		previousProcessingDirectory = defaultProcessingDirectory;
 		sortAllGroups = defaultSortAllGroups;
 		autoSortFiles = defaultAutoSortFiles;
@@ -111,6 +124,12 @@ public class SettingsManager {
 		windowHeight = defaultWindowHeight;
 		autoScrollConsole = defaultAutoScrollConsole;
 		maxConsoleHistory = defaultMaxConsoleHistory;
+		paletteFilePath = "";
+		automaticRelativePaletteOverride = defaultAutomaticRelativePaletteOverride;
+		lookupFilePath = "";
+		automaticRelativeLookupOverride = defaultAutomaticRelativeLookupOverride;
+		tileButtonPressedColour = defaultTileButtonPressedColour;
+		tileButtonBackgroundColour = defaultTileButtonBackgroundColour;
 		backgroundColour = defaultBackgroundColour;
 	}
 	
@@ -168,6 +187,12 @@ public class SettingsManager {
 		tempString = m_settings.getValue("Extract Group File Directory", "Paths");
 		if(tempString != null) {
 			previousExtractGroupFileDirectory = tempString;
+		}
+
+		// parse extract art tile directory path
+		tempString = m_settings.getValue("Extract Art Tile Directory", "Paths");
+		if(tempString != null) {
+			previousExtractArtTileDirectory = tempString;
 		}
 		
 		// parse processing directory path
@@ -321,11 +346,55 @@ public class SettingsManager {
 				autoScrollConsole = false;
 			}
 		}
+		
+		// parse palette file path
+		tempString = m_settings.getValue("Palette File Path", "Paths");
+		if(tempString != null) {
+			paletteFilePath = tempString;
+		}
+
+		// parse automatic relative palette override
+		tempString = m_settings.getValue("Automatic Relative Palette Override", "Interface");
+		if(tempString != null) {
+			if(tempString.equalsIgnoreCase("true")) {
+				automaticRelativePaletteOverride = true;
+			}
+			else if(tempString.equalsIgnoreCase("false")) {
+				automaticRelativePaletteOverride = false;
+			}
+		}
+
+		// parse palette file path
+		tempString = m_settings.getValue("Lookup File Path", "Paths");
+		if(tempString != null) {
+			lookupFilePath = tempString;
+		}
+
+		// parse automatic relative lookup override
+		tempString = m_settings.getValue("Automatic Relative Lookup Override", "Interface");
+		if(tempString != null) {
+			if(tempString.equalsIgnoreCase("true")) {
+				automaticRelativeLookupOverride = true;
+			}
+			else if(tempString.equalsIgnoreCase("false")) {
+				automaticRelativeLookupOverride = false;
+			}
+		}
 
 		// parse max console history
 		tempInt = -1;
 		try { tempInt = Integer.parseInt(m_settings.getValue("Max Console History", "Console")); } catch(NumberFormatException e) { } 
 		if(tempInt >= 1) { maxConsoleHistory = tempInt; }
+
+		// parse tile button pressed colour
+		if(variables.hasVariable("Tile Button Pressed Colour", "Interface")) {
+			tileButtonPressedColour = Utilities.parseColour(variables.getValue("Tile Button Pressed Colour", "Interface"));
+		}
+
+		// parse tile button background colour
+		if(variables.hasVariable("Tile Button Background Colour", "Interface")) {
+			tileButtonBackgroundColour = Utilities.parseColour(variables.getValue("Tile Button Background Colour", "Interface"));
+		}
 		
 		// parse background colour
 		tempColour = Utilities.parseColour(variables.getValue("Background Colour", "Interface"));
@@ -344,6 +413,7 @@ public class SettingsManager {
 		m_settings.setValue("Save Directory", previousSaveDirectory, "Paths");
 		m_settings.setValue("Group File Directory", previousGroupFileDirectory, "Paths");
 		m_settings.setValue("Extract Group File Directory", previousExtractGroupFileDirectory, "Paths");
+		m_settings.setValue("Extract Art Tile Directory", previousExtractArtTileDirectory, "Paths");
 		m_settings.setValue("Processing Directory", previousProcessingDirectory, "Paths");
 		m_settings.setValue("Sort All Groups", sortAllGroups, "Sorting");
 		m_settings.setValue("Auto-Sort Files", autoSortFiles, "Sorting");
@@ -363,6 +433,12 @@ public class SettingsManager {
 		m_settings.setValue("Window Size", windowWidth + ", " + windowHeight, "Interface");
 		m_settings.setValue("Auto-Scroll Console", autoScrollConsole, "Console");
 		m_settings.setValue("Max Console History", maxConsoleHistory, "Console");
+		m_settings.setValue("Palette File Path", paletteFilePath, "Paths");
+		m_settings.setValue("Automatic Relative Palette Override", automaticRelativePaletteOverride, "Interface");
+		m_settings.setValue("Lookup File Path", lookupFilePath, "Paths");
+		m_settings.setValue("Automatic Relative Lookup Override", automaticRelativeLookupOverride, "Interface");
+		m_settings.setValue("Tile Button Pressed Colour", tileButtonPressedColour == null ? "" : tileButtonPressedColour.getRed() + ", " + tileButtonPressedColour.getGreen() + ", " + tileButtonPressedColour.getBlue(), "Interface");
+		m_settings.setValue("Tile Button Background Colour", tileButtonBackgroundColour == null ? "" : tileButtonBackgroundColour.getRed() + ", " + tileButtonBackgroundColour.getGreen() + ", " + tileButtonBackgroundColour.getBlue(), "Interface");
 		m_settings.setValue("Background Colour", backgroundColour.getRed() + ", " + backgroundColour.getGreen() + ", " + backgroundColour.getBlue(), "Interface");
 		m_settings.addVariables(EditorPluginManager.instance.getPreferredPluginsAsVariableCollection(), true);
 		
