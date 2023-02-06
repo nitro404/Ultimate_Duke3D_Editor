@@ -93,7 +93,7 @@ public class MapMetadataPanel extends JPanel implements ItemChangeListener, Upda
 			m_numberOfSectorsLabel.setText("Number of Sectors: N/A");
 			m_numberOfWallsLabel.setText("Number of Walls: N/A");
 			m_numberOfSpritesLabel.setText("Number of Sprites: N/A");
-			m_mapFileSizeLabel.setText("Group File Size: N/A");
+			m_mapFileSizeLabel.setText("Map File Size: N/A");
 		}
 		else {
 			m_fileTypeLabel.setText("File Type: " + m_map.getFileType());
