@@ -11,6 +11,7 @@ public class MapMetadataPanel extends JPanel implements ItemChangeListener, Upda
 	protected Map m_map;
 	protected JLabel m_fileTypeLabel;
 	protected JLabel m_versionLabel;
+	protected JLabel m_typeLabel;
 	protected JLabel m_playerSpawnLabel;
 	protected JLabel m_numberOfSectorsLabel;
 	protected JLabel m_numberOfWallsLabel;
@@ -37,6 +38,7 @@ public class MapMetadataPanel extends JPanel implements ItemChangeListener, Upda
 	private void initComponents() {
 		m_fileTypeLabel = new JLabel();
 		m_versionLabel = new JLabel();
+		m_typeLabel = new JLabel();
 		m_playerSpawnLabel = new JLabel();
 		m_numberOfSectorsLabel = new JLabel();
 		m_numberOfWallsLabel = new JLabel();
@@ -46,6 +48,7 @@ public class MapMetadataPanel extends JPanel implements ItemChangeListener, Upda
 		m_labels = new JLabel[] {
 			m_fileTypeLabel,
 			m_versionLabel,
+			m_typeLabel,
 			m_playerSpawnLabel,
 			m_numberOfSectorsLabel,
 			m_numberOfWallsLabel,
@@ -55,6 +58,7 @@ public class MapMetadataPanel extends JPanel implements ItemChangeListener, Upda
 
 		add(m_fileTypeLabel);
 		add(m_versionLabel);
+		add(m_typeLabel);
 		add(m_playerSpawnLabel);
 		add(m_numberOfSectorsLabel);
 		add(m_numberOfWallsLabel);
@@ -84,6 +88,7 @@ public class MapMetadataPanel extends JPanel implements ItemChangeListener, Upda
 		if(m_map == null) {
 			m_fileTypeLabel.setText("File Type: Unknown");
 			m_versionLabel.setText("Version: N/A");
+			m_typeLabel.setText("Type: N/A");
 			m_playerSpawnLabel.setText("Player Spawn: N/A");
 			m_numberOfSectorsLabel.setText("Number of Sectors: N/A");
 			m_numberOfWallsLabel.setText("Number of Walls: N/A");
@@ -93,6 +98,7 @@ public class MapMetadataPanel extends JPanel implements ItemChangeListener, Upda
 		else {
 			m_fileTypeLabel.setText("File Type: " + m_map.getFileType());
 			m_versionLabel.setText("Version: " + m_map.getVersion());
+			m_typeLabel.setText("Type: " + m_map.getMapType().getDisplayName());
 			m_playerSpawnLabel.setText("Player Spawn: " + m_map.getPlayerSpawnPosition());
 			m_numberOfSectorsLabel.setText("Number of Sectors: " + m_map.numberOfSectors() + " / " + BuildConstants.MAX_NUMBER_OF_SECTORS);
 			m_numberOfWallsLabel.setText("Number of Walls: " + m_map.numberOfWalls() + " / " + BuildConstants.MAX_NUMBER_OF_WALLS);

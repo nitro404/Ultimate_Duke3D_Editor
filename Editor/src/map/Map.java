@@ -21,6 +21,7 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 	protected boolean m_initialized;
 
 	public static final int DEFAULT_VERSION = 7;
+	public static final int ATOMIC_EDITION_START_TILE_NUMBER = 4096;
 
 	public static final Endianness FILE_ENDIANNESS = Endianness.LittleEndian;
 
@@ -136,6 +137,48 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		}
 	}
 
+	public MapType getMapType() {
+		MapType mapType = MapType.RegularVersion;
+
+		if(m_sectors.size() > BuildConstants.MAX_NUMBER_OF_SECTORS ||
+		   m_walls.size() > BuildConstants.MAX_NUMBER_OF_WALLS ||
+		   m_sprites.size() > BuildConstants.MAX_NUMBER_OF_SPRITES) {
+			mapType = MapType.JFDuke3D;
+		}
+		else {
+			for(Sprite sprite : m_sprites) {
+				if(sprite.getTileNumber() >= ATOMIC_EDITION_START_TILE_NUMBER) {
+					mapType = MapType.AtomicEdition;
+					break;
+				}
+			}
+
+			if(mapType != MapType.AtomicEdition) {
+				for(Wall wall : m_walls) {
+					if(wall.getTileNumber() >= ATOMIC_EDITION_START_TILE_NUMBER ||
+					   wall.getMaskedTileNumber() >= ATOMIC_EDITION_START_TILE_NUMBER) {
+						mapType = MapType.AtomicEdition;
+						break;
+					}
+				}
+			}
+
+			if(mapType != MapType.AtomicEdition) {
+				for(Sector sector : m_sectors) {
+					if(sector.getCeiling().getTileNumber() >= ATOMIC_EDITION_START_TILE_NUMBER ||
+					   sector.getCeiling().getTileNumber() >= ATOMIC_EDITION_START_TILE_NUMBER) {
+						mapType = MapType.AtomicEdition;
+						break;
+					}
+				}
+			}
+		}
+
+// TODO: identify eDuke32 map
+
+		return mapType;
+	}
+
 	public int getPlayerSpawnX() {
 		return m_playerSpawn.getX();
 	}
@@ -245,10 +288,6 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 			return false;
 		}
 
-		if(m_sectors.size() >= BuildConstants.MAX_NUMBER_OF_SECTORS) {
-			throw new MaxSectorsExceededException("Failed to add sector, maximum number of sectors reached in current map.");
-		}
-
 		Sector newSector = sector.clone();
 		newSector.setMap(this);
 		m_sectors.add(newSector);
@@ -319,10 +358,6 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 			return false;
 		}
 
-		if(m_walls.size() >= BuildConstants.MAX_NUMBER_OF_WALLS) {
-			throw new MaxWallsExceededException("Failed to add wall, maximum number of walls reached in current map.");
-		}
-
 		Wall newWall = wall.clone();
 		newWall.setMap(this);
 		m_walls.add(newWall);
@@ -391,10 +426,6 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 	public boolean addSprite(Sprite sprite) throws MaxSpritesExceededException {
 		if(sprite == null) {
 			return false;
-		}
-
-		if(m_sprites.size() >= BuildConstants.MAX_NUMBER_OF_SPRITES) {
-			throw new MaxSpritesExceededException("Failed to add sprite, maximum number of sprites reached in current map.");
 		}
 
 		Sprite newSprite = sprite.clone();
@@ -623,11 +654,6 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		int numberOfSectors = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), FILE_ENDIANNESS) & 0xffff;
 		offset += 2;
 
-		// verify that maximum number of sectors is not exceeded
-		if(numberOfSectors > BuildConstants.MAX_NUMBER_OF_SECTORS) {
-			throw new MaxSectorsExceededException("Maximum number of sectors exceeded.");
-		}
-
 		// deserialize the sectors
 		int sectorSize = Sector.getSizeForVersion(version);
 		Vector<Sector> sectors = new Vector<Sector>(numberOfSectors);
@@ -650,11 +676,6 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		int numberOfWalls = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), FILE_ENDIANNESS) & 0xffff;
 		offset += 2;
 
-		// verify that maximum number of walls is not exceeded
-		if(numberOfWalls > BuildConstants.MAX_NUMBER_OF_WALLS) {
-			throw new MaxWallsExceededException("Maximum number of walls exceeded.");
-		}
-
 		// deserialize the walls
 		Vector<Wall> walls = new Vector<Wall>(numberOfWalls);
 
@@ -675,11 +696,6 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		// deserialize the number of sprites
 		int numberOfSprites = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), FILE_ENDIANNESS) & 0xffff;
 		offset += 2;
-
-		// verify that maximum number of sprites is not exceeded
-		if(numberOfSprites > BuildConstants.MAX_NUMBER_OF_SPRITES) {
-			throw new MaxSpritesExceededException("Maximum number of sprites exceeded.");
-		}
 
 		// deserialize the sprites
 		int spriteSize = Sprite.SIZE;
