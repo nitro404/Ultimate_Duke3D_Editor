@@ -123,7 +123,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 		if(xRepeat < 0 || xRepeat > 255) { throw new IllegalArgumentException("Invalid x repeat value: " + xRepeat + ", expected value between 0 and 255."); }
 		if(yRepeat < 0 || yRepeat > 255) { throw new IllegalArgumentException("Invalid y repeat value: " + yRepeat + ", expected value between 0 and 255."); }
 		if(velocity == null) { throw new IllegalArgumentException("Velocity cannot be null."); }
-		if(angle < BuildConstants.MIN_ANGLE || angle > BuildConstants.MAX_ANGLE) { throw new IllegalArgumentException("Invalid sprite angle, expected value between " + BuildConstants.MIN_ANGLE + " and " + BuildConstants.MAX_ANGLE + ", inclusively."); }
+		if(angle < BuildConstants.MIN_ANGLE || angle > BuildConstants.MAX_ANGLE) { throw new IllegalArgumentException("Invalid sprite angle " + angle + ", expected value between " + BuildConstants.MIN_ANGLE + " and " + BuildConstants.MAX_ANGLE + ", inclusively."); }
 
 		m_tileNumber = tileNumber;
 		m_shade = shade;
