@@ -283,7 +283,7 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		return m_sectors.elementAt(sectorNumber);
 	}
 
-	public boolean addSector(Sector sector) throws MaxSectorsExceededException {
+	public boolean addSector(Sector sector) {
 		if(sector == null) {
 			return false;
 		}
@@ -297,7 +297,7 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		return true;
 	}
 
-	public boolean addSectors(Vector<Sector> sectors) throws MaxSectorsExceededException {
+	public boolean addSectors(Vector<Sector> sectors) {
 		if(sectors == null) {
 			return false;
 		}
@@ -353,7 +353,7 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		return m_walls.elementAt(wallNumber);
 	}
 
-	public boolean addWall(Wall wall) throws MaxWallsExceededException {
+	public boolean addWall(Wall wall) {
 		if(wall == null) {
 			return false;
 		}
@@ -367,7 +367,7 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		return true;
 	}
 
-	public boolean addWalls(Vector<Wall> walls) throws MaxWallsExceededException {
+	public boolean addWalls(Vector<Wall> walls) {
 		if(walls == null) {
 			return false;
 		}
@@ -423,7 +423,7 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		return m_sprites.elementAt(spriteNumber);
 	}
 
-	public boolean addSprite(Sprite sprite) throws MaxSpritesExceededException {
+	public boolean addSprite(Sprite sprite) {
 		if(sprite == null) {
 			return false;
 		}
@@ -437,7 +437,7 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		return true;
 	}
 
-	public boolean addSprites(Vector<Sprite> sprites) throws MaxSpritesExceededException {
+	public boolean addSprites(Vector<Sprite> sprites) {
 		if(sprites == null) {
 			return false;
 		}
@@ -630,7 +630,7 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		return data;
 	}
 
-	public static Map deserialize(byte data[]) throws DeserializationException, MaxSectorsExceededException, MaxWallsExceededException, MaxSpritesExceededException {
+	public static Map deserialize(byte data[]) throws DeserializationException {
 		if(data == null) {
 			throw new MapDeserializationException("Invalid map data.");
 		}
@@ -765,7 +765,7 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		return map;
 	}
 
-	public static Map fromJSONObject(JSONObject map) throws JSONException, MalformedItemAttributeException, MaxSectorsExceededException, MaxWallsExceededException, MaxSpritesExceededException {
+	public static Map fromJSONObject(JSONObject map) throws JSONException, MalformedItemAttributeException {
 		if(map == null) {
 			throw new IllegalArgumentException("Map JSON data cannot be null.");
 		}
@@ -861,27 +861,13 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		SystemConsole.instance.writeLine("Opened " + FILE_TYPES[0].getName() + " file: \"" + m_file.getName() + "\", loaded " + data.length + " bytes into memory.");
 
 		Map map = null;
-		try {
-			map = Map.deserialize(data);
-			setVersion(map.m_version);
-			setPlayerSpawn(map.m_playerSpawn);
-			addSectors(map.m_sectors);
-			addWalls(map.m_walls);
-			addSprites(map.m_sprites);
-			setTrailingData(map.m_trailingData);
-		}
-		catch(MaxSectorsExceededException e) {
-			m_loading = false;
-			throw new MapReadException(e.getMessage());
-		}
-		catch(MaxWallsExceededException e) {
-			m_loading = false;
-			throw new MapReadException(e.getMessage());
-		}
-		catch(MaxSpritesExceededException e) {
-			m_loading = false;
-			throw new MapReadException(e.getMessage());
-		}
+		map = Map.deserialize(data);
+		setVersion(map.m_version);
+		setPlayerSpawn(map.m_playerSpawn);
+		addSectors(map.m_sectors);
+		addWalls(map.m_walls);
+		addSprites(map.m_sprites);
+		setTrailingData(map.m_trailingData);
 
 		m_loading = false;
 
@@ -918,21 +904,9 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		map.setVersion(m_version);
 		map.setPlayerSpawn(m_playerSpawn);
 		map.setTrailingData(m_trailingData);
-
-		try {
-			map.addSectors(m_sectors);
-			map.addWalls(m_walls);
-			map.addSprites(m_sprites);
-		}
-		catch(MaxSectorsExceededException e) {
-			return null;
-		}
-		catch(MaxWallsExceededException e) {
-			return null;
-		}
-		catch(MaxSpritesExceededException e) {
-			return null;
-		}
+		map.addSectors(m_sectors);
+		map.addWalls(m_walls);
+		map.addSprites(m_sprites);
 
 		return map;
 	}

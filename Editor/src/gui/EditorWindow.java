@@ -1076,6 +1076,13 @@ public class EditorWindow implements WindowListener, ComponentListener, ChangeLi
 			
 			return false;
 		}
+		catch(IllegalArgumentException e) {
+			SystemConsole.instance.writeLine(e.getMessage());
+			
+			JOptionPane.showMessageDialog(m_frame, e.getMessage(), "File Parsing Failed", JOptionPane.ERROR_MESSAGE);
+			
+			return false;
+		}
 		
 		SystemConsole.instance.writeLine("File \"" + file.getName() +  "\" loaded successfully!");
 		
