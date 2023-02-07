@@ -61,11 +61,11 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 		super(tagInformation);
 
 		if(attributes == null) { throw new IllegalArgumentException("Wall attributes cannot be null."); }
-		if(paletteLookupTableNumber < 0 || paletteLookupTableNumber > 255) { throw new IllegalArgumentException("Invalid palette lookup table number value: " + paletteLookupTableNumber + ", expected value between 0 and 255."); }
-		if(xRepeat < 0 || xRepeat > 255) { throw new IllegalArgumentException("Invalid x repeat value: " + xRepeat + ", expected value between 0 and 255."); }
-		if(yRepeat < 0 || yRepeat > 255) { throw new IllegalArgumentException("Invalid y repeat value: " + yRepeat + ", expected value between 0 and 255."); }
-		if(xPanning < 0 || xPanning > 255) { throw new IllegalArgumentException("Invalid x pannning value: " + xPanning + ", expected value between 0 and 255."); }
-		if(yPanning < 0 || yPanning > 255) { throw new IllegalArgumentException("Invalid y pannning value: " + yPanning + ", expected value between 0 and 255."); }
+		if(paletteLookupTableNumber < 0 || paletteLookupTableNumber > 255) { throw new IllegalArgumentException("Invalid wall palette lookup table number value: " + paletteLookupTableNumber + ", expected value between 0 and 255."); }
+		if(xRepeat < 0 || xRepeat > 255) { throw new IllegalArgumentException("Invalid wall x repeat value: " + xRepeat + ", expected value between 0 and 255."); }
+		if(yRepeat < 0 || yRepeat > 255) { throw new IllegalArgumentException("Invalid wall y repeat value: " + yRepeat + ", expected value between 0 and 255."); }
+		if(xPanning < 0 || xPanning > 255) { throw new IllegalArgumentException("Invalid wall x pannning value: " + xPanning + ", expected value between 0 and 255."); }
+		if(yPanning < 0 || yPanning > 255) { throw new IllegalArgumentException("Invalid wall y pannning value: " + yPanning + ", expected value between 0 and 255."); }
 
 		m_x = x;
 		m_y = y;
@@ -269,7 +269,7 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 	}
 
 	public void setAttributes(WallAttributes attributes) throws IllegalArgumentException {
-		if(attributes == null) { throw new IllegalArgumentException("Attributes cannot be null."); }
+		if(attributes == null) { throw new IllegalArgumentException("Wall attributes cannot be null."); }
 
 		if(m_attributes !=  null) {
 			if(m_attributes.equals(attributes)) {

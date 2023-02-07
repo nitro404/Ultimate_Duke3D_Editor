@@ -122,9 +122,9 @@ public class Sector extends TaggedMapComponent implements PartitionChangeListene
 	public Sector(short firstWallIndex, short numberOfWalls, Partition ceiling, Partition floor, short visibility, byte filler, TagInformation tagInformation, byte[] trailingData) {
 		super(tagInformation);
 
-		if(ceiling == null) { throw new IllegalArgumentException("Ceiling data cannot be null."); }
-		if(floor == null) { throw new IllegalArgumentException("Floor data cannot be null."); }
-		if(trailingData != null && trailingData.length > 3) { throw new IllegalArgumentException("Invalid trailing data."); }
+		if(ceiling == null) { throw new IllegalArgumentException("Sector ceiling data cannot be null."); }
+		if(floor == null) { throw new IllegalArgumentException("Sectot floor data cannot be null."); }
+		if(trailingData != null && trailingData.length > 3) { throw new IllegalArgumentException("Invalid sector trailing data."); }
 
 		m_firstWallIndex = firstWallIndex;
 		m_numberOfWalls = numberOfWalls;

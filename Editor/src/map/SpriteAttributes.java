@@ -1,5 +1,6 @@
 package map;
 
+import console.*;
 import java.util.*;
 import item.*;
 import exception.*;
@@ -472,6 +473,7 @@ public class SpriteAttributes extends ItemAttributes {
 			}
 			
 			if(!attributes.setAttributeValue(attribute, value)) {
+				SystemConsole.instance.writeLine("Failed to set " + attribute.getDisplayName() + " attribute value to: " + value + ".");
 				return null;
 			}
 		}

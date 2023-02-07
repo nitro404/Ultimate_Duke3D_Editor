@@ -116,14 +116,14 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 	public Sprite(Position position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, Velocity velocity, TagInformation tagInformation) {
 		super(tagInformation);
 
-		if(position == null) { throw new IllegalArgumentException("Position cannot be null."); }
-		if(attributes == null) { throw new IllegalArgumentException("Attributes cannot be null."); }
-		if(paletteLookupTableNumber < 0 || paletteLookupTableNumber > 255) { throw new IllegalArgumentException("Invalid palette lookup table number value: " + paletteLookupTableNumber + ", expected value between 0 and 255."); }
-		if(clippingDistance < 0 || clippingDistance > 255) { throw new IllegalArgumentException("Invalid clipping distance value: " + clippingDistance + ", expected value between 0 and 255."); }
-		if(xRepeat < 0 || xRepeat > 255) { throw new IllegalArgumentException("Invalid x repeat value: " + xRepeat + ", expected value between 0 and 255."); }
-		if(yRepeat < 0 || yRepeat > 255) { throw new IllegalArgumentException("Invalid y repeat value: " + yRepeat + ", expected value between 0 and 255."); }
-		if(velocity == null) { throw new IllegalArgumentException("Velocity cannot be null."); }
-		if(angle < BuildConstants.MIN_ANGLE || angle > BuildConstants.MAX_ANGLE) { throw new IllegalArgumentException("Invalid sprite angle " + angle + ", expected value between " + BuildConstants.MIN_ANGLE + " and " + BuildConstants.MAX_ANGLE + ", inclusively."); }
+		if(position == null) { throw new IllegalArgumentException("Sprite position cannot be null."); }
+		if(attributes == null) { throw new IllegalArgumentException("Sprite attributes cannot be null."); }
+		if(paletteLookupTableNumber < 0 || paletteLookupTableNumber > 255) { throw new IllegalArgumentException("Invalid sprite palette lookup table number value: " + paletteLookupTableNumber + ", expected value between 0 and 255."); }
+		if(clippingDistance < 0 || clippingDistance > 255) { throw new IllegalArgumentException("Invalid sprite clipping distance value: " + clippingDistance + ", expected value between 0 and 255."); }
+		if(xRepeat < 0 || xRepeat > 255) { throw new IllegalArgumentException("Invalid sprite x repeat value: " + xRepeat + ", expected value between 0 and 255."); }
+		if(yRepeat < 0 || yRepeat > 255) { throw new IllegalArgumentException("Invalid sprite y repeat value: " + yRepeat + ", expected value between 0 and 255."); }
+		if(velocity == null) { throw new IllegalArgumentException("Sprite velocity cannot be null."); }
+		//if(angle < BuildConstants.MIN_ANGLE || angle > BuildConstants.MAX_ANGLE) { throw new IllegalArgumentException("Invalid sprite angle " + angle + ", expected value between " + BuildConstants.MIN_ANGLE + " and " + BuildConstants.MAX_ANGLE + ", inclusively."); }
 
 		m_tileNumber = tileNumber;
 		m_shade = shade;
@@ -175,7 +175,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 	}
 
 	public void setPosition(Position position) throws IllegalArgumentException {
-		if(position == null) { throw new IllegalArgumentException("Position cannot be null."); }
+		if(position == null) { throw new IllegalArgumentException("Sprite position cannot be null."); }
 
 		if(m_position != null) {
 			if(m_position.equals(position)) {
