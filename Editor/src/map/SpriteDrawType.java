@@ -6,6 +6,7 @@ public enum SpriteDrawType {
 	Face("Face"),
 	Wall("Wall"),
 	Floor("Floor"),
+	Sloped("Sloped"),
 	Invalid("Invalid");
 
 	private String m_displayName;
@@ -22,6 +23,7 @@ public enum SpriteDrawType {
 		"Face",
 		"Wall",
 		"Floor",
+		"Sloped",
 		"Invalid"
 	};
 	
