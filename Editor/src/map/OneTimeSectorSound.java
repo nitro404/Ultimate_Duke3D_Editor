@@ -1,6 +1,6 @@
 package map;
 
-public class OneTimeSectorSound implements Sound {
+public class OneTimeSectorSound extends Sound {
 
 	protected Sector m_sector;
 

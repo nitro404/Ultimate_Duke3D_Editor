@@ -1,6 +1,6 @@
 package map;
 
-public class PrimarySpriteSound implements Sound {
+public class PrimarySpriteSound extends Sound {
 
 	protected Sprite m_sprite;
 
