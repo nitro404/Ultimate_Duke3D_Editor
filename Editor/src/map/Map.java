@@ -500,11 +500,14 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 			}
 		}
 
+		/*
+		// TODO: debugging:
 		System.out.println("Number of Sounds: " + sounds.size());
 
 		for(int i = 0; i < sounds.size(); i++) {
 			System.out.println("Sound #" + (i + 1) + ": " + sounds.elementAt(i).getSoundNumber() + " (" + sounds.elementAt(i).getSoundName() + ")");
 		}
+		*/
 
 		return sounds;
 	}
