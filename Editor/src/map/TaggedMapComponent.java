@@ -34,11 +34,11 @@ public abstract class TaggedMapComponent extends MapComponent implements TagInfo
 		m_tagInformation.setHighTag(highTag);
 	}
 
-	public short getExtra() {
+	public int getExtra() {
 		return m_tagInformation.getExtra();
 	}
 
-	public void setExtra(short extra) {
+	public void setExtra(int extra) {
 		m_tagInformation.setExtra(extra);
 	}
 

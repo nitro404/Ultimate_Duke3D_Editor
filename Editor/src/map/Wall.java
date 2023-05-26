@@ -45,11 +45,11 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 	public static final String Y_PANNING_ATTRIBUTE_NAME = "yPanning";
 	public static final String TAG_INFORMATION_ATTRIBUTE_NAME = "tagInformation";
 
-	public Wall(int x, int y, short nextWallIndex, short adjacentWallIndex, short nextSectorIndex, short attributes, short tileNumber, short maskedTileNumber, byte shade, short paletteLookupTableNumber, short xRepeat, short yRepeat, short xPanning, short yPanning, int lowTag, int highTag, short extra) {
+	public Wall(int x, int y, short nextWallIndex, short adjacentWallIndex, short nextSectorIndex, short attributes, short tileNumber, short maskedTileNumber, byte shade, short paletteLookupTableNumber, short xRepeat, short yRepeat, short xPanning, short yPanning, int lowTag, int highTag, int extra) {
 		this(x, y, nextWallIndex, adjacentWallIndex, nextSectorIndex, WallAttributes.unpack(attributes), tileNumber, maskedTileNumber, shade, paletteLookupTableNumber, xRepeat, yRepeat, xPanning, yPanning, new TagInformation(lowTag, highTag, extra));
 	}
 
-	public Wall(int x, int y, short nextWallIndex, short adjacentWallIndex, short nextSectorIndex, WallAttributes attributes, short tileNumber, short maskedTileNumber, byte shade, short paletteLookupTableNumber, short xRepeat, short yRepeat, short xPanning, short yPanning, int lowTag, int highTag, short extra) {
+	public Wall(int x, int y, short nextWallIndex, short adjacentWallIndex, short nextSectorIndex, WallAttributes attributes, short tileNumber, short maskedTileNumber, byte shade, short paletteLookupTableNumber, short xRepeat, short yRepeat, short xPanning, short yPanning, int lowTag, int highTag, int extra) {
 		this(x, y, nextWallIndex, adjacentWallIndex, nextSectorIndex, attributes, tileNumber, maskedTileNumber, shade, paletteLookupTableNumber, xRepeat, yRepeat, xPanning, yPanning, new TagInformation(lowTag, highTag, extra));
 	}
 

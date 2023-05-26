@@ -9,7 +9,7 @@ public class TagInformation {
 
 	protected int m_lowTag;
 	protected int m_highTag;
-	protected short m_extra;
+	protected int m_extra;
 	protected Vector<TagInformationChangeListener> m_tagInformationChangeListeners;
 
 	final public static int SIZE = 6;
@@ -18,7 +18,7 @@ public class TagInformation {
 	public static final String HIGH_TAG_ATTRIBUTE_NAME = "highTag";
 	public static final String EXTRA_ATTRIBUTE_NAME = "extra";
 
-	public TagInformation(int lowTag, int highTag, short extra)  throws IllegalArgumentException {
+	public TagInformation(int lowTag, int highTag, int extra)  throws IllegalArgumentException {
 		m_tagInformationChangeListeners = new Vector<TagInformationChangeListener>();
 
 		setLowTag(lowTag);
@@ -70,11 +70,15 @@ public class TagInformation {
 		notifyTagInformationChanged();
 	}
 
-	public short getExtra() {
+	public int getExtra() {
 		return m_extra;
 	}
 
-	public void setExtra(short extra) {
+	public void setExtra(int extra) {
+		if(extra < 0 || extra > 65535) {
+			throw new IllegalArgumentException("Invalid extra value: " + extra + ", expected value between 0 and 65535.");
+		}
+
 		if(m_extra == extra) {
 			return;
 		}
@@ -98,7 +102,7 @@ public class TagInformation {
 		System.arraycopy(Serializer.serializeShort((short) m_highTag, endianness), 0, data, offset, 2);
 		offset += 2;
 
-		System.arraycopy(Serializer.serializeShort(m_extra, endianness), 0, data, offset, 2);
+		System.arraycopy(Serializer.serializeShort((short) m_extra, endianness), 0, data, offset, 2);
 		offset += 2;
 
 		return data;
@@ -139,7 +143,7 @@ public class TagInformation {
 		offset += 2;
 
 		// read extra data
-		short extra = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), endianness);
+		int extra = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), endianness) & 0xffff;
 		offset += 2;
 
 		return new TagInformation(lowTag, highTag, extra);
@@ -154,6 +158,18 @@ public class TagInformation {
 		return tagInformation;
 	}
 
+	public boolean addToJSONObject(JSONObject jsonObject) {
+		if(jsonObject == null) {
+			return false;
+		}
+
+		jsonObject.put(LOW_TAG_ATTRIBUTE_NAME, m_lowTag);
+		jsonObject.put(HIGH_TAG_ATTRIBUTE_NAME, m_highTag);
+		jsonObject.put(EXTRA_ATTRIBUTE_NAME, m_extra);
+
+		return true;
+	}
+
 	public static TagInformation fromJSONObject(JSONObject tagInformation) throws IllegalArgumentException, JSONException {
 		if(tagInformation == null) {
 			throw new IllegalArgumentException("Tag information JSON data cannot be null.");
@@ -162,7 +178,7 @@ public class TagInformation {
 		return new TagInformation(
 			tagInformation.getInt(LOW_TAG_ATTRIBUTE_NAME),
 			tagInformation.getInt(HIGH_TAG_ATTRIBUTE_NAME),
-			(short) tagInformation.getInt(EXTRA_ATTRIBUTE_NAME)
+			tagInformation.getInt(EXTRA_ATTRIBUTE_NAME)
 		);
 	}
 
