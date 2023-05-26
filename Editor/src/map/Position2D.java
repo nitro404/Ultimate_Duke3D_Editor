@@ -5,28 +5,25 @@ import exception.*;
 import utilities.*;
 import org.json.*;
 
-public class Position3D {
+public class Position2D {
 
 	protected int m_x;
 	protected int m_y;
-	protected int m_z;
-	protected Vector<Position3DChangeListener> m_positionChangeListeners;
+	protected Vector<Position2DChangeListener> m_positionChangeListeners;
 
-	public static int SIZE = 12;
+	public static int SIZE = 8;
 	
 	public static final String X_ATTRIBUTE_NAME = "x";
 	public static final String Y_ATTRIBUTE_NAME = "y";
-	public static final String Z_ATTRIBUTE_NAME = "z";
 
-	public Position3D() {
-		this(0, 0, 0);
+	public Position2D() {
+		this(0, 0);
 	}
 
-	public Position3D(int x, int y, int z) {
+	public Position2D(int x, int y) {
 		m_x = x;
 		m_y = y;
-		m_z = z;
-		m_positionChangeListeners = new Vector<Position3DChangeListener>();
+		m_positionChangeListeners = new Vector<Position2DChangeListener>();
 	}
 
 	public int getX() {
@@ -57,20 +54,6 @@ public class Position3D {
 		notifyPositionChanged();
 	}
 
-	public int getZ() {
-		return m_z;
-	}
-
-	public void setZ(int z) {
-		if(m_z == z) {
-			return;
-		}
-
-		m_z = z;
-
-		notifyPositionChanged();
-	}
-
 	public byte[] serialize() {
 		return serialize(Endianness.LittleEndian);
 	}
@@ -85,25 +68,22 @@ public class Position3D {
 		System.arraycopy(Serializer.serializeInteger(m_y, endianness), 0, data, offset, 4);
 		offset += 4;
 
-		System.arraycopy(Serializer.serializeInteger(m_z, endianness), 0, data, offset, 4);
-		offset += 4;
-
 		return data;
 	}
 
-	public static Position3D deserialize(byte data[]) throws DeserializationException {
+	public static Position2D deserialize(byte data[]) throws DeserializationException {
 		return deserialize(data, 0);
 	}
 
-	public static Position3D deserialize(byte data[], int offset) throws DeserializationException {
+	public static Position2D deserialize(byte data[], int offset) throws DeserializationException {
 		return deserialize(data, offset, Endianness.LittleEndian);
 	}
 
-	public static Position3D deserialize(byte data[], Endianness endianness) throws DeserializationException {
+	public static Position2D deserialize(byte data[], Endianness endianness) throws DeserializationException {
 		return deserialize(data, 0, endianness);
 	}
 
-	public static Position3D deserialize(byte data[], int offset, Endianness endianness) throws DeserializationException {
+	public static Position2D deserialize(byte data[], int offset, Endianness endianness) throws DeserializationException {
 		if(data == null) {
 			throw new MapDeserializationException("Invalid position data.");
 		}
@@ -125,57 +105,51 @@ public class Position3D {
 		int y = Serializer.deserializeInteger(Arrays.copyOfRange(data, offset, offset + 4), endianness);
 		offset += 4;
 
-		// read the z co-ordinate
-		int z = Serializer.deserializeInteger(Arrays.copyOfRange(data, offset, offset + 4), endianness);
-		offset += 4;
-
-		return new Position3D(x, y, z);
+		return new Position2D(x, y);
 	}
 
 	public JSONObject toJSONObject() {
 		JSONObject position = new JSONObject();
 		position.put(X_ATTRIBUTE_NAME, m_x);
 		position.put(Y_ATTRIBUTE_NAME, m_y);
-		position.put(Z_ATTRIBUTE_NAME, m_z);
 
 		return position;
 	}
 
-	public static Position3D fromJSONObject(JSONObject position) throws IllegalArgumentException, JSONException {
+	public static Position2D fromJSONObject(JSONObject position) throws IllegalArgumentException, JSONException {
 		if(position == null) {
 			throw new IllegalArgumentException("Position JSON data cannot be null.");
 		}
 
-		return new Position3D(
+		return new Position2D(
 			(short) position.getInt(X_ATTRIBUTE_NAME),
-			(short) position.getInt(Y_ATTRIBUTE_NAME),
-			(short) position.getInt(Z_ATTRIBUTE_NAME)
+			(short) position.getInt(Y_ATTRIBUTE_NAME)
 		);
 	}
 
-	public Position3D clone() {
-		return new Position3D(m_x, m_y, m_z);
+	public Position2D clone() {
+		return new Position2D(m_x, m_y);
 	}
 
 	public int numberOfPositionChangeListeners() {
 		return m_positionChangeListeners.size();
 	}
 	
-	public Position3DChangeListener getPositionChangeListener(int index) {
+	public Position2DChangeListener getPositionChangeListener(int index) {
 		if(index < 0 || index >= m_positionChangeListeners.size()) { return null; }
 
 		return m_positionChangeListeners.elementAt(index);
 	}
 	
-	public boolean hasPositionChangeListener(Position3DChangeListener c) {
+	public boolean hasPositionChangeListener(Position2DChangeListener c) {
 		return m_positionChangeListeners.contains(c);
 	}
 	
-	public int indexOfPositionChangeListener(Position3DChangeListener c) {
+	public int indexOfPositionChangeListener(Position2DChangeListener c) {
 		return m_positionChangeListeners.indexOf(c);
 	}
 	
-	public boolean addPositionChangeListener(Position3DChangeListener c) {
+	public boolean addPositionChangeListener(Position2DChangeListener c) {
 		if(c == null || m_positionChangeListeners.contains(c)) { return false; }
 
 		m_positionChangeListeners.add(c);
@@ -191,7 +165,7 @@ public class Position3D {
 		return true;
 	}
 	
-	public boolean removePositionChangeListener(Position3DChangeListener c) {
+	public boolean removePositionChangeListener(Position2DChangeListener c) {
 		if(c == null) { return false; }
 
 		return m_positionChangeListeners.remove(c);
@@ -208,19 +182,18 @@ public class Position3D {
 	}
 
 	public boolean equals(Object o) {
-		if(o == null || !(o instanceof Position3D)) {
+		if(o == null || !(o instanceof Position2D)) {
 			return false;
 		}
 		
-		Position3D p = (Position3D) o;
+		Position2D p = (Position2D) o;
 		
 		return m_x == p.m_x &&
-			   m_y == p.m_y &&
-			   m_z == p.m_z;
+			   m_y == p.m_y;
 	}
 	
 	public String toString() {
-		return m_x + ", " + m_y + ", " + m_z;
+		return m_x + ", " + m_y;
 	}
 
 }

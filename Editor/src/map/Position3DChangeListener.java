@@ -1,6 +1,6 @@
 package map;
 
-public interface PositionChangeListener {
+public interface Position3DChangeListener {
 
 	public void handlePositionChange(Position3D position);
 

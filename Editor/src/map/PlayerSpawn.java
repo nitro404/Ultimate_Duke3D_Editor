@@ -6,7 +6,7 @@ import exception.*;
 import utilities.*;
 import org.json.*;
 
-public class PlayerSpawn extends MapComponent implements PositionChangeListener {
+public class PlayerSpawn extends MapComponent implements Position3DChangeListener {
 
 	protected Position3D m_position;
 	protected short m_angle;

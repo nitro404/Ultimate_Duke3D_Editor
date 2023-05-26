@@ -7,7 +7,7 @@ import exception.*;
 import utilities.*;
 import org.json.*;
 
-public class Sprite extends TaggedMapComponent implements ItemAttributeChangeListener, PositionChangeListener, VelocityChangeListener {
+public class Sprite extends TaggedMapComponent implements ItemAttributeChangeListener, Position3DChangeListener, VelocityChangeListener {
 
 	protected Position3D m_position;
 	protected SpriteAttributes m_attributes;

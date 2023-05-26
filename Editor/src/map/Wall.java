@@ -7,10 +7,9 @@ import exception.*;
 import utilities.*;
 import org.json.*;
 
-public class Wall extends TaggedMapComponent implements ItemAttributeChangeListener {
+public class Wall extends TaggedMapComponent implements ItemAttributeChangeListener, Position2DChangeListener {
 
-	protected int m_x;
-	protected int m_y;
+	protected Position2D m_position;
 	protected short m_nextWallIndex;
 	protected short m_adjacentWallIndex;
 	protected short m_nextSectorIndex;
@@ -29,8 +28,7 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 	
 	protected static final int WALL_VERTEX_SIZE = 4;
 
-	public static final String X_ATTRIBUTE_NAME = "x";
-	public static final String Y_ATTRIBUTE_NAME = "y";
+	public static final String POSITION_ATTRIBUTE_NAME = "position";
 	public static final String NEXT_WALL_INDEX_ATTRIBUTE_NAME = "nextWallIndex";
 	public static final String ADJACENT_WALL_INDEX_ATTRIBUTE_NAME = "adjacentWallIndex";
 	public static final String NEXT_SECTOR_INDEX_ATTRIBUTE_NAME = "nextSectorIndex";
@@ -43,6 +41,23 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 	public static final String Y_REPEAT_ATTRIBUTE_NAME = "yRepeat";
 	public static final String X_PANNING_ATTRIBUTE_NAME = "xPanning";
 	public static final String Y_PANNING_ATTRIBUTE_NAME = "yPanning";
+
+
+	public Wall(Position2D position, short nextWallIndex, short adjacentWallIndex, short nextSectorIndex, short attributes, short tileNumber, short maskedTileNumber, byte shade, short paletteLookupTableNumber, short xRepeat, short yRepeat, short xPanning, short yPanning, int lowTag, int highTag, int extra) {
+		this(position.getX(), position.getY(), nextWallIndex, adjacentWallIndex, nextSectorIndex, WallAttributes.unpack(attributes), tileNumber, maskedTileNumber, shade, paletteLookupTableNumber, xRepeat, yRepeat, xPanning, yPanning, new TagInformation(lowTag, highTag, extra));
+	}
+
+	public Wall(Position2D position, short nextWallIndex, short adjacentWallIndex, short nextSectorIndex, WallAttributes attributes, short tileNumber, short maskedTileNumber, byte shade, short paletteLookupTableNumber, short xRepeat, short yRepeat, short xPanning, short yPanning, int lowTag, int highTag, int extra) {
+		this(position.getX(), position.getY(), nextWallIndex, adjacentWallIndex, nextSectorIndex, attributes, tileNumber, maskedTileNumber, shade, paletteLookupTableNumber, xRepeat, yRepeat, xPanning, yPanning, new TagInformation(lowTag, highTag, extra));
+	}
+
+	public Wall(Position2D position, short nextWallIndex, short adjacentWallIndex, short nextSectorIndex, short attributes, short tileNumber, short maskedTileNumber, byte shade, short paletteLookupTableNumber, short xRepeat, short yRepeat, short xPanning, short yPanning, TagInformation tagInformation) {
+		this(position.getX(), position.getY(), nextWallIndex, adjacentWallIndex, nextSectorIndex, WallAttributes.unpack(attributes), tileNumber, maskedTileNumber, shade, paletteLookupTableNumber, xRepeat, yRepeat, xPanning, yPanning, tagInformation);
+	}
+
+	public Wall(Position2D position, short nextWallIndex, short adjacentWallIndex, short nextSectorIndex, WallAttributes attributes, short tileNumber, short maskedTileNumber, byte shade, short paletteLookupTableNumber, short xRepeat, short yRepeat, short xPanning, short yPanning, TagInformation tagInformation) {
+		this(position.getX(), position.getY(), nextWallIndex, adjacentWallIndex, nextSectorIndex, attributes, tileNumber, maskedTileNumber, shade, paletteLookupTableNumber, xRepeat, yRepeat, xPanning, yPanning, tagInformation);
+	}
 
 	public Wall(int x, int y, short nextWallIndex, short adjacentWallIndex, short nextSectorIndex, short attributes, short tileNumber, short maskedTileNumber, byte shade, short paletteLookupTableNumber, short xRepeat, short yRepeat, short xPanning, short yPanning, int lowTag, int highTag, int extra) {
 		this(x, y, nextWallIndex, adjacentWallIndex, nextSectorIndex, WallAttributes.unpack(attributes), tileNumber, maskedTileNumber, shade, paletteLookupTableNumber, xRepeat, yRepeat, xPanning, yPanning, new TagInformation(lowTag, highTag, extra));
@@ -66,8 +81,8 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 		if(xPanning < 0 || xPanning > 255) { throw new IllegalArgumentException("Invalid wall x pannning value: " + xPanning + ", expected value between 0 and 255."); }
 		if(yPanning < 0 || yPanning > 255) { throw new IllegalArgumentException("Invalid wall y pannning value: " + yPanning + ", expected value between 0 and 255."); }
 
-		m_x = x;
-		m_y = y;
+		m_position = new Position2D(x, y);
+		m_position.addPositionChangeListener(this);
 		m_nextWallIndex = nextWallIndex;
 		m_adjacentWallIndex = adjacentWallIndex;
 		m_nextSectorIndex = nextSectorIndex;
@@ -86,29 +101,56 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 	}
 
 	public int getX() {
-		return m_x;
+		return m_position.getX();
 	}
 
 	public void setX(int x) {
-		if(m_x == x) {
+		if(m_position.getX() == x) {
 			return;
 		}
 
-		m_x = x;
+		m_position.setX(x);
 
 		notifyWallChanged();
 	}
 
 	public int getY() {
-		return m_y;
+		return m_position.getY();
 	}
 
 	public void setY(int y) {
-		if(m_y == y) {
+		if(m_position.getY() == y) {
 			return;
 		}
 
-		m_y = y;
+		m_position.setY(y);
+
+		notifyWallChanged();
+	}
+
+	public Position2D getPosition() {
+		return m_position;
+	}
+
+	public void setPosition(Position2D position) {
+		if(position == null) {
+			return;
+		}
+
+		m_position = position.clone();
+
+		m_position.addPositionChangeListener(this);
+
+		notifyWallChanged();
+	}
+
+	public void setPosition(int x, int y) {
+		if(m_position.getX() == x && m_position.getY() == y) {
+			return ;
+		}
+
+		m_position.setX(x);
+		m_position.setY(y);
 
 		notifyWallChanged();
 	}
@@ -393,11 +435,11 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 		int offset = 0;
 
 		// serialize the wall x co-ordinate
-		System.arraycopy(Serializer.serializeInteger(m_x, endianness), 0, data, offset, 4);
+		System.arraycopy(Serializer.serializeInteger(m_position.getX(), endianness), 0, data, offset, 4);
 		offset += 4;
 
 		// serialize the wall y co-ordinate
-		System.arraycopy(Serializer.serializeInteger(m_y, endianness), 0, data, offset, 4);
+		System.arraycopy(Serializer.serializeInteger(m_position.getY(), endianness), 0, data, offset, 4);
 		offset += 4;
 
 		// serialize the next wall index
@@ -553,8 +595,7 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 
 	public JSONObject toJSONObject() {
 		JSONObject wall = new JSONObject();
-		wall.put(X_ATTRIBUTE_NAME, m_x);
-		wall.put(Y_ATTRIBUTE_NAME, m_y);
+		wall.put(POSITION_ATTRIBUTE_NAME, m_position.toJSONObject());
 		wall.put(NEXT_WALL_INDEX_ATTRIBUTE_NAME, m_nextWallIndex);
 		wall.put(ADJACENT_WALL_INDEX_ATTRIBUTE_NAME, m_adjacentWallIndex);
 		wall.put(NEXT_SECTOR_INDEX_ATTRIBUTE_NAME, m_nextSectorIndex);
@@ -578,8 +619,7 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 		}
 
 		return new Wall(
-			wall.getInt(X_ATTRIBUTE_NAME),
-			wall.getInt(Y_ATTRIBUTE_NAME),
+			Position2D.fromJSONObject(wall),
 			(short) wall.getInt(NEXT_WALL_INDEX_ATTRIBUTE_NAME),
 			(short) wall.getInt(ADJACENT_WALL_INDEX_ATTRIBUTE_NAME),
 			(short) wall.getInt(NEXT_SECTOR_INDEX_ATTRIBUTE_NAME),
@@ -601,7 +641,7 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 	}
 
 	public Wall clone(boolean reassignMap) {
-		Wall clonedWall = new Wall(m_x, m_y, m_nextWallIndex, m_adjacentWallIndex, m_nextSectorIndex, m_attributes, m_tileNumber, m_maskedTileNumber, m_shade, m_paletteLookupTableNumber, m_xRepeat, m_yRepeat, m_xPanning, m_yPanning, m_tagInformation);
+		Wall clonedWall = new Wall(m_position, m_nextWallIndex, m_adjacentWallIndex, m_nextSectorIndex, m_attributes, m_tileNumber, m_maskedTileNumber, m_shade, m_paletteLookupTableNumber, m_xRepeat, m_yRepeat, m_xPanning, m_yPanning, m_tagInformation);
 
 		if(reassignMap) {
 			clonedWall.setMap(m_map);
@@ -669,6 +709,10 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 		notifyWallChanged();
 	}
 
+	public void handlePositionChange(Position2D position) {
+		notifyWallChanged();
+	}
+
 	public void paintWall(Graphics2D g) {
 		paintWall(g, 1.0);
 	}
@@ -703,7 +747,7 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 
 		Wall nextWall = getNextWall();
 
-		g.drawLine((int) (m_x * zoom), (int) (m_y * zoom), (int) (nextWall.m_x * zoom), (int) (nextWall.m_y * zoom));
+		g.drawLine((int) (getX() * zoom), (int) (getY() * zoom), (int) (nextWall.getX() * zoom), (int) (nextWall.getY() * zoom));
 
 		g.setStroke(new BasicStroke());
 	}
@@ -714,7 +758,7 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 
 	public void paintVertex(Graphics2D g, double zoom) {
 		g.setColor(Color.GREEN);
-		g.drawRect((int) (m_x * zoom) - (WALL_VERTEX_SIZE / 2), (int) (m_y * zoom) - (WALL_VERTEX_SIZE / 2), WALL_VERTEX_SIZE, WALL_VERTEX_SIZE);
+		g.drawRect((int) (getX() * zoom) - (WALL_VERTEX_SIZE / 2), (int) (getY() * zoom) - (WALL_VERTEX_SIZE / 2), WALL_VERTEX_SIZE, WALL_VERTEX_SIZE);
 	}
 
 	public boolean equals(Object o) {
@@ -724,8 +768,7 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 
 		Wall w = (Wall) o;
 
-		return m_x == w.m_x &&
-			   m_y == w.m_y &&
+		return m_position.equals(w.m_position) &&
 			   m_nextWallIndex == w.m_nextWallIndex &&
 			   m_nextSectorIndex == w.m_nextSectorIndex &&
 			   m_attributes.equals(w.m_attributes) &&
