@@ -15,7 +15,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 	protected byte m_shade;
 	protected short m_paletteLookupTableNumber;
 	protected short m_clippingDistance;
-	protected byte m_filler; // note: unused and not prevent in version 6
+	protected byte m_filler; // note: unused and not present in version 6
 	protected short m_xRepeat;
 	protected short m_yRepeat;
 	protected byte m_xOffset;

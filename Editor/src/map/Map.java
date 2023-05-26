@@ -878,7 +878,7 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		addSprites(map.m_sprites);
 		setTrailingData(map.m_trailingData);
 
-		map.getSounds();
+		getSounds();
 
 		m_loading = false;
 

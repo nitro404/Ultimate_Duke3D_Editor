@@ -734,13 +734,15 @@ public class Sector extends TaggedMapComponent implements PartitionChangeListene
 		sector.put(FILLER_ATTRIBUTE_NAME, m_filler);
 		sector.put(TAG_INFORMATION_ATTRIBUTE_NAME, m_tagInformation.toJSONObject());
 
-		JSONArray trailingData = new JSONArray();
-
-		for(int i = 0; i < m_trailingData.length; i++) {
-			trailingData.put(m_trailingData[i]);
+		if(m_trailingData.length != 0) {
+			JSONArray trailingData = new JSONArray();
+	
+			for(int i = 0; i < m_trailingData.length; i++) {
+				trailingData.put(m_trailingData[i]);
+			}
+	
+			sector.put(TRAILING_DATA_ATTRIBUTE_NAME, trailingData);
 		}
-
-		sector.put(TRAILING_DATA_ATTRIBUTE_NAME, trailingData);
 
 		return sector;
 	}
