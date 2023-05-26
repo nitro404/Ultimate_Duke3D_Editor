@@ -24,7 +24,6 @@ public class Sector extends TaggedMapComponent implements PartitionChangeListene
 	public static final String FLOOR_ATTRIBUTE_NAME = "floor";
 	public static final String VISIBILITY_ATTRIBUTE_NAME = "visibility";
 	public static final String FILLER_ATTRIBUTE_NAME = "filler";
-	public static final String TAG_INFORMATION_ATTRIBUTE_NAME = "tagInformation";
 	public static final String TRAILING_DATA_ATTRIBUTE_NAME = "trailingData";
 
 	public Sector(short firstWallIndex, short numberOfWalls, int ceilingHeight, short ceilingAttributes, short ceilingTileNumber, short ceilingSlope, byte ceilingShade, short ceilingPaletteLookupTableNumber, short ceilingXPanning, short ceilingYPanning, int floorHeight, short floorAttributes, short floorTileNumber, short floorSlope, byte floorShade, short floorPaletteLookupTableNumber, short floorXPanning, short floorYPanning, short visibility, int lowTag, int highTag, int extra) {
@@ -732,7 +731,7 @@ public class Sector extends TaggedMapComponent implements PartitionChangeListene
 		sector.put(FLOOR_ATTRIBUTE_NAME, m_floor.toJSONObject());
 		sector.put(VISIBILITY_ATTRIBUTE_NAME, m_visibility);
 		sector.put(FILLER_ATTRIBUTE_NAME, m_filler);
-		sector.put(TAG_INFORMATION_ATTRIBUTE_NAME, m_tagInformation.toJSONObject());
+		m_tagInformation.addToJSONObject(sector);
 
 		if(m_trailingData.length != 0) {
 			JSONArray trailingData = new JSONArray();
@@ -770,7 +769,7 @@ public class Sector extends TaggedMapComponent implements PartitionChangeListene
 			Partition.fromJSONObject(sector.getJSONObject(FLOOR_ATTRIBUTE_NAME)),
 			(short) sector.getInt(VISIBILITY_ATTRIBUTE_NAME),
 			(byte) sector.optInt(FILLER_ATTRIBUTE_NAME, 0),
-			TagInformation.fromJSONObject(sector.getJSONObject(TAG_INFORMATION_ATTRIBUTE_NAME)),
+			TagInformation.fromJSONObject(sector),
 			trailingData
 		);
 	}

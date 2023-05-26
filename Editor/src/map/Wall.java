@@ -43,7 +43,6 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 	public static final String Y_REPEAT_ATTRIBUTE_NAME = "yRepeat";
 	public static final String X_PANNING_ATTRIBUTE_NAME = "xPanning";
 	public static final String Y_PANNING_ATTRIBUTE_NAME = "yPanning";
-	public static final String TAG_INFORMATION_ATTRIBUTE_NAME = "tagInformation";
 
 	public Wall(int x, int y, short nextWallIndex, short adjacentWallIndex, short nextSectorIndex, short attributes, short tileNumber, short maskedTileNumber, byte shade, short paletteLookupTableNumber, short xRepeat, short yRepeat, short xPanning, short yPanning, int lowTag, int highTag, int extra) {
 		this(x, y, nextWallIndex, adjacentWallIndex, nextSectorIndex, WallAttributes.unpack(attributes), tileNumber, maskedTileNumber, shade, paletteLookupTableNumber, xRepeat, yRepeat, xPanning, yPanning, new TagInformation(lowTag, highTag, extra));
@@ -568,7 +567,7 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 		wall.put(Y_REPEAT_ATTRIBUTE_NAME, m_yRepeat);
 		wall.put(X_PANNING_ATTRIBUTE_NAME, m_xPanning);
 		wall.put(Y_PANNING_ATTRIBUTE_NAME, m_yPanning);
-		wall.put(TAG_INFORMATION_ATTRIBUTE_NAME, m_tagInformation.toJSONObject());
+		m_tagInformation.addToJSONObject(wall);
 
 		return wall;
 	}
@@ -593,7 +592,7 @@ public class Wall extends TaggedMapComponent implements ItemAttributeChangeListe
 			(short) wall.getInt(Y_REPEAT_ATTRIBUTE_NAME),
 			(short) wall.getInt(X_PANNING_ATTRIBUTE_NAME),
 			(short) wall.getInt(Y_PANNING_ATTRIBUTE_NAME),
-			TagInformation.fromJSONObject(wall.getJSONObject(TAG_INFORMATION_ATTRIBUTE_NAME))
+			TagInformation.fromJSONObject(wall)
 		);
 	}
 

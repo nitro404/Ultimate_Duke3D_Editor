@@ -51,7 +51,6 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 	public static final String ANGLE_ATTRIBUTE_NAME = "angle";
 	public static final String OWNER_ATTRIBUTE_NAME = "owner";
 	public static final String VELOCITY_ATTRIBUTE_NAME = "velocity";
-	public static final String TAG_INFORMATION_ATTRIBUTE_NAME = "tagInformation";
 
 	public Sprite(Position position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, int lowTag, int highTag, int extra) {
 		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), new TagInformation(lowTag, highTag, extra));
@@ -958,7 +957,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 		sprite.put(ANGLE_ATTRIBUTE_NAME, m_angle);
 		sprite.put(OWNER_ATTRIBUTE_NAME, m_owner);
 		sprite.put(VELOCITY_ATTRIBUTE_NAME, m_velocity.toJSONObject());
-		sprite.put(TAG_INFORMATION_ATTRIBUTE_NAME, m_tagInformation.toJSONObject());
+		m_tagInformation.addToJSONObject(sprite);
 
 		return sprite;
 	}
@@ -985,7 +984,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 			(short) sprite.getInt(ANGLE_ATTRIBUTE_NAME),
 			(short) sprite.getInt(OWNER_ATTRIBUTE_NAME),
 			Velocity.fromJSONObject(sprite.getJSONObject(VELOCITY_ATTRIBUTE_NAME)),
-			TagInformation.fromJSONObject(sprite.getJSONObject(TAG_INFORMATION_ATTRIBUTE_NAME))
+			TagInformation.fromJSONObject(sprite)
 		);
 	}
 
