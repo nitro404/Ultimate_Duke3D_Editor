@@ -203,11 +203,11 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		m_playerSpawn.setZ(z);
 	}
 
-	public Position getPlayerSpawnPosition() {
+	public Position3D getPlayerSpawnPosition() {
 		return m_playerSpawn.getPosition();
 	}
 
-	public void setPlayerSpawnPosition(Position position) throws IllegalArgumentException {
+	public void setPlayerSpawnPosition(Position3D position) throws IllegalArgumentException {
 		m_playerSpawn.setPosition(position);
 	}
 

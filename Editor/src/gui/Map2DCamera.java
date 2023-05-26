@@ -68,7 +68,7 @@ public class Map2DCamera implements ItemChangeListener {
 		setY(m_y + y);
 	}
 
-	public void setPosition(Position p) {
+	public void setPosition(Position3D p) {
 		if(p == null) {
 			return;
 		}

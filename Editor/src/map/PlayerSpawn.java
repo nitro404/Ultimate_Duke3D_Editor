@@ -8,7 +8,7 @@ import org.json.*;
 
 public class PlayerSpawn extends MapComponent implements PositionChangeListener {
 
-	protected Position m_position;
+	protected Position3D m_position;
 	protected short m_angle;
 	protected short m_sectorNumber;
 	protected Vector<PlayerSpawnChangeListener> m_playerSpawnChangeListeners;
@@ -22,14 +22,14 @@ public class PlayerSpawn extends MapComponent implements PositionChangeListener 
 	protected static final double ARROW_SIZE = 128;
 
 	public PlayerSpawn() {
-		this(new Position(32768, 32768, 0), (short) 1536, (short) 0);
+		this(new Position3D(32768, 32768, 0), (short) 1536, (short) 0);
 	}
 
 	public PlayerSpawn(int x, int y, int z, short angle, short sectorNumber) {
-		this(new Position(x, y, z), angle, sectorNumber);
+		this(new Position3D(x, y, z), angle, sectorNumber);
 	}
 
-	public PlayerSpawn(Position position, short angle, short sectorNumber) {
+	public PlayerSpawn(Position3D position, short angle, short sectorNumber) {
 		m_playerSpawnChangeListeners = new Vector<PlayerSpawnChangeListener>();
 
 		setPosition(position);
@@ -61,11 +61,11 @@ public class PlayerSpawn extends MapComponent implements PositionChangeListener 
 		m_position.setZ(z);
 	}
 
-	public Position getPosition() {
+	public Position3D getPosition() {
 		return m_position;
 	}
 
-	public void setPosition(Position position) throws IllegalArgumentException {
+	public void setPosition(Position3D position) throws IllegalArgumentException {
 		if(position == null) { throw new IllegalArgumentException("Position cannot be null."); }
 
 		if(m_position != null) {
@@ -142,8 +142,8 @@ public class PlayerSpawn extends MapComponent implements PositionChangeListener 
 		byte data[] = new byte[SIZE];
 		int offset = 0;
 
-		System.arraycopy(m_position.serialize(endianness), 0, data, offset, Position.SIZE);
-		offset += Position.SIZE;
+		System.arraycopy(m_position.serialize(endianness), 0, data, offset, Position3D.SIZE);
+		offset += Position3D.SIZE;
 
 		System.arraycopy(Serializer.serializeShort(m_angle, endianness), 0, data, offset, 2);
 		offset += 2;
@@ -181,8 +181,8 @@ public class PlayerSpawn extends MapComponent implements PositionChangeListener 
 		}
 
 		// read the player spawn position
-		Position position = Position.deserialize(data, offset, endianness);
-		offset += Position.SIZE;
+		Position3D position = Position3D.deserialize(data, offset, endianness);
+		offset += Position3D.SIZE;
 
 		// read the player spawn angle
 		short angle = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), endianness);
@@ -210,7 +210,7 @@ public class PlayerSpawn extends MapComponent implements PositionChangeListener 
 		}
 
 		return new PlayerSpawn(
-			Position.fromJSONObject(playerSpawn.getJSONObject(POSITION_ATTRIBUTE_NAME)),
+			Position3D.fromJSONObject(playerSpawn.getJSONObject(POSITION_ATTRIBUTE_NAME)),
 			(short) playerSpawn.getInt(ANGLE_ATTRIBUTE_NAME),
 			(short) playerSpawn.getInt(SECTOR_NUMBER_ATTRIBUTE_NAME)
 		);
@@ -271,7 +271,7 @@ public class PlayerSpawn extends MapComponent implements PositionChangeListener 
 		}
 	}
 
-	public void handlePositionChange(Position position) {
+	public void handlePositionChange(Position3D position) {
 		notifyPlayerSpawnChanged();
 	}
 

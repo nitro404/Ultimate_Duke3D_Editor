@@ -5,7 +5,7 @@ import exception.*;
 import utilities.*;
 import org.json.*;
 
-public class Position {
+public class Position3D {
 
 	protected int m_x;
 	protected int m_y;
@@ -18,11 +18,11 @@ public class Position {
 	public static final String Y_ATTRIBUTE_NAME = "y";
 	public static final String Z_ATTRIBUTE_NAME = "z";
 
-	public Position() {
+	public Position3D() {
 		this(0, 0, 0);
 	}
 
-	public Position(int x, int y, int z) {
+	public Position3D(int x, int y, int z) {
 		m_x = x;
 		m_y = y;
 		m_z = z;
@@ -91,19 +91,19 @@ public class Position {
 		return data;
 	}
 
-	public static Position deserialize(byte data[]) throws DeserializationException {
+	public static Position3D deserialize(byte data[]) throws DeserializationException {
 		return deserialize(data, 0);
 	}
 
-	public static Position deserialize(byte data[], int offset) throws DeserializationException {
+	public static Position3D deserialize(byte data[], int offset) throws DeserializationException {
 		return deserialize(data, offset, Endianness.LittleEndian);
 	}
 
-	public static Position deserialize(byte data[], Endianness endianness) throws DeserializationException {
+	public static Position3D deserialize(byte data[], Endianness endianness) throws DeserializationException {
 		return deserialize(data, 0, endianness);
 	}
 
-	public static Position deserialize(byte data[], int offset, Endianness endianness) throws DeserializationException {
+	public static Position3D deserialize(byte data[], int offset, Endianness endianness) throws DeserializationException {
 		if(data == null) {
 			throw new MapDeserializationException("Invalid position data.");
 		}
@@ -129,7 +129,7 @@ public class Position {
 		int z = Serializer.deserializeInteger(Arrays.copyOfRange(data, offset, offset + 4), endianness);
 		offset += 4;
 
-		return new Position(x, y, z);
+		return new Position3D(x, y, z);
 	}
 
 	public JSONObject toJSONObject() {
@@ -141,20 +141,20 @@ public class Position {
 		return position;
 	}
 
-	public static Position fromJSONObject(JSONObject position) throws IllegalArgumentException, JSONException {
+	public static Position3D fromJSONObject(JSONObject position) throws IllegalArgumentException, JSONException {
 		if(position == null) {
 			throw new IllegalArgumentException("Position JSON data cannot be null.");
 		}
 
-		return new Position(
+		return new Position3D(
 			(short) position.getInt(X_ATTRIBUTE_NAME),
 			(short) position.getInt(Y_ATTRIBUTE_NAME),
 			(short) position.getInt(Z_ATTRIBUTE_NAME)
 		);
 	}
 
-	public Position clone() {
-		return new Position(m_x, m_y, m_z);
+	public Position3D clone() {
+		return new Position3D(m_x, m_y, m_z);
 	}
 
 	public int numberOfPositionChangeListeners() {
@@ -208,11 +208,11 @@ public class Position {
 	}
 
 	public boolean equals(Object o) {
-		if(o == null || !(o instanceof Position)) {
+		if(o == null || !(o instanceof Position3D)) {
 			return false;
 		}
 		
-		Position p = (Position) o;
+		Position3D p = (Position3D) o;
 		
 		return m_x == p.m_x &&
 			   m_y == p.m_y &&
