@@ -11,8 +11,8 @@ public class PartitionAttributes extends ItemAttributes {
 	protected boolean m_sloped;
 	protected boolean m_swapTextureXY;
 	protected boolean m_doubleSmooshiness;
-	protected boolean m_xFlip;
-	protected boolean m_yFlip;
+	protected boolean m_xFlipped;
+	protected boolean m_yFlipped;
 	protected boolean m_textureAlign;
 	protected byte m_reserved; // note: unused
 
@@ -20,8 +20,8 @@ public class PartitionAttributes extends ItemAttributes {
 	final public static ItemAttribute Sloped = new ItemAttribute("Sloped", "sloped", (byte) 1, false, (byte) 1);
 	final public static ItemAttribute SwapTextureXY = new ItemAttribute("Swap Texture XY", "swapTextureXY", (byte) 1, false, (byte) 2);
 	final public static ItemAttribute DoubleSmooshiness = new ItemAttribute("Double Smooshiness", "doubleSmooshiness", (byte) 1, false, (byte) 3);
-	final public static ItemAttribute XFlip = new ItemAttribute("X Flip", "xFlip", (byte) 1, false, (byte) 4);
-	final public static ItemAttribute YFlip = new ItemAttribute("Y Flip", "yFlip", (byte) 1, false, (byte) 5);
+	final public static ItemAttribute XFlipped = new ItemAttribute("X Flipped", "xFlipped", (byte) 1, false, (byte) 4);
+	final public static ItemAttribute YFlipped = new ItemAttribute("Y Flipped", "yFlipped", (byte) 1, false, (byte) 5);
 	final public static ItemAttribute TextureAlign = new ItemAttribute("Texture Align", "textureAlign", (byte) 1, false, (byte) 6);
 	final public static ItemAttribute Reserved = new ItemAttribute("Reserved", "reserved", (byte) 9, false, (byte) 7);
 
@@ -30,8 +30,8 @@ public class PartitionAttributes extends ItemAttributes {
 		Sloped,
 		SwapTextureXY,
 		DoubleSmooshiness,
-		XFlip,
-		YFlip,
+		XFlipped,
+		YFlipped,
 		TextureAlign,
 		Reserved
 	};
@@ -40,19 +40,19 @@ public class PartitionAttributes extends ItemAttributes {
 		this(false, false, false, false, false, false, false, (byte) 0);
 	}
 
-	public PartitionAttributes(boolean parallaxed, boolean sloped, boolean swapTextureXY, boolean doubleSmooshiness, boolean xFlip, boolean yFlip, boolean textureAlign) throws IllegalArgumentException {
-		this(parallaxed, sloped, swapTextureXY, doubleSmooshiness, xFlip, yFlip, textureAlign, (byte) 0);
+	public PartitionAttributes(boolean parallaxed, boolean sloped, boolean swapTextureXY, boolean doubleSmooshiness, boolean xFlipped, boolean yFlipped, boolean textureAlign) throws IllegalArgumentException {
+		this(parallaxed, sloped, swapTextureXY, doubleSmooshiness, xFlipped, yFlipped, textureAlign, (byte) 0);
 	}
 
-	public PartitionAttributes(boolean parallaxed, boolean sloped, boolean swapTextureXY, boolean doubleSmooshiness, boolean xFlip, boolean yFlip, boolean textureAlign, byte reserved) throws IllegalArgumentException {
+	public PartitionAttributes(boolean parallaxed, boolean sloped, boolean swapTextureXY, boolean doubleSmooshiness, boolean xFlipped, boolean yFlipped, boolean textureAlign, byte reserved) throws IllegalArgumentException {
 		if(!Reserved.isValidValue(reserved)) { throw new IllegalArgumentException("Invalid reserved partition attribute value: " + reserved + ", expected value between " + Reserved.getMinimumValue() + " and " + Reserved.getMaximumValue() + "."); }
 
 		m_parallaxed = parallaxed;
 		m_sloped = sloped;
 		m_swapTextureXY = swapTextureXY;
 		m_doubleSmooshiness = doubleSmooshiness;
-		m_xFlip = xFlip;
-		m_yFlip = yFlip;
+		m_xFlipped = xFlipped;
+		m_yFlipped = yFlipped;
 		m_textureAlign = textureAlign;
 		m_reserved = reserved;
 	}
@@ -149,42 +149,42 @@ public class PartitionAttributes extends ItemAttributes {
 		return true;
 	}
 
-	public boolean getXFlip() {
-		return m_xFlip;
+	public boolean getXFlipped() {
+		return m_xFlipped;
 	}
 
-	public boolean setXFlip(byte xFlip) {
-		if(!XFlip.isValidValue(xFlip)) {
+	public boolean setXFlipped(byte xFlipped) {
+		if(!XFlipped.isValidValue(xFlipped)) {
 			return false;
 		}
 
-		return setXFlip(xFlip != 0);
+		return setXFlipped(xFlipped != 0);
 	}
 
-	public boolean setXFlip(boolean xFlip) {
-		m_xFlip = xFlip;
+	public boolean setXFlipped(boolean xFlipped) {
+		m_xFlipped = xFlipped;
 
-		notifyItemAttributeChanged(XFlip, m_xFlip ? (byte) 1 : (byte) 0);
+		notifyItemAttributeChanged(XFlipped, m_xFlipped ? (byte) 1 : (byte) 0);
 
 		return true;
 	}
 
-	public boolean getYFlip() {
-		return m_yFlip;
+	public boolean getYFlipped() {
+		return m_yFlipped;
 	}
 
-	public boolean setYFlip(byte yFlip) {
-		if(!YFlip.isValidValue(yFlip)) {
+	public boolean setYFlipped(byte yFlipped) {
+		if(!YFlipped.isValidValue(yFlipped)) {
 			return false;
 		}
 
-		return setYFlip(yFlip != 0);
+		return setYFlipped(yFlipped != 0);
 	}
 
-	public boolean setYFlip(boolean yFlip) {
-		m_yFlip = yFlip;
+	public boolean setYFlipped(boolean yFlipped) {
+		m_yFlipped = yFlipped;
 
-		notifyItemAttributeChanged(YFlip, m_yFlip ? (byte) 1 : (byte) 0);
+		notifyItemAttributeChanged(YFlipped, m_yFlipped ? (byte) 1 : (byte) 0);
 
 		return true;
 	}
@@ -238,11 +238,11 @@ public class PartitionAttributes extends ItemAttributes {
 		else if(attribute == DoubleSmooshiness) {
 			return m_doubleSmooshiness ? (byte) 1 : (byte) 0;
 		}
-		else if(attribute == XFlip) {
-			return m_xFlip ? (byte) 1 : (byte) 0;
+		else if(attribute == XFlipped) {
+			return m_xFlipped ? (byte) 1 : (byte) 0;
 		}
-		else if(attribute == YFlip) {
-			return m_yFlip ? (byte) 1 : (byte) 0;
+		else if(attribute == YFlipped) {
+			return m_yFlipped ? (byte) 1 : (byte) 0;
 		}
 		else if(attribute == TextureAlign) {
 			return m_textureAlign ? (byte) 1 : (byte) 0;
@@ -267,11 +267,11 @@ public class PartitionAttributes extends ItemAttributes {
 		else if(attribute == DoubleSmooshiness) {
 			return setDoubleSmooshiness(value);
 		}
-		else if(attribute == XFlip) {
-			return setXFlip(value);
+		else if(attribute == XFlipped) {
+			return setXFlipped(value);
 		}
-		else if(attribute == YFlip) {
-			return setYFlip(value);
+		else if(attribute == YFlipped) {
+			return setYFlipped(value);
 		}
 		else if(attribute == TextureAlign) {
 			return setTextureAlign(value);
@@ -318,8 +318,8 @@ public class PartitionAttributes extends ItemAttributes {
 		setSloped(a.m_sloped);
 		setSwapTextureXY(a.m_swapTextureXY);
 		setDoubleSmooshiness(a.m_doubleSmooshiness);
-		setXFlip(a.m_xFlip);
-		setYFlip(a.m_yFlip);
+		setXFlipped(a.m_xFlipped);
+		setYFlipped(a.m_yFlipped);
 		setTextureAlign(a.m_textureAlign);
 		setReserved(a.m_reserved);
 	}
@@ -390,7 +390,7 @@ public class PartitionAttributes extends ItemAttributes {
 	}
 
 	public ItemAttributes clone(boolean reassignItemChangeListeners) {
-		PartitionAttributes newPartitionAttributes = new PartitionAttributes(m_parallaxed, m_sloped, m_swapTextureXY, m_doubleSmooshiness, m_xFlip, m_yFlip, m_textureAlign, m_reserved);
+		PartitionAttributes newPartitionAttributes = new PartitionAttributes(m_parallaxed, m_sloped, m_swapTextureXY, m_doubleSmooshiness, m_xFlipped, m_yFlipped, m_textureAlign, m_reserved);
 
 		if(reassignItemChangeListeners) {
 			newPartitionAttributes.m_itemAttributeChangeListeners = new Vector<ItemAttributeChangeListener>(m_itemAttributeChangeListeners.size());
@@ -408,8 +408,8 @@ public class PartitionAttributes extends ItemAttributes {
 		m_sloped = false;
 		m_swapTextureXY = false;
 		m_doubleSmooshiness = false;
-		m_xFlip = false;
-		m_yFlip = false;
+		m_xFlipped = false;
+		m_yFlipped = false;
 		m_textureAlign = false;
 		m_reserved = (byte) 0;
 	}
@@ -425,8 +425,8 @@ public class PartitionAttributes extends ItemAttributes {
 			   m_sloped == a.m_sloped &&
 			   m_swapTextureXY == a.m_swapTextureXY &&
 			   m_doubleSmooshiness == a.m_doubleSmooshiness &&
-			   m_xFlip == a.m_xFlip &&
-			   m_yFlip == a.m_yFlip &&
+			   m_xFlipped == a.m_xFlipped &&
+			   m_yFlipped == a.m_yFlipped &&
 			   m_textureAlign == a.m_textureAlign &&
 			   m_reserved == a.m_reserved;
 	}
