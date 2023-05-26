@@ -14,6 +14,7 @@ public class PartitionAttributes extends ItemAttributes {
 	protected boolean m_xFlipped;
 	protected boolean m_yFlipped;
 	protected boolean m_textureAlign;
+// TODO: this is 9 bytes but it cant be stored unless this was a short:
 	protected byte m_reserved; // note: unused
 
 	final public static ItemAttribute Parallaxed = new ItemAttribute("Parallaxed", "parallaxed", (byte) 1, false, (byte) 0);
