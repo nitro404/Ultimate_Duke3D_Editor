@@ -20,7 +20,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 	protected short m_yRepeat;
 	protected byte m_xOffset;
 	protected byte m_yOffset;
-	protected short m_sectorNumber;
+	protected short m_sectorIndex;
 	protected short m_statusNumber;
 	protected short m_angle;
 	protected short m_owner;
@@ -46,73 +46,73 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 	public static final String Y_REPEAT_ATTRIBUTE_NAME = "yRepeat";
 	public static final String X_OFFSET_ATTRIBUTE_NAME = "xOffset";
 	public static final String Y_OFFSET_ATTRIBUTE_NAME = "yOffset";
-	public static final String SECTOR_NUMBER_ATTRIBUTE_NAME = "sectorNumber";
+	public static final String SECTOR_INDEX_ATTRIBUTE_NAME = "sectorIndex";
 	public static final String STATUS_NUMBER_ATTRIBUTE_NAME = "statusNumber";
 	public static final String ANGLE_ATTRIBUTE_NAME = "angle";
 	public static final String OWNER_ATTRIBUTE_NAME = "owner";
 	public static final String VELOCITY_ATTRIBUTE_NAME = "velocity";
 
-	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, int lowTag, int highTag, int extra) {
-		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), new TagInformation(lowTag, highTag, extra));
+	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, int lowTag, int highTag, int extra) {
+		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), new TagInformation(lowTag, highTag, extra));
 	}
 
-	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, int lowTag, int highTag, int extra) {
-		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), new TagInformation(lowTag, highTag, extra));
+	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, int lowTag, int highTag, int extra) {
+		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), new TagInformation(lowTag, highTag, extra));
 	}
 
-	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, int lowTag, int highTag, int extra) {
-		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), new TagInformation(lowTag, highTag, extra));
+	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, int lowTag, int highTag, int extra) {
+		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), new TagInformation(lowTag, highTag, extra));
 	}
 
-	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, int lowTag, int highTag, int extra) {
-		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), new TagInformation(lowTag, highTag, extra));
+	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, int lowTag, int highTag, int extra) {
+		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), new TagInformation(lowTag, highTag, extra));
 	}
 
-	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, TagInformation tagInformation) {
-		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), tagInformation);
+	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, TagInformation tagInformation) {
+		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), tagInformation);
 	}
 
-	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, TagInformation tagInformation) {
-		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), tagInformation);
+	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, TagInformation tagInformation) {
+		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), tagInformation);
 	}
 
-	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, TagInformation tagInformation) {
-		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), tagInformation);
+	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, TagInformation tagInformation) {
+		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), tagInformation);
 	}
 
-	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, TagInformation tagInformation) {
-		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), tagInformation);
+	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, short velocityX, short velocityY, short velocityZ, TagInformation tagInformation) {
+		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, new Velocity(velocityX, velocityY, velocityZ), tagInformation);
 	}
 
-	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, Velocity velocity, int lowTag, int highTag, int extra) {
-		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, velocity, new TagInformation(lowTag, highTag, extra));
+	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, Velocity velocity, int lowTag, int highTag, int extra) {
+		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, velocity, new TagInformation(lowTag, highTag, extra));
 	}
 
-	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, Velocity velocity, int lowTag, int highTag, int extra) {
-		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, velocity, new TagInformation(lowTag, highTag, extra));
+	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, Velocity velocity, int lowTag, int highTag, int extra) {
+		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, velocity, new TagInformation(lowTag, highTag, extra));
 	}
 
-	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, Velocity velocity, int lowTag, int highTag, int extra) {
-		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, velocity, new TagInformation(lowTag, highTag, extra));
+	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, Velocity velocity, int lowTag, int highTag, int extra) {
+		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, velocity, new TagInformation(lowTag, highTag, extra));
 	}
 
-	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, Velocity velocity, int lowTag, int highTag, int extra) {
-		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, velocity, new TagInformation(lowTag, highTag, extra));
+	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, Velocity velocity, int lowTag, int highTag, int extra) {
+		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, velocity, new TagInformation(lowTag, highTag, extra));
 	}
 
-	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, Velocity velocity, TagInformation tagInformation) {
-		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, velocity, tagInformation);
+	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, Velocity velocity, TagInformation tagInformation) {
+		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, velocity, tagInformation);
 	}
 
-	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, Velocity velocity, TagInformation tagInformation) {
-		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, velocity, tagInformation);
+	public Sprite(Position3D position, short attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, Velocity velocity, TagInformation tagInformation) {
+		this(position, SpriteAttributes.unpack(attributes), tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, velocity, tagInformation);
 	}
 
-	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, Velocity velocity, TagInformation tagInformation) {
-		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, velocity, tagInformation);
+	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, Velocity velocity, TagInformation tagInformation) {
+		this(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, (byte) 0, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, velocity, tagInformation);
 	}
 
-	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorNumber, short statusNumber, short angle, short owner, Velocity velocity, TagInformation tagInformation) {
+	public Sprite(Position3D position, SpriteAttributes attributes, short tileNumber, byte shade, short paletteLookupTableNumber, short clippingDistance, byte filler, short xRepeat, short yRepeat, byte xOffset, byte yOffset, short sectorIndex, short statusNumber, short angle, short owner, Velocity velocity, TagInformation tagInformation) {
 		super(tagInformation);
 
 		if(position == null) { throw new IllegalArgumentException("Sprite position cannot be null."); }
@@ -133,7 +133,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 		m_yRepeat = yRepeat;
 		m_xOffset = xOffset;
 		m_yOffset = yOffset;
-		m_sectorNumber = sectorNumber;
+		m_sectorIndex = sectorIndex;
 		m_statusNumber = statusNumber;
 		m_angle = angle;
 		m_owner = owner;
@@ -433,8 +433,8 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 		notifySpriteChanged();
 	}
 
-	public short getSectorNumber() {
-		return m_sectorNumber;
+	public short getSectorIndex() {
+		return m_sectorIndex;
 	}
 
 	public Sector getSector() {
@@ -442,15 +442,15 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 			return null;
 		}
 
-		return m_map.getSector(m_sectorNumber);
+		return m_map.getSector(m_sectorIndex);
 	}
 
-	public void setSectorNumber(short sectorNumber) {
-		if(m_sectorNumber == sectorNumber) {
+	public void setSectorIndex(short sectorIndex) {
+		if(m_sectorIndex == sectorIndex) {
 			return;
 		}
 
-		m_sectorNumber = sectorNumber;
+		m_sectorIndex = sectorIndex;
 
 		notifySpriteChanged();
 	}
@@ -759,7 +759,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 
 		if(version != 6) {
 			// serialize the sprite sector number
-			System.arraycopy(Serializer.serializeShort(m_sectorNumber, endianness), 0, data, offset, 2);
+			System.arraycopy(Serializer.serializeShort(m_sectorIndex, endianness), 0, data, offset, 2);
 			offset += 2;
 
 			// serialize the sprite status number
@@ -792,7 +792,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 			offset += 2;
 
 			// serialize the sprite sector number
-			System.arraycopy(Serializer.serializeShort(m_sectorNumber, endianness), 0, data, offset, 2);
+			System.arraycopy(Serializer.serializeShort(m_sectorIndex, endianness), 0, data, offset, 2);
 			offset += 2;
 
 			// serialize the sprite status number
@@ -840,7 +840,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 
 		short tileNumber = -1;
 		byte filler = 0;
-		short sectorNumber = -1;
+		short sectorIndex = -1;
 		short statusNumber = -1;
 		short owner = -1;
 
@@ -886,7 +886,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 
 		if(version != 6) {
 			// deserialize the sector number
-			sectorNumber = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), endianness);
+			sectorIndex = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), endianness);
 			offset += 2;
 
 			// deserialize the status number
@@ -919,7 +919,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 			offset += 2;
 
 			// deserialize the sector number
-			sectorNumber = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), endianness);
+			sectorIndex = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), endianness);
 			offset += 2;
 
 			// deserialize the status number
@@ -936,7 +936,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 			filler = data[offset++];
 		}
 
-		return new Sprite(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorNumber, statusNumber, angle, owner, velocity, tagInformation);
+		return new Sprite(position, attributes, tileNumber, shade, paletteLookupTableNumber, clippingDistance, filler, xRepeat, yRepeat, xOffset, yOffset, sectorIndex, statusNumber, angle, owner, velocity, tagInformation);
 	}
 
 	public JSONObject toJSONObject() {
@@ -952,7 +952,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 		sprite.put(Y_REPEAT_ATTRIBUTE_NAME, m_yRepeat);
 		sprite.put(X_OFFSET_ATTRIBUTE_NAME, m_xOffset);
 		sprite.put(Y_OFFSET_ATTRIBUTE_NAME, m_yOffset);
-		sprite.put(SECTOR_NUMBER_ATTRIBUTE_NAME, m_sectorNumber);
+		sprite.put(SECTOR_INDEX_ATTRIBUTE_NAME, m_sectorIndex);
 		sprite.put(STATUS_NUMBER_ATTRIBUTE_NAME, m_statusNumber);
 		sprite.put(ANGLE_ATTRIBUTE_NAME, m_angle);
 		sprite.put(OWNER_ATTRIBUTE_NAME, m_owner);
@@ -979,7 +979,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 			(short) sprite.getInt(Y_REPEAT_ATTRIBUTE_NAME),
 			(byte) sprite.getInt(X_OFFSET_ATTRIBUTE_NAME),
 			(byte) sprite.getInt(Y_OFFSET_ATTRIBUTE_NAME),
-			(short) sprite.getInt(SECTOR_NUMBER_ATTRIBUTE_NAME),
+			(short) sprite.getInt(SECTOR_INDEX_ATTRIBUTE_NAME),
 			(short) sprite.getInt(STATUS_NUMBER_ATTRIBUTE_NAME),
 			(short) sprite.getInt(ANGLE_ATTRIBUTE_NAME),
 			(short) sprite.getInt(OWNER_ATTRIBUTE_NAME),
@@ -993,7 +993,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 	}
 
 	public Sprite clone(boolean reassignMap) {
-		Sprite clonedSprite = new Sprite(m_position, m_attributes, m_tileNumber, m_shade, m_paletteLookupTableNumber, m_clippingDistance, m_filler, m_xRepeat, m_yRepeat, m_xOffset, m_yOffset, m_sectorNumber, m_statusNumber, m_angle, m_owner, m_velocity, m_tagInformation);
+		Sprite clonedSprite = new Sprite(m_position, m_attributes, m_tileNumber, m_shade, m_paletteLookupTableNumber, m_clippingDistance, m_filler, m_xRepeat, m_yRepeat, m_xOffset, m_yOffset, m_sectorIndex, m_statusNumber, m_angle, m_owner, m_velocity, m_tagInformation);
 
 		if(reassignMap) {
 			clonedSprite.setMap(m_map);
@@ -1109,7 +1109,7 @@ public class Sprite extends TaggedMapComponent implements ItemAttributeChangeLis
 			   m_yRepeat == s.m_yRepeat &&
 			   m_xOffset == s.m_xOffset &&
 			   m_yOffset == s.m_yOffset &&
-			   m_sectorNumber == s.m_sectorNumber &&
+			   m_sectorIndex == s.m_sectorIndex &&
 			   m_statusNumber == s.m_statusNumber &&
 			   m_angle == s.m_angle &&
 			   m_owner == s.m_owner &&

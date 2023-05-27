@@ -219,12 +219,12 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		m_playerSpawn.setAngle(angle);
 	}
 
-	public short getPlayerSpawnSectorNumber() {
-		return m_playerSpawn.getSectorNumber();
+	public short getPlayerSpawnSectorIndex() {
+		return m_playerSpawn.getSectorIndex();
 	}
 
-	public void setPlayerSpawnSectorNumber(short sectorNumber) {
-		m_playerSpawn.setSectorNumber(sectorNumber);
+	public void setPlayerSpawnSectorIndex(short sectorIndex) {
+		m_playerSpawn.setSectorIndex(sectorIndex);
 	}
 
 	public PlayerSpawn getPlayerSpawn() {
@@ -275,12 +275,12 @@ public class Map extends Item implements PlayerSpawnChangeListener, SectorChange
 		return -1;
 	}
 
-	public Sector getSector(short sectorNumber) {
-		if(sectorNumber < 0 || sectorNumber >= m_sectors.size()) {
+	public Sector getSector(short sectorIndex) {
+		if(sectorIndex < 0 || sectorIndex >= m_sectors.size()) {
 			return null;
 		}
 
-		return m_sectors.elementAt(sectorNumber);
+		return m_sectors.elementAt(sectorIndex);
 	}
 
 	public boolean addSector(Sector sector) {

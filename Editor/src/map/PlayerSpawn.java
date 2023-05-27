@@ -10,7 +10,7 @@ public class PlayerSpawn extends MapComponent implements Position3DChangeListene
 
 	protected Position3D m_position;
 	protected short m_angle;
-	protected short m_sectorNumber;
+	protected short m_sectorIndex;
 	protected Vector<PlayerSpawnChangeListener> m_playerSpawnChangeListeners;
 
 	public static final int SIZE = 16;
@@ -25,16 +25,16 @@ public class PlayerSpawn extends MapComponent implements Position3DChangeListene
 		this(new Position3D(32768, 32768, 0), (short) 1536, (short) 0);
 	}
 
-	public PlayerSpawn(int x, int y, int z, short angle, short sectorNumber) {
-		this(new Position3D(x, y, z), angle, sectorNumber);
+	public PlayerSpawn(int x, int y, int z, short angle, short sectorIndex) {
+		this(new Position3D(x, y, z), angle, sectorIndex);
 	}
 
-	public PlayerSpawn(Position3D position, short angle, short sectorNumber) {
+	public PlayerSpawn(Position3D position, short angle, short sectorIndex) {
 		m_playerSpawnChangeListeners = new Vector<PlayerSpawnChangeListener>();
 
 		setPosition(position);
 		setAngle(angle);
-		setSectorNumber(sectorNumber);
+		setSectorIndex(sectorIndex);
 	}
 
 	public int getX() {
@@ -108,16 +108,16 @@ public class PlayerSpawn extends MapComponent implements Position3DChangeListene
 		notifyPlayerSpawnChanged();
 	}
 
-	public short getSectorNumber() {
-		return m_sectorNumber;
+	public short getSectorIndex() {
+		return m_sectorIndex;
 	}
 
-	public void setSectorNumber(short sectorNumber) {
-		if(m_sectorNumber == sectorNumber) {
+	public void setSectorIndex(short sectorIndex) {
+		if(m_sectorIndex == sectorIndex) {
 			return;
 		}
 
-		m_sectorNumber = sectorNumber;
+		m_sectorIndex = sectorIndex;
 
 		notifyPlayerSpawnChanged();
 	}
@@ -148,7 +148,7 @@ public class PlayerSpawn extends MapComponent implements Position3DChangeListene
 		System.arraycopy(Serializer.serializeShort(m_angle, endianness), 0, data, offset, 2);
 		offset += 2;
 
-		System.arraycopy(Serializer.serializeShort(m_sectorNumber, endianness), 0, data, offset, 2);
+		System.arraycopy(Serializer.serializeShort(m_sectorIndex, endianness), 0, data, offset, 2);
 		offset += 2;
 
 		return data;
@@ -189,17 +189,17 @@ public class PlayerSpawn extends MapComponent implements Position3DChangeListene
 		offset += 2;
 
 		// read the sector number
-		short sectorNumber = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), endianness);
+		short sectorIndex = Serializer.deserializeShort(Arrays.copyOfRange(data, offset, offset + 2), endianness);
 		offset += 2;
 
-		return new PlayerSpawn(position, angle, sectorNumber);
+		return new PlayerSpawn(position, angle, sectorIndex);
 	}
 
 	public JSONObject toJSONObject() {
 		JSONObject playerSpawn = new JSONObject();
 		playerSpawn.put(POSITION_ATTRIBUTE_NAME, m_position.toJSONObject());
 		playerSpawn.put(ANGLE_ATTRIBUTE_NAME, m_angle);
-		playerSpawn.put(SECTOR_NUMBER_ATTRIBUTE_NAME, m_sectorNumber);
+		playerSpawn.put(SECTOR_NUMBER_ATTRIBUTE_NAME, m_sectorIndex);
 
 		return playerSpawn;
 	}
@@ -217,7 +217,7 @@ public class PlayerSpawn extends MapComponent implements Position3DChangeListene
 	}
 
 	public PlayerSpawn clone() {
-		return new PlayerSpawn(m_position, m_angle, m_sectorNumber);
+		return new PlayerSpawn(m_position, m_angle, m_sectorIndex);
 	}
 
 	public int numberOfPlayerSpawnChangeListeners() {
@@ -317,11 +317,11 @@ public class PlayerSpawn extends MapComponent implements Position3DChangeListene
 		
 		return m_position.equals(s.m_position) &&
 			   m_angle == s.m_angle &&
-			   m_sectorNumber == s.m_sectorNumber;
+			   m_sectorIndex == s.m_sectorIndex;
 	}
 	
 	public String toString() {
-		return "Spawn Position: " + m_position + ", Angle: " + m_angle + ", Sector Number: " + m_sectorNumber;
+		return "Spawn Position: " + m_position + ", Angle: " + m_angle + ", Sector Number: " + m_sectorIndex;
 	}
 
 }
