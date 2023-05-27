@@ -22,7 +22,7 @@ public abstract class TaggedMapComponent extends MapComponent implements TagInfo
 		m_tagInformation.setLowTag(lowTag);
 	}
 
-	public boolean hasHightag() {
+	public boolean hasHighTag() {
 		return m_tagInformation.hasHighTag();
 	}
 
