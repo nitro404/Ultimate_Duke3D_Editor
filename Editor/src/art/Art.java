@@ -357,6 +357,10 @@ public class Art extends Item implements TileChangeListener {
 	}
 
 	protected boolean setTile(Tile tile) {
+		if(tile == null) {
+			return false;
+		}
+
 		return setTile(tile, tile.getNumber());
 	}
 
@@ -388,7 +392,7 @@ public class Art extends Item implements TileChangeListener {
 	}
 	
 	public boolean replaceTile(Tile tile, int tileNumber) {
-		if(m_tiles == null) {
+		if(m_tiles == null || tile == null) {
 			return false;
 		}
 		
@@ -966,8 +970,26 @@ public class Art extends Item implements TileChangeListener {
 		}
 
 		// read and verify the art file version
+		int numberOfAdditionalHeaderBytes = 0;
 		int version = Serializer.deserializeInteger(Arrays.copyOfRange(data, offset, offset + 4), FILE_ENDIANNESS);
 		offset += 4;
+
+		// some converted art files have a bad header structure and require additional processing
+		if(version == 0x4c495542) {
+			version = Serializer.deserializeInteger(Arrays.copyOfRange(data, offset, offset + 4), FILE_ENDIANNESS);
+			offset += 4;
+			numberOfAdditionalHeaderBytes += 4;
+
+			if(version == 0x54524144) {
+				version = Serializer.deserializeInteger(Arrays.copyOfRange(data, offset, offset + 4), FILE_ENDIANNESS);
+				offset += 4;
+				numberOfAdditionalHeaderBytes += 4;
+			}
+		}
+
+		if(numberOfAdditionalHeaderBytes != 0 && data.length < offset + HEADER_LENGTH + numberOfAdditionalHeaderBytes) {
+			throw new ArtDeserializationException("Art data is incomplete or corrupted: missing extended header data.");
+		}
 
 		if(version != VERSION) { 
 			throw new ArtDeserializationException("Invalid or unsupported art file version: " + version + ", expected " + VERSION + ".");
